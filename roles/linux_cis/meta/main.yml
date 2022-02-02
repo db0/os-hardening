@@ -17,5 +17,4 @@ galaxy_info:
         - security
         - cis
         - hardening
-dependencies:
-    community.general: "*"
+dependencies: []
