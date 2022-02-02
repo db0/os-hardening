@@ -1,0 +1,16 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Configure firewalld"
+  include_tasks: configure_firewalld.yml
+  when:
+  - linuxcis_firewall == "firewalld"
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
+  include_tasks: configure_nftables.yml
+  when:
+  - linuxcis_firewall == "nftables"
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables"
+  include_tasks: configure_iptables.yml
+  when:
+  - linuxcis_firewall == "iptables"

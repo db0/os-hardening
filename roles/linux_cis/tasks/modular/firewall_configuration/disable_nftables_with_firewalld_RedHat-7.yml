@@ -1,0 +1,6 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_DISABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services is absent with firewalld"
+  yum:
+      name: nftables
+      state: absent

@@ -1,0 +1,13 @@
+---
+
+
+# Delete this task if you do not need different tasks per distribution.
+# If you do, also delete the relevant task files.
+- name: Distribution-specific Prerequisite tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "prereqs_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prereqs_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prereqs_{{ ansible_facts.distribution }}.yml"
+      - "prereqs_{{ ansible_facts.os_family }}.yml"

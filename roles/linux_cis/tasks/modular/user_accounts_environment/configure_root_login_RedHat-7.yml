@@ -1,0 +1,21 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console "
+  block:
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console"
+        command: cat /etc/securetty
+        changed_when: false
+        become: yes
+        register: rhel_07_5_6_audit
+
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console"
+        debug:
+            msg:
+                - "These are the consoles with root login access, please review:"
+                - "{{ rhel_07_5_6_audit.stdout_lines }}"
+  when:
+      - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
+  tags:
+      - level1
+      - audit
+      - rule_5.6

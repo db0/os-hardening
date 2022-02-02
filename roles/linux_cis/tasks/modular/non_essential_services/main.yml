@@ -1,0 +1,11 @@
+---
+
+- name: "{{ SEC_ID_NON_ESSENTIAL_SERVICES }} | L1 | Ensure nonessential services are removed or masked (Manual)"
+  debug:
+      msg: "<----- manual check only"
+  when:
+      - SEC_ID_NON_ESSENTIAL_SERVICES not in disabled_cis_rules
+  tags:
+      - level1
+      - notscored
+      - rule_2.4

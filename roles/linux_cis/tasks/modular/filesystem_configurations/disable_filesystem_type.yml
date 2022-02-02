@@ -1,0 +1,14 @@
+---
+
+- name: "{{ cis_section }} | {{ cis_level }} | PATCH | Ensure mounting of {{ filesystem_type }} filesystems is disabled | Edit modprobe config"
+  lineinfile:
+      dest: /etc/modprobe.d/CIS.conf
+      regexp: "^(#)?install {{ filesystem_type }}(\\s|$)"
+      line: "install {{ filesystem_type }} /bin/true"
+      create: yes
+      mode: '0600'
+
+- name: "{{ cis_level }} | PATCH | Remove {{ filesystem_type }} module"
+  modprobe:
+      name: "{{ filesystem_type }}"
+      state: absent

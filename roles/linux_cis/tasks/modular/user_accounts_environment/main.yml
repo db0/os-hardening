@@ -1,0 +1,112 @@
+---
+
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Set Shadow Suite Parameters"
+  include_tasks: shadow_suite_parameters.yml
+
+- name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured"
+  block:
+      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Set nologin"
+        user:
+            name: "{{ item.id }}"
+            shell: /usr/sbin/nologin
+        loop: "{{ linuxcis_passwd }}"
+        become: true
+        when:
+            - item.id != "root"
+            - item.id != "sync"
+            - item.id != "shutdown"
+            - item.id != "halt"
+            - item.gid < linuxcis_int_gid
+            - item.shell != "      /bin/false"
+            - item.shell != "      /usr/sbin/nologin"
+
+      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Lock accounts"
+        user:
+            name: "{{ item.id }}"
+            password_lock: true
+        loop: "{{ linuxcis_passwd }}"
+        become: true
+        when:
+            - item.id != "halt"
+            - item.id != "shutdown"
+            - item.id != "sync"
+            - item.id != "root"
+            - item.gid < linuxcis_int_gid
+            - item.shell != "      /bin/false"
+            - item.shell != "      /usr/sbin/nologin"
+  when:
+      - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.2
+
+- name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0"
+  shell: usermod -g 0 root
+  changed_when: false
+  failed_when: false
+  when:
+      - SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.3
+
+- name: "{{ SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT }} | L1 | PATCH | Ensure default user shell timeout is configured"
+  blockinfile:
+      create: yes
+      mode: 0644
+      dest: "{{ item.dest }}"
+      state: "{{ item.state }}"
+      marker: "# {mark} ANSIBLE MANAGED"
+      block: |
+          # Set session timeout - CIS ID RHEL-07-5.5.4
+          TMOUT={{ linuxcis_shell_session_timeout.timeout }}
+          readonly TMOUT
+          export TMOUT
+  loop:
+      - dest: "{{ linuxcis_shell_session_timeout.file }}"
+        state: present
+      - dest: /etc/profile
+        state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  when:
+      - SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2
+      - patch
+      - rule_5.5.4
+
+- name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured"
+  block:
+      - name: "5.5.5 | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/bashrc"
+        replace:
+            path: /etc/bashrc
+            regexp: '(^\s+umask) 0[012][0-6]'
+            replace: '\1 027'
+
+      - name: "5.5.5 | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/profile"
+        replace:
+            path: /etc/profile
+            regexp: '(^\s+umask) 0[012][0-6]'
+            replace: '\1 027'
+  when:
+      - SEC_ID_ENSURE_DEFAULT_USER_UMASK not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.5
+
+
+- name: "SECTION | {{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | Configure root login"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "configure_root_login_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "configure_root_login_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "configure_root_login_{{ ansible_facts.distribution }}.yml"
+      - "configure_root_login_{{ ansible_facts.os_family }}.yml"
+
+- name: "SECTION | {{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | Restrict su command"
+  include_tasks: restrict_su_command.yml

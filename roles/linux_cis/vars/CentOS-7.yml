@@ -1,0 +1,8 @@
+---
+
+UEFI_BOOTLOADER_PATH: /boot/efi/EFI/centos/
+LEGACY_BOOTLOADER_PATH: /boot/grub2/
+
+SEC_1_2_1_GPG_FILE: RPM-GPG-KEY-CentOS-7
+SEC_1_7_SELINUX_PKG: libselinux
+SEC_2_2_2_XORG_PKG: 'xorg-x11-server-*'

@@ -1,0 +1,6 @@
+---
+
+SUPPORTED_DISTRIBUTIONS:
+  RedHat:
+    - '7'
+    - '8'

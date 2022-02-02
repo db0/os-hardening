@@ -1,0 +1,31 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_RSYSLOG }} | Configure rsyslog"
+  include_tasks: configure_rsyslog.yml
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_JOURNALD }} | Configure journald"
+  include_tasks: configure_journald.yml
+
+- name: "{{ SEC_ID_ENSURE_LOGFILE_PERMISSIONS }} | L1 | PATCH | Ensure permissions on all logfiles are configured"
+  command: find /var/log -type f -exec chmod g-wx,o-rwx "{}" +
+  changed_when: false
+  failed_when: false
+  when:
+      - SEC_ID_ENSURE_LOGFILE_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - automated
+      - rule_4.2.3
+
+- name: "{{ SEC_ID_ENSURE_LOGROTATE_CONFIGURED }} | L1 | AUDIT | Ensure logrotate is configured"
+  find:
+      paths: /etc/logrotate.d/
+  register: log_rotates
+  when:
+      - SEC_ID_ENSURE_LOGROTATE_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1
+      - audit
+      - manual
+      - rule_4.2.4

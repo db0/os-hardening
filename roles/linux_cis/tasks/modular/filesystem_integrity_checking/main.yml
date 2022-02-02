@@ -1,0 +1,43 @@
+---
+
+- name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup"
+  block:
+  - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | install"
+    package:
+      name: aide
+      state: installed
+  - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
+    shell: /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'
+    args:
+      creates: /var/lib/aide/aide.db.gz
+    changed_when: false
+    failed_when: false
+    async: 45
+    poll: 0
+  when:
+    - linuxcis_config_aide
+    - SEC_ID_AIDE_SETUP not in disabled_cis_rules
+  tags:
+    - level1
+    - aide
+    - patch
+    - rule_1.3.1
+
+
+- name: "{{ SEC_ID_AIDE_SCHEDULE }} | L1 | PATCH | Ensure filesystem integrity is regularly checked | cron"
+  cron:
+    name: Run AIDE integrity check
+    minute: "{{ linuxcis_aide_cron['aide_minute'] | default('0') }}"
+    hour: "{{ linuxcis_aide_cron['aide_hour'] | default('5') }}"
+    day: "{{ linuxcis_aide_cron['aide_day'] | default('*') }}"
+    month: "{{ linuxcis_aide_cron['aide_month'] | default('*') }}"
+    weekday: "{{ linuxcis_aide_cron['aide_weekday'] | default('*') }}"
+    job: "{{ linuxcis_aide_cron['aide_job'] }}"
+  when:
+    - SEC_ID_AIDE_SCHEDULE not in disabled_cis_rules
+  tags:
+    - level1
+    - aide
+    - file_integrity
+    - patch
+    - rule_1.3.2

@@ -1,0 +1,285 @@
+---
+- name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | PATCH | Audit system file permissions"
+  block:
+      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | AUDIT | Audit system file permissions | Audit the packages"
+        shell: rpm -Va --nomtime --nosize --nomd5 --nolinkto
+        changed_when: false
+        failed_when: false
+        register: linuxcis_6_1_1_packages_rpm
+        tags:
+            - skip_ansible_lint
+
+      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Create list and warning"
+        block:
+            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Add file discrepancy list to system"
+              copy:
+                  dest: "{{ linuxcis_rpm_audit_file }}"
+                  content: "{{ linuxcis_6_1_1_packages_rpm.stdout }}"
+              changed_when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
+
+            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Message out alert for package descrepancies"
+              debug:
+                  msg: |
+                      "Warning! You have some package descrepancies issues.
+                       The file list can be found in {{ linuxcis_rpm_audit_file }}"
+              changed_when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
+              when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
+
+            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Message out no package descrepancies"
+              debug:
+                  msg: "Good News! There are no package descrepancies"
+              when: linuxcis_6_1_1_packages_rpm.stdout|length == 0
+  when:
+      - SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2
+      - patch
+      - rule_6.1.1
+
+- name: "{{ SEC_ID_ENSURE_ETC_PASSWD_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/passwd are configured"
+  file:
+      dest: /etc/passwd
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_PASSWD_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.2
+
+- name: "{{ SEC_ID_ENSURE_ETC_PASSWD_DASH_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/passwd- are configured"
+  file:
+      dest: /etc/passwd-
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_PASSWD_DASH_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.3
+
+- name: "{{ SEC_ID_ENSURE_ETC_SHADOW_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/shadow are configured"
+  file:
+      dest: /etc/shadow
+      owner: root
+      group: root
+      mode: 0000
+  when:
+      - SEC_ID_ENSURE_ETC_SHADOW_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.4
+
+- name: "{{ SEC_ID_ENSURE_ETC_SHADOW_DASH_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/shadow- are configured"
+  file:
+      dest: /etc/shadow-
+      owner: root
+      group: root
+      mode: 0000
+  when:
+      - SEC_ID_ENSURE_ETC_SHADOW_DASH_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.5
+
+- name: "{{ SEC_ID_ENSURE_ETC_GSHADOW_DASH_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/gshadow- are configured"
+  file:
+      dest: /etc/gshadow-
+      owner: root
+      group: root
+      mode: 0000
+  when:
+      - SEC_ID_ENSURE_ETC_GSHADOW_DASH_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.6
+
+- name: "{{ SEC_ID_ENSURE_ETC_GSHADOW_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/gshadow are configured"
+  file:
+      dest: /etc/gshadow
+      owner: root
+      group: root
+      mode: 0000
+  when:
+      - SEC_ID_ENSURE_ETC_GSHADOW_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.7
+
+- name: "{{ SEC_ID_ENSURE_ETC_GROUP_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/group are configured"
+  file:
+      dest: /etc/group
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_GROUP_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.8
+
+- name: "{{ SEC_ID_ENSURE_ETC_GROUP_DASH_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/group- are configured"
+  file:
+      dest: /etc/group-
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_GROUP_DASH_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.9
+
+- name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | PATCH | Ensure no world writable files exist"
+  block:
+      - name: "6.1.10 | L1 | AUDIT | Ensure no world writable files exist | Get list of world-writable files"
+        shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
+        become: yes
+        failed_when: false
+        changed_when: false
+        register: rhel_07_6_1_10_perms_results
+
+      - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | AUDIT | Ensure no world writable files exist | Alert no world-writable files exist"
+        debug:
+            msg: "Good news! We have not found any world-writable files on your system"
+        failed_when: false
+        changed_when: false
+        when:
+            - rhel_07_6_1_10_perms_results.stdout is not defined
+
+      - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | PATCH | Ensure no world writable files exist | Adjust world-writable files if they exist (Configurable)"
+        file:
+            path: '{{ item }}'
+            mode: o-w
+            state: touch
+        with_items: "{{ rhel_07_6_1_10_perms_results.stdout_lines }}"
+        when:
+            - rhel_07_6_1_10_perms_results.stdout_lines is defined
+            - linuxcis_no_world_write_adjust
+  when:
+      - SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.10
+
+- name: "{{ SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS }} | L1 | PATCH | Ensure no unowned files or directories exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS }} | L1 | AUDIT | Ensure no unowned files or directories exist | Finding all unowned files or directories"
+        command: find "{{ item.mount }}" -xdev -nouser
+        check_mode: false
+        register: rhel_07_6_1_11_audit
+        failed_when: false
+        changed_when: false
+        when: item['device'].startswith('/dev') and not 'bind' in item['options']
+        with_items: "{{ ansible_mounts }}"
+
+      - name: "{{ SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS }} | L1 | AUDIT | Ensure no unowned files or directories exist | Displaying any unowned files or directories"
+        debug:
+            msg: "Warning - Manual intervention is required -- missing owner on items in {{ item.item.mount }}: {{ item.stdout_lines | join(', ') }}"
+        when:
+            - item.stdout_lines is defined
+            - item.stdout_lines | length > 0
+        with_items: "{{ rhel_07_6_1_11_audit.results }}"
+  when:
+      - SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.11
+
+- name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | PATCH | Ensure no ungrouped files or directories exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | AUDIT | Ensure no ungrouped files or directories exist | Finding all ungrouped files or directories"
+        command: find "{{ item.mount }}" -xdev -nogroup
+        check_mode: false
+        register: rhel_07_6_1_12_audit
+        failed_when: false
+        changed_when: false
+        when: item['device'].startswith('/dev') and not 'bind' in item['options']
+        with_items: "{{ ansible_mounts }}"
+
+      - name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | AUDIT | Ensure no ungrouped files or directories exist | Displaying all ungrouped files or directories"
+        debug:
+            msg: "Warning - Manual intervention is required -- missing group on items in {{ item }}!"
+        changed_when: item | length > 0
+        with_items: "{{ rhel_07_6_1_12_audit.results |map(attribute='stdout_lines') }}"
+  when:
+      - SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.12
+
+- name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | PATCH | Audit SUID executables"
+  block:
+      - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables | Find all SUID executables"
+        shell: df {{ item.mount }} -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -4000
+        become: yes
+        failed_when: false
+        changed_when: false
+        register: rhel_07_6_1_13_perms_results
+        with_items: "{{ ansible_mounts }}"
+
+      - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables |  Alert no SUID executables exist"
+        debug:
+            msg: "Good news! We have not found any SUID executable files on your system"
+        failed_when: false
+        changed_when: false
+        when:
+            - rhel_07_6_1_13_perms_results.stdout is not defined
+
+      - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables |  Alert SUID executables exist"
+        debug:
+            msg: "Warning - Manual intervention is required -- SUID set on items in {{ item.item.mount }}: {{ item.stout_lines | join(', ') }}"
+        with_items: "{{ rhel_07_6_1_13_perms_results.stdout_lines }}"
+        when:
+            - rhel_07_6_1_13_perms_results.stdout is defined
+  when:
+      - SEC_ID_AUDIT_SUID_EXECUTABLES not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.13
+
+- name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | PATCH | Audit SGID executables"
+  block:
+      - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables | Find all SGID executables"
+        shell: df {{ item.mount }} -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -2000
+        become: yes
+        failed_when: false
+        changed_when: false
+        register: rhel_07_6_1_14_perms_results
+        with_items: "{{ ansible_mounts }}"
+
+      - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables |  Alert no SGID executables exist"
+        debug:
+            msg: "Good news! We have not found any SGID executable files on your system"
+        failed_when: false
+        changed_when: false
+        when:
+            - rhel_07_6_1_14_perms_results.stdout is not defined
+
+      - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables |  Alert SGID executables exist"
+        debug:
+            msg: "Warning - Manual intervention is required -- SGID set on items in {{ item.item.mount }}: {{ item.stout_lines | join(', ') }}"
+        with_items: "{{ rhel_07_6_1_14_perms_results.stdout_lines }}"
+        when:
+            - rhel_07_6_1_14_perms_results.stdout is defined
+  when:
+      - SEC_ID_AUDIT_SGID_EXECUTABLES not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.1.14

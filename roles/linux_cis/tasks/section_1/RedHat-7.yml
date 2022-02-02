@@ -1,0 +1,43 @@
+---
+
+- name: "SECTION | {{ SEC_ID_FILESYSTEM_CONFIGURATIONS }} | FileSystem Configurations"
+  include_tasks: "../modular/filesystem_configurations/main.yml"
+  when:
+    - SEC_ID_FILESYSTEM_CONFIGURATIONS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_SOFTWARE_UPDATES }} | Configure Software Updates"
+  include_tasks: "../modular/configure_software_updates/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_SOFTWARE_UPDATES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_FILESYSTEM_INTEGRITY }} | Filesystem Integrity"
+  include_tasks: "../modular/filesystem_integrity_checking/main.yml"
+  when:
+    - linuxcis_config_aide
+    - SEC_ID_CONFIGURE_FILESYSTEM_INTEGRITY not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_SECURE_BOOT_SETTINGS }} | Secure Boot Settings"
+  include_tasks: "../modular/secure_boot_settings/main.yml"
+  when:
+    - SEC_ID_SECURE_BOOT_SETTINGS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ADDITIONAL_PROCESS_HARDENING }} | Additional Process Hardening"
+  include_tasks: "../modular/additional_process_hardening/main.yml"
+  when:
+    - SEC_ID_ADDITIONAL_PROCESS_HARDENING not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_MANDATORY_ACCESS_CONTROL }} | Mandatory Access Control"
+  include_tasks: "../modular/mandatory_access_control/main.yml"
+  when:
+    - not linuxcis_selinux_disable
+    - SEC_ID_MANDATORY_ACCESS_CONTROL not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+  include_tasks: "../modular/warning_banners/main.yml"
+  when:
+    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_UPDATES_AND_PATCHES }} | Updates and Patches"
+  include_tasks: "../modular/updates_and_patches/main.yml"
+  when:
+    - SEC_ID_UPDATES_AND_PATCHES not in disabled_cis_rules

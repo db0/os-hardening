@@ -1,0 +1,169 @@
+---
+# tasks file for RHEL7-CIS
+- name: Check OS version and family
+  fail:
+      msg: "This role can only be run against RHEL 7. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
+  when:
+      - ansible_os_family in SUPPORTED_DISTRIBUTIONS
+      - not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family]
+      - linuxcis_os_check
+  tags:
+      - always
+
+- name: Check ansible version
+  fail:
+      msg: You must use ansible 2.10 or greater
+  when: not ansible_version.full is version_compare('2.10', '>=')
+  tags:
+      - always
+
+- name: Include Distribution-specific vars
+  include_vars: "{{ lookup('first_found', dist_vars) }}"
+  vars:
+    dist_vars:
+      - "../vars/{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/{{ ansible_facts.distribution }}.yml"
+      - "../vars/{{ ansible_facts.os_family }}.yml"
+
+- name: Load Distribution Section ID
+  include_vars: "{{ lookup('first_found', dist_vars) }}"
+  vars:
+    dist_vars:
+      - "../vars/sec_ids_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.distribution }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.os_family }}.yml"
+
+
+- name: Include Distribution-specific vars into lookup dictionary
+  include_vars:
+    file: "{{ lookup('first_found', dist_vars) }}"
+    name: section_names
+  vars:
+    dist_vars:
+      - "../vars/sec_ids_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.distribution }}.yml"
+      - "../vars/sec_ids_{{ ansible_facts.os_family }}.yml"
+
+- name: Add excluded sections by name
+  set_fact:
+    disabled_cis_rules: "{{ disabled_cis_rules + [section_names[item]] }}"
+  loop: "{{ disabled_cis_sections }}"
+  when: item in section_names
+
+- name: "Display Excluded CIS Sections"
+  debug:
+    msg: "The following CIS benchmark sections have been disabled for {{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }} during this run: {{ disabled_cis_rules }}"
+
+- name: Check linuxcis_bootloader_password_hash variable has been changed
+  assert:
+      that: linuxcis_bootloader_password_hash != 'grub.pbkdf2.sha512.changethispart'
+      msg: "This role will not be able to run single user password commands as  linuxcis_bootloader_password_hash variable has not been set"
+  when:
+      - ansible_distribution_version >= '7.2'
+      - linuxcis_set_boot_pass
+      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
+
+- name: "check sugroup exists if used"
+  block:
+      - name: "Check su group exists if defined"
+        command: grep -w "{{ linuxcis_sugroup }}" /etc/group
+        register: sugroup_exists
+        changed_when: false
+        failed_when: sugroup_exists.rc >= 2
+        tags:
+            - skip_ansible_lint
+
+      - name: Check sugroup if defined exists before continuing
+        assert:
+            that: sugroup_exists.rc == 0
+            msg: "The variable linuxcis_sugroup is defined but does not exist please rectify"
+  when:
+      - linuxcis_sugroup is defined
+      - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
+  tags:
+      - rule_5.6
+
+- include_tasks: prereqs/main.yml
+  tags:
+      - always
+      - prereqs
+
+- include_tasks: prelim/main.yml
+  tags:
+      - prelim_tasks
+      - always
+
+- import_tasks: pre_remediation_audit.yml
+  when:
+      - run_audit
+  tags:
+      - run_audit
+
+- name: Gather the package facts
+  package_facts:
+      manager: auto
+  tags:
+      - always
+
+- include_tasks: parse_etc_password.yml
+  when:
+      - linuxcis_section5 or
+        linuxcis_section6
+
+- include_tasks: section_1/main.yml
+  when: linuxcis_section1
+  tags:
+      - linuxcis_section1
+
+- include_tasks: section_2/main.yml
+  when: linuxcis_section2
+  tags:
+      - linuxcis_section2
+
+- include_tasks: section_3/main.yml
+  when: linuxcis_section3
+  tags:
+      - linuxcis_section3
+
+- include_tasks: section_4/main.yml
+  when: linuxcis_section4
+  tags:
+      - linuxcis_section4
+
+- include_tasks: section_5/main.yml
+  when: linuxcis_section5
+  tags:
+      - linuxcis_section5
+
+- include_tasks: section_6/main.yml
+  when: linuxcis_section6
+  tags:
+      - linuxcis_section6
+
+- include_tasks: post/main.yml
+  tags:
+      - post_tasks
+      - always
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: reboot system
+  reboot:
+  when:
+      - linuxcis_allow_reboot
+
+- import_tasks: post_remediation_audit.yml
+  when:
+      - run_audit
+  tags:
+      - run_audit
+
+- name: Show Audit Summary
+  debug:
+      msg: "{{ audit_results.split('\n') }}"
+  when:
+      - run_audit

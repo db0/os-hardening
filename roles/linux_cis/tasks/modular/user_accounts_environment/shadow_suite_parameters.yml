@@ -1,0 +1,106 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_PASSWORD_EXPIRY_365 }} | L1 | PATCH | Ensure password expiration is 365 days or less"
+  lineinfile:
+      state: present
+      dest: /etc/login.defs
+      regexp: '^PASS_MAX_DAYS'
+      line: "PASS_MAX_DAYS {{ linuxcis_pass['max_days'] }}"
+  when:
+      - SEC_ID_ENSURE_PASSWORD_EXPIRY_365 not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.1.1
+
+- name: "{{ SEC_ID_ENSURE_MINIMUM_DAYS_PASSWORD_CHANGE }} | L1 | PATCH | Ensure minimum days between password changes is configured"
+  lineinfile:
+      state: present
+      dest: /etc/login.defs
+      regexp: '^PASS_MIN_DAYS'
+      line: "PASS_MIN_DAYS {{ linuxcis_pass['min_days'] }}"
+  when:
+      - SEC_ID_ENSURE_MINIMUM_DAYS_PASSWORD_CHANGE not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.1.2
+
+- name: "{{ SEC_ID_ENSURE_PASSWORD_EXPIRY_WARNING_7 }} | L1 | PATCH | Ensure password expiration warning days is 7 or more"
+  lineinfile:
+      state: present
+      dest: /etc/login.defs
+      regexp: '^PASS_WARN_AGE'
+      line: "PASS_WARN_AGE {{ linuxcis_pass['warn_age'] }}"
+  when:
+      - SEC_ID_ENSURE_PASSWORD_EXPIRY_WARNING_7 not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.1.3
+
+- name: "{{ SEC_ID_ENSURE_PASSWORD_LOCK_30 }} | L1 | PATCH | Ensure inactive password lock is 30 days or less"
+  block:
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_LOCK_30 }} | L1 | PATCH | Ensure inactive password lock is 30 days or less | Set default inactive setting"
+        lineinfile:
+            path: /etc/default/useradd
+            regexp: '^INACTIVE='
+            line: "INACTIVE={{ linuxcis_inactivelock['lock_days'] }}"
+            state: present
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_LOCK_30 }} | L1 | AUDIT | Ensure inactive password lock is 30 days or less | Getting user list"
+        # shell: 'egrep ^[^:]+:[^\!*] /etc/shadow | cut -d: -f1'
+        shell: "egrep ^[^:]+:[^\\!*] /etc/shadow | awk -F: '{print $1 \",\" $7}' | egrep -v  ',\\d|,[1-2][0-9]|,30|{{ linuxcis_inactive_whitelist | join('|') }}' | cut -d , -f1"
+        register: rhel_07_5_5_1_4_audit
+        changed_when: false
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_LOCK_30 }} | L1 | PATCH | Ensure inactive password lock is 30 days or less | Apply Inactive setting to existing accounts"
+        shell: "chage --inactive {{ linuxcis_inactivelock.lock_days }} {{ item }}"
+        with_items:
+            - "{{ rhel_07_5_5_1_4_audit.stdout_lines }}"
+        when:
+            - rhel_07_5_5_1_4_audit.stdout | length > 0
+  when:
+      - SEC_ID_ENSURE_PASSWORD_LOCK_30 not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.1.4
+
+- name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | PATCH | Ensure all users last password change date is in the past"
+  block:
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | AUDIT | Ensure all users last password change date is in the past | Get current date in Unix Time"
+        shell: echo $(($(date --utc --date "$1" +%s)/86400))
+        failed_when: false
+        changed_when: false
+        register: linuxcis_5_5_1_5_current_unix_time
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | AUDIT | Ensure all users last password change date is in the past | Get list of users with last changed pw date in the future"
+        shell: "cat /etc/shadow | awk -F: '{if($3>{{ linuxcis_5_5_1_5_current_unix_time.stdout }})print$1}'"
+        register: linuxcis_5_5_1_5_user_list
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | AUDIT | Ensure all users last password change date is in the past | Alert no pw change in the future exist"
+        debug:
+            msg: "Good News! All accounts have PW change dates that are in the past"
+        when: linuxcis_5_5_1_5_user_list.stdout | length == 0
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | AUDIT | Ensure all users last password change date is in the past | Alert on accounts with pw change in the future"
+        debug:
+            msg: "Warning! The following accounts have the last PW change date in the future: {{ linuxcis_5_5_1_5_user_list.stdout_lines }}"
+        when:
+            - linuxcis_5_5_1_5_user_list.stdout | length > 0
+            - not linuxcis_futurepwchgdate_autofix
+
+      - name: "{{ SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST }} | L1 | PATCH | Ensure all users last password change date is in the past | Fix accounts with pw change in the future"
+        shell: passwd --expire {{ item }}
+        when:
+            - linuxcis_5_5_1_5_user_list | length > 0
+            - linuxcis_futurepwchgdate_autofix
+        with_items:
+            - "{{ linuxcis_5_5_1_5_user_list.stdout_lines }}"
+  when:
+      - SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_5.5.1.5

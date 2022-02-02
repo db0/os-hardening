@@ -1,0 +1,47 @@
+---
+- name: "{{ SEC_ID_ENSURE_AUDITD_INSTALLED }} | L2 | PATCH | Ensure auditd is installed"
+  package:
+      name: ['audit', 'audit-libs']
+      state: present
+#   vars:
+#       ansible_python_interpreter: /bin/python
+  when:
+      - SEC_ID_ENSURE_AUDITD_INSTALLED not in disabled_cis_rules
+      - linuxcis_level2
+  notify: restart auditd
+  tags:
+      - level2
+      - auditd
+      - rule_4.1.1.1
+
+- name: "{{ SEC_ID_ENSURE_AUDITD_ENABLED }} | L2 | PATCH | Ensure auditd service is enabled and running"
+  service:
+      name: auditd
+      state: started
+      enabled: yes
+  when:
+      - not linuxcis_skip_for_travis
+      - SEC_ID_ENSURE_AUDITD_ENABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+      - linuxcis_level2
+  tags:
+      - level2
+      - auditd
+      - patch
+      - rule_4.1.1.2
+
+- name: "{{ SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED }} | L2 | PATCH | Ensure auditing for processes that start prior to auditd is enabled"
+  replace:
+      dest: /etc/default/grub
+      # regexp: '(^GRUB_CMDLINE_LINUX\s*\=\s*)(?:")(.+)(?<!audit=1)(?:")'
+      regexp: ^(GRUB_CMDLINE_LINUX=)(?:")(?!.*audit=1)(.+)(?:")$
+      replace: '\1"\2 audit=1"'
+  notify: grub2cfg
+  when:
+      - SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2
+      - auditd
+      - patch
+      - rule_4.1.1.3

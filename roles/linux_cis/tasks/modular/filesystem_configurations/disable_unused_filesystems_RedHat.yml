@@ -1,0 +1,47 @@
+---
+
+- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.1 | L1 | PATCH | Ensure mounting of cramfs filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: cramfs
+    cis_level: L1
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.1"
+  when:
+      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1
+      - patch
+      - rule_1.1.1.1
+      - cramfs
+
+- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.2 | L2 | PATCH | Ensure mounting of squashfs filesystems is disabled"
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: squashfs
+    cis_level: L2
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.2"
+  when:
+      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - ansible_connection != 'docker'
+      - linuxcis_level2
+  tags:
+      - level2
+      - patch
+      - rule_1.1.1.2
+      - squashfs
+
+- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.3 | L1 | PATCH | Ensure mounting of udf filesystems is disabled"
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: udf
+    cis_level: L1
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.3"
+  when:
+      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1
+      - patch
+      - rule_1.1.1.3
+      - udf

@@ -1,0 +1,43 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_JOURNALD_TO_RSYSLOG }} | L1 | PATCH | Ensure journald is configured to send logs to rsyslog"
+  lineinfile:
+      path: /etc/systemd/journald.conf
+      regexp: '^[F|f]orward[T|t]o[S|s]yslog='
+      line: "ForwardToSyslog=yes"
+  when:
+      - SEC_ID_ENSURE_JOURNALD_TO_RSYSLOG not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - manual
+      - rule_4.2.2.1
+      - journald
+
+- name: "{{ SEC_ID_ENSURE_JOURNALD_COMPRESSION }} | L1 | PATCH | Ensure journald is configured to compress large log files"
+  lineinfile:
+      path: /etc/systemd/journald.conf
+      regexp: '^[C|c]ompress='
+      line: "Compress=yes"
+  when:
+      - SEC_ID_ENSURE_JOURNALD_COMPRESSION not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - automated
+      - rule_4.2.2.2
+      - journald
+
+- name: "{{ SEC_ID_ENSURE_WRITE_TO_PERSISTENT_DISK }} | L1 | PATCH | Ensure journald is configured to write logfiles to persistent disk"
+  lineinfile:
+      path: /etc/systemd/journald.conf
+      regexp: '^[S|s]torage='
+      line: "Storage=persistent"
+  when:
+      - SEC_ID_ENSURE_WRITE_TO_PERSISTENT_DISK not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - automated
+      - rule_4.2.2.3
+      - journald

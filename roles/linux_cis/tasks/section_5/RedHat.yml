@@ -1,0 +1,21 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_CRON }} | Configure time-based job schedulers"
+  include_tasks: "../modular/configure_cron/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_CRON not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_SSH }} | Configure SSH Server"
+  include_tasks: "../modular/configure_ssh_server/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_SSH not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_PAM }} | Configure PAM"
+  include_tasks: "../modular/configure_pam/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_PAM not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_USER_ACCOUNTS_ENVIRONMENT }} | User Accounts and Environment"
+  include_tasks: "../modular/user_accounts_environment/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_USER_ACCOUNTS_ENVIRONMENT not in disabled_cis_rules
