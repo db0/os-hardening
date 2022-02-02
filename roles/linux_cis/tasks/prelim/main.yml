@@ -52,7 +52,7 @@
   set_fact:
       mount_names: "{{ ansible_mounts | map(attribute='mount') | list }}"
 
-- name: "PRELIM | Section {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }}| Ensure SELinux is installed"
+- name: "PRELIM | Section {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Ensure SELinux is installed"
   package:
       name: "{{ SEC_1_7_SELINUX_PKG }}"
       state: present
