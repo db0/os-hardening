@@ -7,6 +7,7 @@ Configure Linux 7 machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/
 Currently Supported
 
 * RHEL/Centos 7 - [CIS RedHat Enterprise Linux 7 Benchmark v3.1.1 - 05-21-2021 ](https://www.cisecurity.org/cis-benchmarks/)
+* RHEL/Centos 8
 
 Caution(s)
 ---------
