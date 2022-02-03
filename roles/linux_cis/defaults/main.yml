@@ -583,7 +583,7 @@ copy_goss_from_path: /some/accessible/path
 ### Goss Audit Benchmark file ###
 ## managed by the control audit_content
 # git
-audit_file_git: "https://github.com/ansible-lockdown/{{ benchmark }}-Audit.git"
+audit_file_git: "https://github.com/db0/{{ benchmark }}-Audit.git"
 audit_git_version: main
 
 # copy:
