@@ -34,7 +34,7 @@ linuxcis_legacy_boot: {{ linuxcis_legacy_boot }}
 # You must enable an entire section in order for the variables below to take effect.
 
 {% for cis_section in section_names %}
-{{ cis_section }}: true
+{{ cis_section }}: {{ cis_section in disabled_cis_rules }}
 {% endfor %}
 
 
