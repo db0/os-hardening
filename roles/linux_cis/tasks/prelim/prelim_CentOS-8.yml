@@ -17,17 +17,3 @@
       # - rhel8cis_rule_5_3_1 or
       #   rhel8cis_rule_5_3_2 or
       #   rhel8cis_rule_5_3_3
-
-# - name: debug grub stat
-#   debug:
-#       var: grub_cfg.stat
-
-- name: "PRELIM | Check for rhnsd service"
-  shell: "systemctl show rhnsd | grep LoadState | cut -d = -f 2"
-  changed_when: false
-  check_mode: false
-  register: rhnsd_service_status
-  when:
-      - SEC_ID_ACTIVATE_GPG_GLOBALLY not in disabled_cis_rules
-  tags:
-      - skip_ansible_lint

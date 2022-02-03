@@ -1,13 +1,10 @@
 ---
 
-- name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | PATCH | Ensure GPG keys are configured"
-  command: gpg --quiet --with-fingerprint /etc/pki/rpm-gpg/{{ SEC_1_2_1_GPG_FILE }}
+- name: "Section | {{ SEC_ID_ENSURE_RHSM_CONFIGURED }} {{ SEC_ID_DISABLE_RHNSD_DAEMON }} | Red Hat Subscription Manager"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
   when:
-      - SEC_ID_CONFIGURE_GPG_KEYS not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.2.1
+      - ansible_facts.distribution == 'RedHat'
+      - ansible_distribution_major_version is version_compare('8', '!=')
 
 - name: "{{ SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS }} | L1 | AUDIT | Ensure package manager repositories are configured"
   block:

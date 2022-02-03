@@ -23,52 +23,67 @@
   tags:
   - skip_ansible_lint
 
-- name: "PRELIM | Check whether machine is UEFI-based"
+- name: "PRELIM | Set facts based on boot type"
+  block:
+      - name: "PRELIM | Check whether machine is UEFI-based"
+        stat:
+            path: /sys/firmware/efi
+        register: linuxcis_efi_boot
+
+      - name: "PRELIM | AUDIT | set legacy boot and grub path | Bios"
+        set_fact:
+            linuxcis_bootloader_path: "{{ UEFI_BOOTLOADER_PATH }}"
+            linuxcis_legacy_boot: false
+            grub2_path: /etc/grub2.cfg
+        when: linuxcis_efi_boot.stat.exists
+
+      - name: "PRELIM | set grub fact | UEFI"
+        set_fact:
+            linuxcis_bootloader_path: "{{ UEFI_BOOTLOADER_PATH }}"
+            linuxcis_legacy_boot: true
+            grub2_path: /etc/grub2-efi.cfg
+        when: not linuxcis_efi_boot.stat.exists
+
+# - name: debug legacy boot var
+#   debug:
+#       msg: |
+#           legacy_boot={{ rhel8cis_legacy_boot }}
+#           grub2_path={{ grub2_path }}
+
+- name: "PRELIM | AUDIT | Ensure permissions on bootloader config are configured | Get grub config file stats"
   stat:
-      path: /sys/firmware/efi
-  register: linuxcis_efi_boot
+      path: "{{ grub2_path }}"
   changed_when: false
+  register: grub_cfg
 
-- name: "PRELIM | set fact if UEFI boot | RHEL or OEL"
-  set_fact:
-      linuxcis_bootloader_path: "{{ UEFI_BOOTLOADER_PATH }}"
-      linuxcis_legacy_boot: false
+
+- name: "PRELIM | if systemd coredump"
+  stat:
+      path: /etc/systemd/coredump.conf
+  register: systemd_coredump
   when:
-  - linuxcis_efi_boot.stat.exists
-
-- name: "PRELIM | set if not UEFI boot"
-  set_fact:
-      linuxcis_bootloader_path: "{{ LEGACY_BOOTLOADER_PATH }}"
-      linuxcis_legacy_boot: true
-  when: not linuxcis_efi_boot.stat.exists
-
-- name: output bootloader and efi state
-  debug:
-      msg:
-      - "bootloader path set to {{ linuxcis_bootloader_path }}"
-      - "legacy boot equals {{ linuxcis_legacy_boot }}"
+      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
 
 - name: "PRELIM | Section {{ SEC_ID_FILESYSTEM_CONFIGURATIONS }} | Create list of mount points"
   set_fact:
       mount_names: "{{ ansible_mounts | map(attribute='mount') | list }}"
 
-- name: "PRELIM | Section {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Ensure SELinux is installed"
-  package:
-      name: "{{ SEC_1_7_SELINUX_PKG }}"
-      state: present
-  when:
-  - not linuxcis_selinux_disable
-
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_SYSTEM_ACCOUNTING }} | Configure System Accounting (auditd)"
   package:
       name: audit
       state: present
-  # vars:
-  #     ansible_python_interpreter: /bin/python
+  when: linuxcis_level2
 
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_CRON }} | Configure cron"
   package:
       name: cronie
       state: present
-  # vars:
-  #     ansible_python_interpreter: /bin/python
+
+- name: Distribution-specific Prerequisite tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "prelim_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prelim_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prelim_{{ ansible_facts.distribution }}.yml"
+      - "prelim_{{ ansible_facts.os_family }}.yml"
