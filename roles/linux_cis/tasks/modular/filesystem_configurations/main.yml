@@ -51,7 +51,7 @@
             src: "{{ item.device }}"
             fstype: "{{ item.fstype }}"
             state: present
-            opts: defaults,{% if linuxcis_rule_1_1_3 %}noexec,{% endif %}{% if linuxcis_rule_1_1_4 %}nodev,{% endif %}{% if linuxcis_rule_1_1_5 %}nosuid{% endif %}
+            opts: defaults,{% if SEC_ID_CONFIGURE_TMP_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_TMP_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_TMP_NOSUID not in disabled_cis_rules %}nosuid{% endif %}
         notify: remount tmp
         loop: "{{ ansible_mounts }}"
         when:
@@ -120,7 +120,7 @@
       src: tmpfs
       fstype: tmpfs
       state: present
-      opts: defaults,{% if linuxcis_rule_1_1_7 %}noexec,{% endif %}{% if linuxcis_rule_1_1_8 %}nodev,{% endif %}{% if linuxcis_rule_1_1_9 %}nosuid{% endif %},seclabel
+      opts: defaults,{% if SEC_ID_CONFIGURE_SHM_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_SHM_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_SHM_NOSUID not in disabled_cis_rules %}nosuid{% endif %},seclabel
   notify: remount dev_shm
   when:
       - SEC_ID_CONFIGURE_SHM_NODEV not in disabled_cis_rules
@@ -201,7 +201,7 @@
       src: "{{ item.device }}"
       fstype: "{{ item.fstype }}"
       state: present
-      opts: defaults,{% if linuxcis_rule_1_1_12 %}noexec,{% endif %}{% if linuxcis_rule_1_1_13 %}nodev,{% endif %}{% if linuxcis_rule_1_1_14 %}nosuid{% endif %}
+      opts: defaults,{% if SEC_ID_CONFIGURE_VAR_TMP_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_VAR_TMP_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_VAR_TMP_NOSUID not in disabled_cis_rules %}nosuid{% endif %}
   loop: "{{ ansible_mounts }}"
   when:
       - var_tmp_mount_present is defined
@@ -309,7 +309,7 @@
       src: "{{ item.device }}"
       fstype: "{{ item.fstype }}"
       state: present
-      opts: defaults,{% if linuxcis_rule_1_1_17 %}nodev{% endif %}
+      opts: defaults,{% if SEC_ID_CONFIGURE_HOME_NODEV not in disabled_cis_rules %}nodev{% endif %}
   loop: "{{ ansible_mounts }}"
   when:
       - home_mount_present is defined

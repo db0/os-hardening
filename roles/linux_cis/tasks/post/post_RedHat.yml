@@ -1,0 +1,6 @@
+---
+
+- name: Perform DNF package cleanup
+  dnf:
+      autoremove: yes
+  changed_when: no
