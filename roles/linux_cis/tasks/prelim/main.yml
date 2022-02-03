@@ -79,7 +79,7 @@
       name: cronie
       state: present
 
-- name: Distribution-specific Prerequisite tasks
+- name: PRELIM | Distribution-specific Preliminary tasks
   include_tasks: "{{ lookup('first_found', dist_tasks) }}"
   vars:
     dist_tasks:
