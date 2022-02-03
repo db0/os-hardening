@@ -17,9 +17,8 @@ linuxcis_level2: true
 # Disable/Enable OS check
 linuxcis_os_check: true
 
-# Should always reboot after this number of changes allow this to be automated as part of remediation
-linuxcis_allow_reboot: false
-
+# Whether to skip the reboot
+linuxcis_skip_reboot: true
 ## Python Binary
 ## This is used for python3 Installations where python2 OS modules are used in ansible
 python2_bin: /bin/python2.7

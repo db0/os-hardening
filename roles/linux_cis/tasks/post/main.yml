@@ -1,10 +1,20 @@
 ---
 # Post tasks
 
-- name: Perform YUM package cleanup
-  package:
-      autoremove: true
-  changed_when: false
-  ignore_errors: yes
-  tags:
-      - skip_ansible_lint
+- name: Distribution-specific Prerequisite tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "post_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "post_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "post_{{ ansible_facts.distribution }}.yml"
+      - "post_{{ ansible_facts.os_family }}.yml"
+
+
+- name: flush handlers
+  meta: flush_handlers
+
+- name: Reboot host
+  reboot:
+  when:
+  - not linuxcis_skip_reboot
