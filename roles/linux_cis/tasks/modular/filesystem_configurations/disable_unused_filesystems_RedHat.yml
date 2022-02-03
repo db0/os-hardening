@@ -1,13 +1,14 @@
 ---
 
-- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.1 | L1 | PATCH | Ensure mounting of cramfs filesystems is disabled "
+- name: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }} | L1 | PATCH | Ensure mounting of cramfs filesystems is disabled "
   include_tasks: disable_filesystem_type.yml
   vars:
     filesystem_type: cramfs
     cis_level: L1
-    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.1"
+    cis_section: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }}"
   when:
       - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - SEC_ID_ENSURE_FS_CRAMFS_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
   tags:
       - level1
@@ -15,14 +16,15 @@
       - rule_1.1.1.1
       - cramfs
 
-- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.2 | L2 | PATCH | Ensure mounting of squashfs filesystems is disabled"
+- name: "{{ SEC_ID_ENSURE_FS_SQUASHFS_DISABLED }} | L2 | PATCH | Ensure mounting of squashfs filesystems is disabled"
   include_tasks: disable_filesystem_type.yml
   vars:
     filesystem_type: squashfs
     cis_level: L2
-    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.2"
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}"
   when:
       - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - SEC_ID_ENSURE_FS_SQUASHFS_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
       - linuxcis_level2
   tags:
@@ -31,14 +33,15 @@
       - rule_1.1.1.2
       - squashfs
 
-- name: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.3 | L1 | PATCH | Ensure mounting of udf filesystems is disabled"
+- name: "{{ SEC_ID_ENSURE_FS_UDF_DISABLED }} | L1 | PATCH | Ensure mounting of udf filesystems is disabled"
   include_tasks: disable_filesystem_type.yml
   vars:
     filesystem_type: udf
     cis_level: L1
-    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}.3"
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}"
   when:
       - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
+      - SEC_ID_ENSURE_FS_UDF_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
   tags:
       - level1

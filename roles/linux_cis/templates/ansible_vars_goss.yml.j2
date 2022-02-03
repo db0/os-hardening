@@ -33,9 +33,6 @@ linuxcis_legacy_boot: {{ linuxcis_legacy_boot }}
 # PLEASE NOTE: These work in coordination with the section # group variables and tags.
 # You must enable an entire section in order for the variables below to take effect.
 
-linuxcis_rule_1_1_1_1: true
-linuxcis_rule_1_1_1_2: true
-linuxcis_rule_1_1_1_3: true
 {% for cis_section in section_names %}
 {{ cis_section }}: true
 {% endfor %}
