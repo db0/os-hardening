@@ -33,15 +33,15 @@
       - patch
       - rule_2.2.19
 
-- name: "{{ SEC_ID_AVAHI_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure Avahi Server is not installed | disabled"
+- name: "{{ SEC_ID_AVAHI_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure Avahi Server is not enabled"
   service:
       name: avahi-daemon
       state: stopped
-      enabled: no
+      enabled: false
   when:
       - not linuxcis_avahi_server
       - "'avahi' in ansible_facts.packages"
-      - SEC_ID_AVAHI_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_AVAHI_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -51,13 +51,15 @@
       - patch
       - rule_2.2.3
 
-- name: "{{ SEC_ID_SNMP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure net-snmp is not installed"
-  package:
-      name: net-snmp
-      state: absent
+- name: "{{ SEC_ID_SNMP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure SNMP Server is not enabled"
+  service:
+      name: snmpd
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_snmp_server
-      - SEC_ID_SNMP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'net-snmp' in ansible_facts.packages"
+      - SEC_ID_SNMP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -67,13 +69,15 @@
       - patch
       - rule_2.2.13
 
-- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure HTTP Proxy server is not installed"
-  package:
+- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP Proxy Server is not enabled"
+  service:
       name: squid
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_squid_server
-      - SEC_ID_HTTP_PROXY_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'squid' in ansible_facts.packages"
+      - SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -83,7 +87,7 @@
       - patch
       - rule_2.2.12
 
-- name: "{{ SEC_ID_ENSURE_SAMBA_NOT_ENABLED }} | L1 | PATCH | Ensure Samba not enabled"
+- name: "{{ SEC_ID_ENSURE_SAMBA_NOT_ENABLED }} | L1 | PATCH | Ensure Samba is not enable"
   service:
       name: smb
       state: stopped
@@ -101,13 +105,15 @@
       - patch
       - rule_2.2.11
 
-- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not installed"
-  package:
+- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not enabled"
+  service:
       name: dovecot
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_dovecot_server
-      - SEC_ID_IMAP_POP3_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'dovecot' in ansible_facts.packages"
+      - SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -117,13 +123,15 @@
       - patch
       - rule_2.2.10
 
-- name: "{{ SEC_ID_HTTP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure HTTP server is not installed"
-  package:
+- name: "{{ SEC_ID_HTTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP server is not enabled"
+  service:
       name: httpd
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_httpd_server
-      - SEC_ID_HTTP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'httpd' in ansible_facts.packages"
+      - SEC_ID_HTTP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -133,13 +141,15 @@
       - patch
       - rule_2.2.9
 
-- name: "{{ SEC_ID_FTP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure FTP server is not installed"
-  package:
+- name: "{{ SEC_ID_FTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure FTP Server is not enabled"
+  service:
       name: vsftpd
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_vsftpd_server
-      - SEC_ID_FTP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'vsftpd' in ansible_facts.packages"
+      - SEC_ID_FTP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -149,13 +159,15 @@
       - patch
       - rule_2.2.8
 
-- name: "{{ SEC_ID_DNS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure DNS server is not installed"
-  package:
-      name: bind
-      state: absent
+- name: "{{ SEC_ID_DNS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DNS Server is not enabled"
+  service:
+      name: named
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_named_server
-      - SEC_ID_DNS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'bind' in ansible_facts.packages"
+      - SEC_ID_DNS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -170,6 +182,10 @@
       name: nfs-server
       state: stopped
       enabled: false
+  when:
+      - not linuxcis_nfs_rpc_server
+      - "'nfs-utils' in ansible_facts.packages"
+      - SEC_ID_ENSURE_NFS_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -196,13 +212,15 @@
       - patch
       - rule_2.2.18
 
-- name: "{{ SEC_ID_LDAP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure LDAP server is not installed"
-  package:
-      name: openldap-servers
-      state: absent
+- name: "{{ SEC_ID_LDAP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure LDAP server is not enabled"
+  service:
+      name: slapd
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_ldap_server
-      - SEC_ID_LDAP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'openldap-servers' in ansible_facts.packages"
+      - SEC_ID_LDAP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -212,13 +230,15 @@
       - patch
       - rule_2.2.6
 
-- name: "{{ SEC_ID_DHCP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
-  package:
-      name: dhcp
-      state: absent
+- name: "{{ SEC_ID_DHCP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
+  service:
+      name: dhcpd
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_dhcp_server
-      - SEC_ID_DHCP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'dhcp' in ansible_facts.packages"
+      - SEC_ID_DHCP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -228,13 +248,15 @@
       - patch
       - rule_2.2.5
 
-- name: "{{ SEC_ID_CUPS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure CUPS is not installed"
-  package:
+- name: "{{ SEC_ID_CUPS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure CUPS is not enabled"
+  service:
       name: cups
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_cups_server
-      - SEC_ID_CUPS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'cups' in ansible_facts.packages"
+      - SEC_ID_CUPS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -244,13 +266,15 @@
       - patch
       - rule_2.2.4
 
-- name: "{{ SEC_ID_NIS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure NIS server is not installed"
-  package:
+- name: "{{ SEC_ID_NIS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure NIS Server is not enabled"
+  service:
       name: ypserv
-      state: absent
+      state: stopped
+      enabled: false
   when:
       - not linuxcis_nis_server
-      - SEC_ID_NIS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - "'ypserv' in ansible_facts.packages"
+      - SEC_ID_NIS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation

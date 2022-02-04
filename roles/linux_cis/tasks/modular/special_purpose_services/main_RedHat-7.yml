@@ -15,7 +15,7 @@
       - patch
       - rule_2.2.2
 
-- name: "{{ SEC_ID_AVAHI_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure Avahi Server is not installed | disabled"
+- name: "{{ SEC_ID_AVAHI_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure Avahi Server is not installed | disabled"
   service:
       name: avahi-daemon
       state: stopped
@@ -23,7 +23,7 @@
   when:
       - not linuxcis_avahi_server
       - "'avahi' in ansible_facts.packages"
-      - SEC_ID_AVAHI_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_AVAHI_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -32,13 +32,13 @@
       - patch
       - rule_2.2.3
 
-- name: "{{ SEC_ID_CUPS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure CUPS is not installed"
+- name: "{{ SEC_ID_CUPS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure CUPS is not installed"
   package:
       name: cups
       state: absent
   when:
       - not linuxcis_cups_server
-      - SEC_ID_CUPS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_CUPS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -47,13 +47,13 @@
       - patch
       - rule_2.2.4
 
-- name: "{{ SEC_ID_DHCP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
+- name: "{{ SEC_ID_DHCP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
   package:
       name: dhcp
       state: absent
   when:
       - not linuxcis_dhcp_server
-      - SEC_ID_DHCP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_DHCP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -62,13 +62,13 @@
       - patch
       - rule_2.2.5
 
-- name: "{{ SEC_ID_LDAP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure LDAP server is not installed"
+- name: "{{ SEC_ID_LDAP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure LDAP server is not installed"
   package:
       name: openldap-servers
       state: absent
   when:
       - not linuxcis_ldap_server
-      - SEC_ID_LDAP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_LDAP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -77,13 +77,13 @@
       - patch
       - rule_2.2.6
 
-- name: "{{ SEC_ID_DNS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure DNS server is not installed"
+- name: "{{ SEC_ID_DNS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DNS server is not installed"
   package:
       name: bind
       state: absent
   when:
       - not linuxcis_named_server
-      - SEC_ID_DNS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_DNS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -92,13 +92,13 @@
       - patch
       - rule_2.2.7
 
-- name: "{{ SEC_ID_FTP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure FTP server is not installed"
+- name: "{{ SEC_ID_FTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure FTP server is not installed"
   package:
       name: vsftpd
       state: absent
   when:
       - not linuxcis_vsftpd_server
-      - SEC_ID_FTP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_FTP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -107,13 +107,13 @@
       - patch
       - rule_2.2.8
 
-- name: "{{ SEC_ID_HTTP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure HTTP server is not installed"
+- name: "{{ SEC_ID_HTTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP server is not installed"
   package:
       name: httpd
       state: absent
   when:
       - not linuxcis_httpd_server
-      - SEC_ID_HTTP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_HTTP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -122,13 +122,13 @@
       - patch
       - rule_2.2.9
 
-- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not installed"
+- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not installed"
   package:
       name: dovecot
       state: absent
   when:
       - not linuxcis_dovecot_server
-      - SEC_ID_IMAP_POP3_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -152,13 +152,13 @@
       - patch
       - rule_2.2.11
 
-- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure HTTP Proxy server is not installed"
+- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP Proxy server is not installed"
   package:
       name: squid
       state: absent
   when:
       - not linuxcis_squid_server
-      - SEC_ID_HTTP_PROXY_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -167,13 +167,13 @@
       - patch
       - rule_2.2.12
 
-- name: "{{ SEC_ID_SNMP_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure net-snmp is not installed"
+- name: "{{ SEC_ID_SNMP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure net-snmp is not installed"
   package:
       name: net-snmp
       state: absent
   when:
       - not linuxcis_snmp_server
-      - SEC_ID_SNMP_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_SNMP_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
@@ -182,13 +182,13 @@
       - patch
       - rule_2.2.13
 
-- name: "{{ SEC_ID_NIS_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure NIS server is not installed"
+- name: "{{ SEC_ID_NIS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure NIS server is not installed"
   package:
       name: ypserv
       state: absent
   when:
       - not linuxcis_nis_server
-      - SEC_ID_NIS_SERVER_NOT_INSTALLED not in disabled_cis_rules
+      - SEC_ID_NIS_SERVER_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1
       - scored
