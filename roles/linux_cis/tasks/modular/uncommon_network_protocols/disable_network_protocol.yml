@@ -1,0 +1,12 @@
+---
+
+- name: "{{ cis_section }} | {{ cis_level }} | PATCH | Ensure {{ network_protocol }} network protocol is disabled | Edit modprobe config"
+  lineinfile:
+      dest: /etc/modprobe.d/CIS.conf
+      regexp: "^(#)?install {{ network_protocol }}(\\s|$)"
+      line: "install {{ network_protocol }} /bin/true"
+      create: yes
+      owner: root
+      group: root
+      mode: 0600
+  tags: always
