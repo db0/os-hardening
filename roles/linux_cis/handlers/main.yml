@@ -1,20 +1,23 @@
 ---
-# handlers file for RHEL7-CIS
+# Handlers for Linux CIS
 
 - name: sysctl flush ipv4 route table
-  become: yes
+  become: true
   sysctl:
       name: net.ipv4.route.flush
       value: '1'
-      sysctl_set: yes
+      sysctl_set: true
+  ignore_errors: true
   when: ansible_virtualization_type != "docker"
+  tags:
+      - skip_ansible_lint
 
 - name: sysctl flush ipv6 route table
-  become: yes
+  become: true
   sysctl:
       name: net.ipv6.route.flush
       value: '1'
-      sysctl_set: yes
+      sysctl_set: true
   when: ansible_virtualization_type != "docker"
 
 - name: update sysctl
@@ -63,6 +66,29 @@
   command: mount -o remount /var/tmp
   args:
       warn: false
+
+- name: update sysctl
+  template:
+      src: etc/99-sysctl.conf.j2
+      dest: /etc/sysctl.d/99-sysctl.conf
+      owner: root
+      group: root
+      mode: 0600
+  notify: reload sysctl
+  when:
+      - ansible_virtualization_type != "docker"
+      - "'procps-ng' in ansible_facts.packages"
+
+- name: reload sysctl
+  sysctl:
+    name: net.ipv4.route.flush
+    value: '1'
+    state: present
+    reload: true
+    ignoreerrors: true
+  when:
+      - ansible_virtualization_type != "docker"
+      - "'systemd' in ansible_facts.packages"
 
 - name: systemd restart var-tmp.mount
   systemd:
