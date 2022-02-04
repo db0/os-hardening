@@ -10,6 +10,9 @@ linuxcis_section4: true
 linuxcis_section5: true
 linuxcis_section6: true
 
+system_is_container: false
+container_vars_file: is_container.yml
+
 # Disable all level 2 CIS rules
 # Set to false to skip all level2 modifications
 linuxcis_level2: true
