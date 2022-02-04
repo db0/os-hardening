@@ -6,7 +6,7 @@
 - name: "{{ SEC_ID_X11_COMPONENTS_NOT_INSTALLED }} | L1 | PATCH | Ensure X11 Server components are not installed"
   package:
       state: absent
-      name: "{{ SEC_2_2_2_XORG_PKG }}"
+      name: "{{ XORG_PKG }}"
 #   vars:
 #       ansible_python_interpreter: /bin/python
   when:

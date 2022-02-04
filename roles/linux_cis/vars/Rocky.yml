@@ -1,0 +1,6 @@
+---
+
+UEFI_BOOTLOADER_PATH: /boot/efi/EFI/rocky/
+LEGACY_BOOTLOADER_PATH: /boot/grub2/
+
+RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-rockyofficial
