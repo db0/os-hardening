@@ -1,0 +1,36 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | Ensure core dumps are restricted | Update limits.conf file"
+  lineinfile:
+      state: present
+      dest: /etc/security/limits.conf
+      regexp: '^#?\\*.*core'
+      line: '*                hard    core            0'
+      insertbefore: '^# End of file'
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | Set active kernel parameter"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+      dist_tasks:
+      - "set_active_kernel_parameter_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "set_active_kernel_parameter_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "set_active_kernel_parameter_{{ ansible_facts.distribution }}.yml"
+      - "set_active_kernel_parameter_{{ ansible_facts.os_family }}.yml"
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | if systemd coredump"
+  lineinfile:
+      path: /etc/systemd/coredump.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.regexp }}{{ item.line }}"
+      state: present
+      mode: 0644
+  loop:
+      - {'regexp': 'Storage=', 'line': 'none'}
+      - {'regexp': 'ProcessSizeMax=', 'line': '0'}
+  notify:
+      - systemd_daemon_reload
+  when:
+      - systemd_coredump.stat.exists
+  tags: always

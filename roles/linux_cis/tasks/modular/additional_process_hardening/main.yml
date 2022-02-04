@@ -1,83 +1,10 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted"
-  block:
-      - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | Ensure core dumps are restricted | Update limits.conf file"
-        lineinfile:
-            state: present
-            dest: /etc/security/limits.conf
-            regexp: '^#?\\*.*core'
-            line: '*                hard    core            0'
-            insertbefore: '^# End of file'
-
-      - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | Set active kernel parameter"
-        include_tasks: "{{ lookup('first_found', dist_tasks) }}"
-        vars:
-            dist_tasks:
-            - "set_active_kernel_parameter_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-            - "set_active_kernel_parameter_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-            - "set_active_kernel_parameter_{{ ansible_facts.distribution }}.yml"
-            - "set_active_kernel_parameter_{{ ansible_facts.os_family }}.yml"
-
-      - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | if systemd coredump"
-        lineinfile:
-            path: /etc/systemd/coredump.conf
-            regexp: "{{ item.regexp }}"
-            line: "{{ item.regexp }}{{ item.line }}"
-            state: present
-            mode: 0644
-        loop:
-            - {'regexp': 'Storage=', 'line': 'none'}
-            - {'regexp': 'ProcessSizeMax=', 'line': '0'}
-        notify:
-            - systemd_daemon_reload
-        when:
-            - systemd_coredump.stat.exists
-  when:
-      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
-  tags:
-      - level1-server
-      - level1-workstation
-      - scored
-      - sysctl
-      - patch
-      - rule_1.6.1
-
-- name: "{{ SEC_ID_ENSURE_NX_ND_SUPPORT_ENABLED }} | L1 | PATCH | Ensure XD/NX support is enabled"
-  shell: dmesg|grep -E "NX|XD" | grep " active"
-  changed_when: false
-  when:
-      - SEC_ID_ENSURE_NX_ND_SUPPORT_ENABLED not in disabled_cis_rules
-  tags:
-      - skip_ansible_lint
-      - level1
-      - patch
-      - rule_1.5.2
-
-- name: "{{ SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED }} | L1 | PATCH | Ensure address space layout randomization (ASLR) is enabled"
-  sysctl:
-      name: kernel.randomize_va_space
-      value: '2'
-      state: present
-      reload: yes
-      sysctl_set: yes
-      ignoreerrors: yes
-  when:
-      - SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.5.3
-
-- name: "{{ SEC_ID_ENSURE_PRELINK_NOT_INSTALLED }} | L1 | PATCH | Ensure prelink is disabled"
-  package:
-      name: prelink
-      state: absent
-  when:
-      - SEC_ID_ENSURE_PRELINK_NOT_INSTALLED not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.5.4
-#   vars:
-#       ansible_python_interpreter: /bin/python
+- name: "SECTION | {{ SEC_ID_SECURE_BOOT_SETTINGS }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "main_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.distribution }}.yml"
+      - "main_{{ ansible_facts.os_family }}.yml"
