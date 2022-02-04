@@ -7,3 +7,4 @@ RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
 XORG_PKG: 'xorg-x11-server-*'
+XINETD_PKG: xinetd

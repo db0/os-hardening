@@ -6,3 +6,4 @@ LEGACY_BOOTLOADER_PATH: /boot/grub2/
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
+XINETD_PKG: xinetd
