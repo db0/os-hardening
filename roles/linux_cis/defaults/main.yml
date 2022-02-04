@@ -64,9 +64,6 @@ system_is_ec2: false
 # Change to false if using EFI boot changes 1.1.1.4 to stop vfat
 linuxcis_legacy_boot: true
 
-# If set true uses the tmp.mount service else using fstab configuration
-linuxcis_tmp_svc: false
-
 # These variables correspond with the CIS rule IDs or paragraph numbers defined in
 # the CIS benchmark documents.
 # PLEASE NOTE: These work in coordination with the section # group variables and tags.
@@ -106,6 +103,13 @@ linuxcis_net_snmp: false
 linuxcis_allow_autofs: false
 
 ## Section 1 vars
+
+# 1.1.2
+# These settings go into the /etc/fstab file for the /tmp mount settings
+# The value must contain nosuid,nodev,noexec to conform to CIS standards
+# rhel9cis_tmp_tmpfs_settings: "defaults,rw,nosuid,nodev,noexec,relatime 0 0"
+# If set true uses the tmp.mount service else using fstab configuration
+linuxcis_tmp_svc: false
 
 # 1.2.1
 # This is the login information for your RedHat Subscription
