@@ -4,7 +4,7 @@
   include_tasks: "time_synchronization.yml"
 
 - name: "{{ SEC_ID_ENSURE_XORG_NOT_INSTALLED }} | L1 | PATCH | Ensure X Org not installed | Distribution Specific Tasks"
-  include_tasks: "ensure_xorg_not_installed_RedHat-7.yml"
+  include_tasks: "ensure_xorg_not_installed_RedHat.yml"
   when:
       - not linuxcis_xwindows_required
       - SEC_ID_ENSURE_XORG_NOT_INSTALLED not in disabled_cis_rules
@@ -15,14 +15,14 @@
       - patch
       - rule_2.2.2
 
-- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync is not installed or the rsyncd services are masked"
+- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync service is not enabled"
   service:
       name: rsyncd
       state: stopped
       enabled: false
   when:
       - not linuxcis_rsyncd_server
-      - "'rsync' in ansible_facts.packages"
+      - "'rsyncd' in ansible_facts.packages"
       - SEC_ID_ENSURE_RSYNC_NOT_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
@@ -165,7 +165,7 @@
       - patch
       - rule_2.2.7
 
-- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure nfs-utils is not installed or the nfs-server service is masked"
+- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure NFS is not enabled"
   service:
       name: nfs-server
       state: stopped
@@ -179,7 +179,7 @@
       - patch
       - rule_2.2.17
 
-- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked"
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure RPC is not enabled"
   service:
       name: rpcbind
       state: stopped
