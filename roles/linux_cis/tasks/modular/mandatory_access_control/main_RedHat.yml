@@ -16,7 +16,7 @@
       - rule_1.7.1.1
 
 - name: "{{ SEC_ID_ENSURE_SELINUX_NOT_DISABLED_IN_BOOTLOADER }} | L2 | PATCH | Ensure SELinux is not disabled in bootloader configuration"
-  include_tasks: "ensure_selinux_not_disabled.yml.yml"
+  include_tasks: "ensure_selinux_not_disabled.yml"
   vars:
     cis_level: L2
   when:
@@ -53,7 +53,7 @@
       - rule_1.7.1.4
 
 - name: "{{ SEC_ID_ENSURE_SELINUX_MODE_ENFORCING }} | L2 | PATCH | Ensure the SELinux state is enforcing"
-  include_tasks: "ensure_selinux_not_disabled.yml.yml"
+  include_tasks: "ensure_selinux_enforcing.yml"
   when:
       - not linuxcis_selinux_disable
       - SEC_ID_ENSURE_SELINUX_MODE_ENFORCING not in disabled_cis_rules
