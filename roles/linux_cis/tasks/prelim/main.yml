@@ -55,7 +55,11 @@
       path: "{{ grub2_path }}"
   changed_when: false
   register: grub_cfg
-
+  when:
+      - not system_is_container
+  tags:
+      - bootloader
+      - grub
 
 - name: "PRELIM | if systemd coredump"
   stat:

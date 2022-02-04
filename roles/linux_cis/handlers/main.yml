@@ -17,6 +17,29 @@
       sysctl_set: yes
   when: ansible_virtualization_type != "docker"
 
+- name: update sysctl
+  template:
+      src: etc/99-sysctl.conf.j2
+      dest: /etc/sysctl.d/99-sysctl.conf
+      owner: root
+      group: root
+      mode: 0600
+  notify: reload sysctl
+  when:
+      - ansible_virtualization_type != "docker"
+      - "'procps-ng' in ansible_facts.packages"
+
+- name: reload sysctl
+  sysctl:
+    name: net.ipv4.route.flush
+    value: '1'
+    state: present
+    reload: true
+    ignoreerrors: true
+  when:
+      - ansible_virtualization_type != "docker"
+      - "'systemd' in ansible_facts.packages"
+
 - name: systemd restart tmp.mount
   become: yes
   systemd:
@@ -99,7 +122,12 @@
       - skip_ansible_lint
 
 - name: grub2cfg
-  command: /sbin/grub2-mkconfig -o "{{ linuxcis_bootloader_path }}grub.cfg"
+  shell: "grub2-mkconfig -o {{ grub_cfg.stat.lnk_source }}"
+  args:
+      warn: false
+  ignore_errors: True
+  tags:
+      - skip_ansible_lint
 
 - name: restart rsyslog
   become: yes
@@ -112,3 +140,7 @@
   service:
       name: syslog-ng
       state: restarted
+
+- name: systemd_daemon_reload
+  systemd:
+      daemon-reload: true

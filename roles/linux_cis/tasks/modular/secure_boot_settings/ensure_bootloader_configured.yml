@@ -2,14 +2,14 @@
 
 - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured | Update grub config settings"
   file:
-      path: "{{ linuxcis_bootloader_path }}grub.cfg"
+      path: "{{ grub_cfg.stat.lnk_source }}"
       owner: root
       group: root
       mode: 0600
   when:
       - linuxcis_legacy_boot
   tags: always
-  
+
 - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured | UEFI"
   mount:
       name: /boot/efi

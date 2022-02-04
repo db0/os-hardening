@@ -11,13 +11,13 @@
             insertbefore: '^# End of file'
 
       - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | Set active kernel parameter"
-        sysctl:
-            name: fs.suid_dumpable
-            value: '0'
-            state: present
-            reload: yes
-            sysctl_set: yes
-            ignoreerrors: yes
+        include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+        vars:
+            dist_tasks:
+            - "set_active_kernel_parameter_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+            - "set_active_kernel_parameter_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+            - "set_active_kernel_parameter_{{ ansible_facts.distribution }}.yml"
+            - "set_active_kernel_parameter_{{ ansible_facts.os_family }}.yml"
 
       - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | if systemd coredump"
         lineinfile:
