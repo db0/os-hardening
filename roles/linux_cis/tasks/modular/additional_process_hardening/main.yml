@@ -1,6 +1,6 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_SECURE_BOOT_SETTINGS }} | Distribution Specific Order"
+- name: "SECTION | {{ SEC_ID_ADDITIONAL_PROCESS_HARDENING }} | Distribution Specific Order"
   include_tasks: "{{ lookup('first_found', dist_tasks) }}"
   vars:
     dist_tasks:

@@ -1,0 +1,7 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_MCSTRANS_NOT_INSTALLED }} | {{ cis_level }} | PATCH | Ensure the MCS Translation Service (mcstrans) is not installed"
+  package:
+      name: mcstrans
+      state: absent
+  tags: always

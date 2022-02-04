@@ -1,0 +1,20 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NO_UNCONFINED_SERVICES_EXIST }} | {{ cis_level }} | AUDIT | Ensure no unconfined daemons exist | Find the unconfined daemons"
+  shell: ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr ':' ' ' | awk '{ print $NF }'
+  register: linuxcis_unconf_daemons
+  failed_when: false
+  changed_when: false
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_NO_UNCONFINED_SERVICES_EXIST }} | {{ cis_level }} | AUDIT | Ensure no unconfined daemons exist | Message on no unconfined daemones"
+  debug:
+      msg: "Good News! There are no unconfined daemons found on your system"
+  when: linuxcis_unconf_daemons.stdout | length == 0
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_NO_UNCONFINED_SERVICES_EXIST }} | {{ cis_level }} | AUDIT | Ensure no unconfined daemons exist | Message on unconfined daemones"
+  debug:
+      msg: "Warning! You have unconfined daemons: {{ linuxcis_unconf_daemons.stdout_lines }}"
+  when: linuxcis_unconf_daemons.stdout | length > 0
+  tags: always

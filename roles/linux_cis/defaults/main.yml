@@ -57,6 +57,8 @@ run_audit: false
 
 # Enable/Disable SELinux
 linuxcis_selinux_disable: false
+# Only for CIS for Red Hat 7
+# For 8+, this is expected to always be enforcing
 linuxcis_selinux_state: enforcing
 
 # Misc. environment variables

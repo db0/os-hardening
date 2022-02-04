@@ -1,3 +1,5 @@
 ---
 
 XORG_PKG: 'xserver-xorg*'
+SELINUX_PKG: libselinux
+SETROUBLESHOOT_PKG: setroubleshoot
