@@ -46,3 +46,8 @@
   include_tasks: "../modular/updates_and_patches/main.yml"
   when:
     - SEC_ID_UPDATES_AND_PATCHES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_CRYPTO_POLICY_NOT_LEGACY }}, SEC_ID_ENSURE_CRYPTO_POLICY_FUTURE_FIPS | Crypto Policy"
+  include_tasks: "../modular/configure_crypto_policy/main.yml"
+  when:
+  - not system_is_ec2

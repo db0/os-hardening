@@ -162,6 +162,10 @@ linuxcis_selinux_pol: targeted
 # Whether or not to run tasks related to auditing/patching the desktop environment
 linuxcis_gui: no
 
+# 1.10/1.11 Set crypto policy (LEGACY, DEFAULT, FUTURE, FIPS)
+# Control 1.10 sates not ot use LEGACY and control 1.11 says to use FUTURE or FIPS.
+linuxcis_crypto_policy: "FUTURE"
+
 # Set to 'true' if X Windows is needed in your environment
 linuxcis_xwindows_required: no
 
