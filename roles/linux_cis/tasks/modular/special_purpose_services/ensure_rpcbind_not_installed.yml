@@ -1,0 +1,25 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked | rpcbind"
+  package:
+      name: rpcbind
+      state: absent
+  when:
+      - not linuxcis_nfs_rpc_server and not linuxcis_rpc_server
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked | rpcbind-server"
+  systemd:
+      name: rpcbind
+      masked: true
+  when:
+      - linuxcis_nfs_rpc_server and not linuxcis_rpc_server
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked | rpcbind-server"
+  systemd:
+      name: rpcbind.socket
+      masked: true
+  when:
+      - linuxcis_nfs_rpc_server and not linuxcis_rpc_server
+  tags: always

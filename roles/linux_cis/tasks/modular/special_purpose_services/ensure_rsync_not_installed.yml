@@ -1,0 +1,13 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync is not installed or the rsyncd services are masked | pkg removal"
+  package:
+      name: rsync
+      state: absent
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync is not installed or the rsyncd services are masked | Mask "
+  systemd:
+      name: rsyncd
+      masked: true
+  tags: always
