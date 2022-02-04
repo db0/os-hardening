@@ -37,7 +37,7 @@
     - not linuxcis_selinux_disable
     - SEC_ID_MANDATORY_ACCESS_CONTROL not in disabled_cis_rules
 
-- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+- name: "SECTION | {{ SEC_ID_WARNING_BANNERS }} | Command Line Warning Banners"
   include_tasks: "../modular/warning_banners/main.yml"
   when:
     - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules

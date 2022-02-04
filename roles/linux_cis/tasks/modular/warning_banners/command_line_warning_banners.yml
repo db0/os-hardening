@@ -1,0 +1,97 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_MOTD_CONFIGURED }} | L1 | PATCH | Ensure message of the day is configured properly"
+  template:
+      src: etc/motd.j2
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_MOTD_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - banner
+      - patch
+      - rule_1.7.1
+
+- name: "{{ SEC_ID_ENSURE_LOCAL_LOGIN_BANNER_CONFIGURED }} | L1 | PATCH | Ensure local login warning banner is configured properly"
+  template:
+      src: etc/issue.j2
+      dest: /etc/issue
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_LOCAL_LOGIN_BANNER_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - banner
+      - patch
+      - rule_1.7.2
+
+- name: "{{ SEC_ID_ENSURE_REMOTE_LOGIN_BANNER_CONFIGURED }} | L1 | PATCH | Ensure remote login warning banner is configured properly"
+  template:
+      src: etc/issue.net.j2
+      dest: /etc/issue.net
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_REMOTE_LOGIN_BANNER_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - banner
+      - patch
+      - rule_1.7.3
+
+- name: "{{ SEC_ID_ENSURE_ETC_MOTD_PERMISSIONS_CONFIGURED }} | L1 | PATCH | Ensure permissions on /etc/motd are configured"
+  file:
+      dest: /etc/motd
+      state: file
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_MOTD_PERMISSIONS_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - perms
+      - patch
+      - rule_1.7.4
+
+- name: "{{ SEC_ID_ENSURE_ETC_ISSUE_PERMISSIONS_CONFIGURED }} | L1 | PATCH | Ensure permissions on /etc/issue are configured"
+  file:
+      dest: /etc/issue
+      state: file
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_MOTD_PERMISSIONS_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - perms
+      - patch
+      - rule_1.7.5
+
+- name: "{{ SEC_ID_ENSURE_ETC_ISSUE_NET_PERMISSIONS_CONFIGURED }} | L1 | PATCH | Ensure permissions on /etc/issue.net are configured"
+  file:
+      dest: /etc/issue.net
+      state: file
+      owner: root
+      group: root
+      mode: 0644
+  when:
+      - SEC_ID_ENSURE_ETC_ISSUE_NET_PERMISSIONS_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - perms
+      - patch
+      - rule_1.7.6
