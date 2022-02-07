@@ -20,7 +20,6 @@
   when:
       - '"NetworkManager" in ansible_facts.packages'
       - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
-      - linuxcis_level2
   tags:
       - level1-server
       - level2-workstation

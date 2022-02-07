@@ -19,3 +19,13 @@
   include_tasks: "../modular/firewall_configuration/main.yml"
   when:
     - SEC_ID_FIREWALL_CONFIGURATION not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | Disable Wireless"
+  include_tasks: "../modular/disable_wireless/main.yml"
+  when:
+    - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_DISABLE_IPV6 }} | Disable Ipv6"
+  include_tasks: "../modular/disable_ipv6/main.yml"
+  when:
+    - SEC_ID_ENSURE_DISABLE_IPV6 not in disabled_cis_rules
