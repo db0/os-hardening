@@ -20,9 +20,8 @@
             - FORWARD
             - OUTPUT
   when:
-      - rhel9cis_firewall == "iptables"
-      - rhel9cis_rule_3_4_4_2_1
-      - rhel9cis_ipv6_required
+      - linuxcis_firewall == "iptables"
+      - SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -55,9 +54,8 @@
             jump: DROP
             ip_version: ipv6
   when:
-      - rhel9cis_firewall == "iptables"
-      - rhel9cis_rule_3_4_4_2_2
-      - rhel9cis_ipv6_required
+      - linuxcis_firewall == "iptables"
+      - SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -81,9 +79,8 @@
       - { chain: INPUT, protocol: udp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: icmp, ctstate: ESTABLISHED }
   when:
-      - rhel9cis_firewall == "iptables"
-      - rhel9cis_rule_3_4_4_2_3
-      - rhel9cis_ipv6_required
+      - linuxcis_firewall == "iptables"
+      - SEC_ID_ENSURE_IPTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -96,7 +93,7 @@
         shell: netstat -ant |grep "tcp6.*LISTEN" | awk '{ print $4 }'| sed 's/.*://'
         changed_when: false
         failed_when: false
-        register: rhel9cis_3_4_4_2_4_otcp
+        register: linuxcis_3_4_4_2_4_otcp
 
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH |Ensure ip6tables firewall rules exist for all open ports| Adjust open tcp6 ports"
         iptables:
@@ -109,12 +106,11 @@
             jump: ACCEPT
             ip_version: ipv6
         with_items:
-            - "{{ rhel9cis_3_4_4_2_4_otcp.stdout_lines }}"
-        when: rhel9cis_3_4_4_2_4_otcp.stdout is defined
+            - "{{ linuxcis_3_4_4_2_4_otcp.stdout_lines }}"
+        when: linuxcis_3_4_4_2_4_otcp.stdout is defined
   when:
-      - rhel9cis_firewall == "iptables"
-      - rhel9cis_rule_3_4_4_2_4
-      - rhel9cis_ipv6_required
+      - linuxcis_firewall == "iptables"
+      - SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -127,8 +123,8 @@
       enabled: true
       state: started
   when:
-      - rhel9cis_firewall == "iptables"
-      - rhel9cis_rule_3_4_4_2_5
+      - linuxcis_firewall == "iptables"
+      - SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
