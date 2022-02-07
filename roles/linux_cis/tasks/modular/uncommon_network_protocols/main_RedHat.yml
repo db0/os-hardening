@@ -45,7 +45,7 @@
 - name: "{{ SEC_ID_ENSURE_TIPC_DISABLED }} | L2 | PATCH | Ensure TICP is disabled"
   include_tasks: disable_network_protocol.yml
   vars:
-    network_protocol: ticp
+    network_protocol: tipc
     cis_level: L2
     cis_section: "{{ SEC_ID_ENSURE_TIPC_DISABLED }}"
   when:
