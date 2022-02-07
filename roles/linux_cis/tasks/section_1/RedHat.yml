@@ -40,7 +40,7 @@
 - name: "SECTION | {{ SEC_ID_WARNING_BANNERS }} | Command Line Warning Banners"
   include_tasks: "../modular/warning_banners/main.yml"
   when:
-    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
+    - SEC_ID_WARNING_BANNERS not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_UPDATES_AND_PATCHES }} | Updates and Patches"
   include_tasks: "../modular/updates_and_patches/main.yml"
