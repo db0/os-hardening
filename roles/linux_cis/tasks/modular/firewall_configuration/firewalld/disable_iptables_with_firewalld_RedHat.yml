@@ -5,3 +5,5 @@
       name: iptables
       state: stopped
       masked: yes
+  when:
+      - "'iptables' in ansible_facts.packages"

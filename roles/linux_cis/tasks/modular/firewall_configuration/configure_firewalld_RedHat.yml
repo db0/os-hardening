@@ -14,14 +14,14 @@
       - patch
       - rule_3.5.1.4
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld | Import Distriution-dependent-tasks"
+- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure iptables not enabled along with firewalld | Import Distribution-dependent-tasks"
   include_tasks: "{{ lookup('first_found', dist_tasks) }}"
   vars:
     dist_tasks:
-      - "disable_iptables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "disable_iptables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "disable_iptables_with_firewalld_{{ ansible_facts.distribution }}.yml"
-      - "disable_iptables_with_firewalld_{{ ansible_facts.os_family }}.yml"
+      - "firewalld/disable_iptables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "firewalld/disable_iptables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "firewalld/disable_iptables_with_firewalld_{{ ansible_facts.distribution }}.yml"
+      - "firewalld/disable_iptables_with_firewalld_{{ ansible_facts.os_family }}.yml"
   when:
       - SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD not in disabled_cis_rules
   tags:
@@ -30,14 +30,14 @@
       - patch
       - rule_3.5.1.2
 
-- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld | Import Distriution-dependent-tasks"
+- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables not enabled along with firewalld | Import Distribution-dependent-tasks"
   include_tasks: "{{ lookup('first_found', dist_tasks) }}"
   vars:
     dist_tasks:
-      - "disable_nftables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "disable_nftables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "disable_nftables_with_firewalld_{{ ansible_facts.distribution }}.yml"
-      - "disable_nftables_with_firewalld_{{ ansible_facts.os_family }}.yml"
+      - "firewalld/disable_nftables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "firewalld/disable_nftables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "firewalld/disable_nftables_with_firewalld_{{ ansible_facts.distribution }}.yml"
+      - "firewalld/disable_nftables_with_firewalld_{{ ansible_facts.os_family }}.yml"
   when:
       - SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD not in disabled_cis_rules
   tags:

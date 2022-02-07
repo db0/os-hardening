@@ -1,0 +1,28 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | L1 | PATCH | Ensure wireless interfaces are disabled"
+  block:
+      - name: "{{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | L1 | AUDIT | Ensure wireless interfaces are disabled | Check if wifi is enabled"
+        shell: nmcli radio wifi
+        args:
+            warn: false
+        register: linuxcis_wifi_enabled_out
+        changed_when: linuxcis_wifi_enabled_out.stdout != "disabled"
+        failed_when: false
+
+      - name: "{{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | L1 | PATCH | Ensure wireless interfaces are disabled | Disable wifi if enabled"
+        shell: nmcli radio all off
+        args:
+            warn: false
+        changed_when: false
+        failed_when: false
+        when: linuxcis_wifi_enabled_out is changed
+  when:
+      - '"NetworkManager" in ansible_facts.packages'
+      - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level1-server
+      - level2-workstation
+      - patch
+      - rule_3.5
