@@ -1,6 +1,6 @@
 # Setting added via ansible CIS remediation playbook
 
-{% if SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules  %}
+{% if SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules %}
 # Filesystem sysctl
 # CIS 1.6.1
 fs.suid_dumpable = 0

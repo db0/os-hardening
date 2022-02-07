@@ -232,6 +232,9 @@ linuxcis_logrotate: "daily"
 # linuxcis_audit_backlog_limit value needs to be 8192 or larger to conform to CIS standards
 linuxcis_audit_backlog_limit: 8192
 
+# The max_log_file parameter should be based on your sites policy
+linuxcis_max_log_file_size: 10
+
 # RHEL-07-4.2.1.4/4.2.1.5 remote and destation log server name
 linuxcis_remote_log_server: logagg.example.com
 
