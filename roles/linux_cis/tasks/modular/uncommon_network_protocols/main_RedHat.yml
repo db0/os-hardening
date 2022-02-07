@@ -10,7 +10,8 @@
       - SEC_ID_ENSURE_DCCP_DISABLED not in disabled_cis_rules
       - linuxcis_level2
   tags:
-      - level2
+      - level2-server
+      - level2-workstation
       - patch
       - rule_3.4.1
 
@@ -24,7 +25,8 @@
       - SEC_ID_ENSURE_SCTP_DISABLED not in disabled_cis_rules
       - linuxcis_level2
   tags:
-      - level2
+      - level2-server
+      - level2-workstation
       - patch
       - rule_3.4.2
 
@@ -38,7 +40,8 @@
       - SEC_ID_ENSURE_RDS_DISABLED not in disabled_cis_rules
       - linuxcis_level2
   tags:
-      - level2
+      - level2-server
+      - level2-workstation
       - patch
       - rule_3.4.2
 
@@ -52,6 +55,7 @@
       - SEC_ID_ENSURE_TIPC_DISABLED not in disabled_cis_rules
       - linuxcis_level2
   tags:
-      - level2
+      - level2-server
+      - level2-workstation
       - patch
       - rule_3.4.2
