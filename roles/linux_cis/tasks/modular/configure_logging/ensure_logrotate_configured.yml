@@ -10,6 +10,6 @@
       path: "{{ item.path }}"
       regexp: '^(\s*)(daily|weekly|monthly|yearly)$'
       replace: "\\1{{ linuxcis_logrotate }}"
-  loop:
+  with_items:
       - "{{ linuxcis_log_rotates.files }}"
       - { path: "/etc/logrotate.conf" }
