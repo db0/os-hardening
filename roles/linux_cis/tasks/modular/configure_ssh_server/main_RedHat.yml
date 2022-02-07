@@ -1,0 +1,352 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SSHD_PERMISSIONS }} | L1 | PATCH | Ensure permissions on /etc/ssh/sshd_config are configured"
+  file:
+      dest: /etc/ssh/sshd_config
+      state: file
+      owner: root
+      group: root
+      mode: 0600
+  when:
+      - SEC_ID_ENSURE_SSHD_PERMISSIONS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.1
+
+- name: "{{ SEC_ID_ENSURE_SSH_ACCESS_LIMITED }} | L1 | PATCH | Ensure SSH access is limited"
+  include_tasks: "ensure_ssh_access_limited.yml"
+  when:
+      - SEC_ID_ENSURE_SSH_ACCESS_LIMITED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.4
+
+- name: "{{ SEC_ID_ENSURE_SSH_PRIVATE_HOST_KEY_FILES }} | L1 | PATCH | Ensure permissions on SSH private host key files are configured"
+  include_tasks: "ensure_private_host_key_file_permissions.yml"
+  when:
+      - SEC_ID_ENSURE_SSH_PRIVATE_HOST_KEY_FILES not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.2
+
+- name: "{{ SEC_ID_ENSURE_SSH_PUBLIC_HOST_KEY_FILES }} | L1 | PATCH | Ensure permissions on SSH public host key files are configured"
+  include_tasks: "ensure_public_host_key_file_permissions.yml"
+  when:
+      - SEC_ID_ENSURE_SSH_PUBLIC_HOST_KEY_FILES not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.3
+
+- name: "{{ SEC_ID_ENSURE_SSH_LOGLEVEL }} | L1 | PATCH | Ensure SSH LogLevel is appropriate"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#LogLevel|^LogLevel"
+      line: 'LogLevel {{ linuxcis_ssh_loglevel }}'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_LOGLEVEL not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.5
+
+- name: "{{ SEC_ID_ENSURE_SSH_X11_FW_DISABLED }} | L2 | PATCH | Ensure SSH X11 forwarding is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#X11Forwarding|^X11Forwarding"
+      line: 'X11Forwarding no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_X11_FW_DISABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.6
+
+- name: "{{ SEC_ID_ENSURE_SSH_MAXAUTHTRIES_LIMITED }} | L1 | PATCH | Ensure SSH MaxAuthTries is set to 4 or less"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: '^(#)?MaxAuthTries \d'
+      line: 'MaxAuthTries 4'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_MAXAUTHTRIES_LIMITED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.7
+
+- name: "{{ SEC_ID_ENSURE_SSH_IGNORERHOSTS_ENABLED }} | L1 | PATCH | Ensure SSH IgnoreRhosts is enabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#IgnoreRhosts|^IgnoreRhosts"
+      line: 'IgnoreRhosts yes'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_IGNORERHOSTS_ENABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.8
+
+- name: "{{ SEC_ID_ENSURE_SSH_HOSTBASEDAUTHENTICATION_DISABLED }} | L1 | PATCH | Ensure SSH HostbasedAuthentication is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: ^#HostbasedAuthentication|^HostbasedAuthentication"
+      line: 'HostbasedAuthentication no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_HOSTBASEDAUTHENTICATION_DISABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.9
+
+- name: "{{ SEC_ID_ENSURE_SSH_ROOT_LOGIN_DISABLED }} | L1 | PATCH | Ensure SSH root login is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#PermitRootLogin|^PermitRootLogin"
+      line: 'PermitRootLogin no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_ROOT_LOGIN_DISABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.10
+
+- name: "{{ SEC_ID_ENSURE_SSH_EMPTY_PASSWORDS_DISABLED }} | L1 | PATCH | Ensure SSH PermitEmptyPasswords is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#PermitEmptyPasswords|^PermitEmptyPasswords"
+      line: 'PermitEmptyPasswords no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_EMPTY_PASSWORDS_DISABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.11
+
+- name: "{{ SEC_ID_ENSURE_EMPTY_ENVIRONMENT_DISABLED }} | L1 | PATCH | Ensure SSH PermitUserEnvironment is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#PermitUserEnvironment|^PermitUserEnvironment"
+      line: 'PermitUserEnvironment no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_EMPTY_ENVIRONMENT_DISABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.12
+
+- name: "{{ SEC_ID_ENSURE_SSH_IDLE_TIMEOUT }} | L1 | PATCH | Ensure SSH Idle Timeout Interval is configured"
+  block:
+      - name: "{{ SEC_ID_ENSURE_SSH_IDLE_TIMEOUT }} | L1 | PATCH | Ensure SSH Idle Timeout Interval is configured | Add line in sshd_config for ClientAliveInterval"
+        lineinfile:
+            state: present
+            dest: /etc/ssh/sshd_config
+            regexp: "^#ClientAliveInterval|^ClientAliveInterval"
+            line: "ClientAliveInterval {{ linuxcis_sshd['clientaliveinterval'] }}"
+            validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+        notify:
+            - restart sshd
+
+      - name: "{{ SEC_ID_ENSURE_SSH_IDLE_TIMEOUT }} | L1 | PATCH | Ensure SSH Idle Timeout Interval is configured | Ensure SSH ClientAliveCountMax set to <= 3"
+        lineinfile:
+            state: present
+            dest: /etc/ssh/sshd_config
+            regexp: "^#ClientAliveCountMax|^ClientAliveCountMax"
+            line: "ClientAliveCountMax {{ linuxcis_sshd['clientalivecountmax'] }}"
+            validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+        notify:
+            - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_IDLE_TIMEOUT not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.16
+
+- name: "{{ SEC_ID_ENSURE_SSH_LOGINGRACETIME }} | L1 | PATCH | Ensure SSH LoginGraceTime is set to one minute or less"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#LoginGraceTime|^LoginGraceTime"
+      line: "LoginGraceTime {{ linuxcis_sshd['logingracetime'] }}"
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_LOGINGRACETIME not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.17
+
+- name: "{{ SEC_ID_ENSURE_SSH_WARNING_BANNER }} | L1 | PATCH | Ensure SSH warning banner is configured"
+  lineinfile:
+      dest: /etc/ssh/sshd_config
+      regexp: '^Banner ((?!/etc/issue.net$)).*$'
+      line: "{{ item.line|default(omit) }}"
+      insertafter: "{{ item.after|default(omit)}}"
+      state: "{{ item.state }}"
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  with_items:
+      - { state: absent }
+      - { state: present, line: 'Banner /etc/issue.net', after: '#Banner none' }
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_WARNING_BANNER not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.18
+
+- name: "{{ SEC_ID_ENSURE_SSH_PAM }} | L1 | PATCH | Ensure SSH PAM is enabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#UsePAM|^UsePAM"
+      line: 'UsePAM yes'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_PAM not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.19
+
+- name: "{{ SEC_ID_ENSURE_SSH_ALLOWTCPFORWARDING_DISABLED }} | L2 | PATCH | Ensure SSH AllowTcpForwarding is disabled"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#AllowTcpForwarding|^AllowTcpForwarding"
+      line: 'AllowTcpForwarding no'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_ALLOWTCPFORWARDING_DISABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - patch
+      - ssh
+      - rule_5.3.20
+
+- name: "{{ SEC_ID_ENSURE_SSH_MAXSTARTUPS }} | L1 | PATCH | Ensure SSH MaxStartups is configured"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#MaxStartups|^MaxStartups"
+      line: 'MaxStartups 10:30:60'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_MAXSTARTUPS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.21
+
+- name: "{{ SEC_ID_ENSURE_SSH_MAXSESSIONS_LIMITED }} | L1 | PATCH | Ensure SSH MaxSessions is limited"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^#MaxSessions|^MaxSessions"
+      line: 'MaxSessions {{ linuxcis_ssh_maxsessions }}'
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - SEC_ID_ENSURE_SSH_MAXSESSIONS_LIMITED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.3.22
+
+- name: "{{ SEC_ID_ENSURE_SYSTEM_WIDE_CRYPTO_POLICY }} | L1 | PATCH | Ensure system-wide crypto policy is not over-ridden"
+  shell: sed -ri "s/^\s*(CRYPTO_POLICY\s*=.*)$/# \1/" /etc/sysconfig/sshd
+  args:
+      warn: false
+  notify: restart sshd
+  when:
+      - SEC_ID_ENSURE_SYSTEM_WIDE_CRYPTO_POLICY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - ssh
+      - rule_5.2.20
