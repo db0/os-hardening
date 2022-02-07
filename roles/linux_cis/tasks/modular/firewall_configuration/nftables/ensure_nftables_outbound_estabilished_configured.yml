@@ -1,0 +1,51 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | AUDIT | Ensure nftables outbound and established connections are configured | Gather incoming connection rules"
+  shell: nft list ruleset | awk '/hook input/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+  become: true
+  register: linuxcis_nftables_inconnectionrule_out
+  changed_when: false
+  failed_when: false
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | AUDIT | Ensure nftables outbound and established connections are configured | Gather outbound connection rules"
+  shell: nft list ruleset | awk '/hook output/,/}/' | grep -E 'ip protocol (tcp|udp|icmp) ct state'
+  become: true
+  register: linuxcis_nftables_outconnectionrule_out
+  changed_when: false
+  failed_when: false
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add input tcp established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" input ip protocol tcp ct state established accept
+  become: true
+  when:
+      - '"ip protocol tcp ct state established accept" not in linuxcis_nftables_inconnectionrule_out.stdout'
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add input udp established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" input ip protocol udp ct state established accept
+  become: true
+  when:
+      - '"ip protocol udp ct state established accept" not in linuxcis_nftables_inconnectionrule_out.stdout'
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add input icmp established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" input ip protocol icmp ct state established accept
+  become: true
+  when:
+      - '"ip protocol icmp ct state established accept" not in linuxcis_nftables_inconnectionrule_out.stdout'
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add output tcp new, related, established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" output ip protocol tcp ct state new,related,established accept
+  become: true
+  when:
+      - '"ip protocol tcp ct state established,related,new accept" not in linuxcis_nftables_outconnectionrule_out.stdout'
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add output udp new, related, established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" output ip protocol udp ct state new,related,established accept
+  become: true
+  when:
+      - '"ip protocol udp ct state established,related,new accept" not in linuxcis_nftables_outconnectionrule_out.stdout'
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured | Add output icmp new, related, established accpet policy"
+  command: nft add rule inet "{{ linuxcis_nft_tables_tableName }}" output ip protocol icmp ct state new,related,established accept
+  become: true
+  when:
+      - '"ip protocol icmp ct state established,related,new accept" not in linuxcis_nftables_outconnectionrule_out.stdout'

@@ -1,0 +1,90 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_IPTABLES_ARE_FLUSHED_WITH_NFTABLES }} | L1 | PATCH | Ensure iptables are flushed with nftables"
+  include_tasks: "nftables/ensure_iptables_flushed_with_nftables.yml"
+  when:
+    - SEC_ID_ENSURE_IPTABLES_ARE_FLUSHED_WITH_NFTABLES not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.4
+
+- name: "{{ SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS }} | L1 | PATCH | Ensure an nftables table exists"
+  include_tasks: "nftables/ensure_nftables_table_exists.yml"
+  when:
+    - SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.5
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | PATCH | Ensure nftables base chains exist"
+  include_tasks: "nftables/ensure_nftables_base_chain_exists.yml"
+  when:
+    - SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS not in disabled_cis_rules
+  tags:
+    - skip_ansible_lint
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.6
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure nftables loopback traffic is configured"
+  include_tasks: "nftables/ensure_nftables_loopup_traffic_configured.yml"
+  when:
+    - SEC_ID_ENSURE_NFTABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.7
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure nftables outbound and established connections are configured"
+  include_tasks: "nftables/ensure_nftables_outbound_estabilished_configured.yml"
+  when:
+    - SEC_ID_ENSURE_NFTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.8
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure nftables default deny firewall policy"
+  include_tasks: "nftables/ensure_nftables_default_deny_policy.yml"
+  when:
+    - SEC_ID_ENSURE_NFTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.9
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_SERVICE_ENABLED }} | L1 | PATCH | Ensure nftables service is enabled"
+  systemd:
+      name: nftables
+      enabled: yes
+  become: true
+  when:
+    - SEC_ID_ENSURE_NFTABLES_SERVICE_ENABLED not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.10
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_RULES_PERMANENT }} | L1 | PATCH | Ensure nftables rules are permanent"
+  lineinfile:
+      path: /etc/sysconfig/nftables.conf
+      state: present
+      insertafter: EOF
+      line: include "/etc/nftables/inet-{{ linuxcis_nft_tables_tableName }}"
+  become: true
+  when:
+    - SEC_ID_ENSURE_NFTABLES_RULES_PERMANENT not in disabled_cis_rules
+  tags:
+    - level1-server
+    - level1-workstation
+    - patch
+    - rule_3.5.2.11

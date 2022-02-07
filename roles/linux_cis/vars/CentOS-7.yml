@@ -8,3 +8,11 @@ SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
 XORG_PKG: 'xorg-x11-server-*'
 XINETD_PKG: xinetd
+FIREWALL_PKGS:
+  firewalld:
+  - firewalld
+  nftables:
+  - nftables
+  iptables:
+  - iptables
+  - iptables-services

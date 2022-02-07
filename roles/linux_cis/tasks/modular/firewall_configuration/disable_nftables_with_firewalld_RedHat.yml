@@ -1,6 +1,6 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_NFTABLES_DISABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld"
+- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld"
   systemd:
       name: nftables
       state: stopped

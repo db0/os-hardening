@@ -1,16 +1,10 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Configure firewalld"
-  include_tasks: configure_firewalld.yml
-  when:
-  - linuxcis_firewall == "firewalld"
-
-- name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
-  include_tasks: configure_nftables.yml
-  when:
-  - linuxcis_firewall == "nftables"
-
-- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables"
-  include_tasks: configure_iptables.yml
-  when:
-  - linuxcis_firewall == "iptables"
+- name: "SECTION | {{ SEC_ID_FIREWALL_CONFIGURATION }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "main_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.distribution }}.yml"
+      - "main_{{ ansible_facts.os_family }}.yml"

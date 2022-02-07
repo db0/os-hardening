@@ -1,0 +1,77 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_SERVICE_ENABLED }} | L1 | PATCH | Ensure firewalld service is enabled and running"
+  systemd:
+      name: firewalld
+      state: started
+      enabled: true
+      masked: false
+  when:
+      - SEC_ID_ENSURE_FIREWALLD_SERVICE_ENABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.5.1.4
+
+- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld | Import Distriution-dependent-tasks"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "disable_iptables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "disable_iptables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "disable_iptables_with_firewalld_{{ ansible_facts.distribution }}.yml"
+      - "disable_iptables_with_firewalld_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.5.1.2
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services not installed along with firewalld | Import Distriution-dependent-tasks"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "disable_nftables_with_firewalld_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "disable_nftables_with_firewalld_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "disable_nftables_with_firewalld_{{ ansible_facts.distribution }}.yml"
+      - "disable_nftables_with_firewalld_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.5.1.3
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DEFAULT_ZONE_SET }} | L1 | PATCH | Ensure firewalld default zone is set"
+  include_tasks: "firewalld/ensure_firewalld_default_zone_set.yml"
+  when:
+      - SEC_ID_ENSURE_FIREWALLD_DEFAULT_ZONE_SET not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.5.1.5
+
+- name: "{{ SEC_ID_ENSURE_NETWORK_INTERFACES_ASSIGNED_TO_APPROPRIATE_USE }} | L1 | AUDIT | Ensure network interfaces are assigned to appropriate zone"
+  include_tasks: "firewalld/ensure_network_ifaces_assigned.yml"
+  when:
+      - SEC_ID_ENSURE_NETWORK_INTERFACES_ASSIGNED_TO_APPROPRIATE_USE not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_3.5.1.6
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DROPS_UNNECESSARY_SERVICES_PORTS }} | L1 | AUDIT | Ensure firewalld drops unnecessary services and ports"
+  include_tasks: "firewalld/ensure_unnecessary_services_ports_dropped.yml"
+  when:
+      - SEC_ID_ENSURE_FIREWALLD_DROPS_UNNECESSARY_SERVICES_PORTS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_3.5.1.7

@@ -1,0 +1,28 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS }} | L1 | AUDIT | Ensure an nftables table exists | Check for tables"
+  command: nft list tables
+  register: linuxcis_nft_tables_list_out
+
+- name: "{{ SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS }} | L1 | AUDIT | Ensure an nftables table exists | Show existing tables"
+  debug:
+      msg:
+          - "Below are the current nft tables, please review"
+          - "{{ linuxcis_nft_tables_list_out.stdout_lines }}"
+  when:
+      - linuxcis_nft_tables_list_out.stdout | length > 0
+
+- name: "{{ SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS }} | L1 | AUDIT | Ensure an nftables table exists | Alert on no tables"
+  debug:
+      msg:
+          - "Warning! You currently have no nft tables, please review your setup"
+          - 'Use the command "nft create table inet <table name>" to create a new table'
+  when:
+      - linuxcis_nft_tables_list_out.stdout | length == 0
+      - not linuxcis_nft_tables_autoNewTable
+
+- name: "{{ SEC_ID_ENSURE_AN_NFTABLES_TABLE_EXISTS }} | L1 | PATCH | Ensure an nftables table exists | Create table if needed"
+  command: nft create table inet "{{ linuxcis_nft_tables_tableName }}"
+  failed_when: false
+  when:
+      - linuxcis_nft_tables_autoNewTable

@@ -1,0 +1,13 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DEFAULT_ZONE_SET }} | L1 | AUDIT | Ensure default zone is set"
+  command: firewall-cmd --get-default-zone
+  changed_when: false
+  register: current_default_zone
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DEFAULT_ZONE_SET }} | L1 | PATCH | Ensure default zone is set"
+  command: firewall-cmd --set-default-zone="{{ linuxcis_default_zone }}"
+  when:
+      - current_default_zone.stdout != linuxcis_default_zone
+  tags: always

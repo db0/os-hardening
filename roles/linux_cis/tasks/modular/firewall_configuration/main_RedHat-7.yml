@@ -1,0 +1,19 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Configure firewalld"
+  include_tasks: configure_firewalld_RedHat-7.yml
+  when:
+  - linuxcis_firewall == "firewalld"
+  - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
+  include_tasks: configure_nftables_RedHat-7.yml
+  when:
+  - linuxcis_firewall == "nftables"
+  - SEC_ID_CONFIGURE_NFTABLES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables"
+  include_tasks: configure_iptables_RedHat-7.yml
+  when:
+  - linuxcis_firewall == "iptables"
+  - SEC_ID_CONFIGURE_IPTABLES not in disabled_cis_rules
