@@ -1,17 +1,5 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted"
-  include_tasks: "ensure_core_dumps_restricted.yml"
-  when:
-      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
-  tags:
-      - level1-server
-      - level1-workstation
-      - scored
-      - sysctl
-      - patch
-      - rule_1.6.1
-
 - name: "{{ SEC_ID_ENSURE_NX_ND_SUPPORT_ENABLED }} | L1 | PATCH | Ensure XD/NX support is enabled"
   include_tasks: "ensure_xd_nx_support_enabled.yml"
   when:
@@ -52,3 +40,15 @@
       - scored
       - patch
       - rule_1.5.4
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted"
+  include_tasks: "ensure_core_dumps_restricted.yml"
+  when:
+      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - sysctl
+      - patch
+      - rule_1.6.1
