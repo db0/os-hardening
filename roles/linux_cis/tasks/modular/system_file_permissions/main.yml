@@ -1,7 +1,7 @@
 ---
-- name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | PATCH | Audit system file permissions"
+- name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions"
   block:
-      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | AUDIT | Audit system file permissions | Audit the packages"
+      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Audit the packages"
         shell: rpm -Va --nomtime --nosize --nomd5 --nolinkto
         changed_when: false
         failed_when: false
@@ -33,7 +33,8 @@
       - SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS not in disabled_cis_rules
       - linuxcis_level2
   tags:
-      - level2
+      - level2-server
+      - level2-workstation
       - patch
       - rule_6.1.1
 
@@ -46,7 +47,8 @@
   when:
       - SEC_ID_ENSURE_ETC_PASSWD_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.2
 
@@ -59,7 +61,8 @@
   when:
       - SEC_ID_ENSURE_ETC_PASSWD_DASH_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.3
 
@@ -72,7 +75,8 @@
   when:
       - SEC_ID_ENSURE_ETC_SHADOW_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.4
 
@@ -85,7 +89,8 @@
   when:
       - SEC_ID_ENSURE_ETC_SHADOW_DASH_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.5
 
@@ -98,7 +103,8 @@
   when:
       - SEC_ID_ENSURE_ETC_GSHADOW_DASH_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.6
 
@@ -111,7 +117,8 @@
   when:
       - SEC_ID_ENSURE_ETC_GSHADOW_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.7
 
@@ -124,7 +131,8 @@
   when:
       - SEC_ID_ENSURE_ETC_GROUP_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.8
 
@@ -137,7 +145,8 @@
   when:
       - SEC_ID_ENSURE_ETC_GROUP_DASH_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.9
 
@@ -145,7 +154,8 @@
   block:
       - name: "6.1.10 | L1 | AUDIT | Ensure no world writable files exist | Get list of world-writable files"
         shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
-        become: yes
+        args:
+            warn: false
         failed_when: false
         changed_when: false
         register: rhel_07_6_1_10_perms_results
@@ -170,7 +180,8 @@
   when:
       - SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_6.1.10
 
@@ -184,6 +195,8 @@
         changed_when: false
         when: item['device'].startswith('/dev') and not 'bind' in item['options']
         with_items: "{{ ansible_mounts }}"
+        loop_control:
+            label: "{{ item.mount }}"
 
       - name: "{{ SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS }} | L1 | AUDIT | Ensure no unowned files or directories exist | Displaying any unowned files or directories"
         debug:
@@ -195,11 +208,12 @@
   when:
       - SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS not in disabled_cis_rules
   tags:
-      - level1
-      - patch
+      - level1-server
+      - level1-workstation
+      - audit
       - rule_6.1.11
 
-- name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | PATCH | Ensure no ungrouped files or directories exist"
+- name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | AUDIT | Ensure no ungrouped files or directories exist"
   block:
       - name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | AUDIT | Ensure no ungrouped files or directories exist | Finding all ungrouped files or directories"
         command: find "{{ item.mount }}" -xdev -nogroup
@@ -218,11 +232,12 @@
   when:
       - SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS not in disabled_cis_rules
   tags:
-      - level1
-      - patch
+      - level1-server
+      - level1-workstation
+      - audit
       - rule_6.1.12
 
-- name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | PATCH | Audit SUID executables"
+- name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables"
   block:
       - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables | Find all SUID executables"
         shell: df {{ item.mount }} -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -4000
@@ -249,11 +264,12 @@
   when:
       - SEC_ID_AUDIT_SUID_EXECUTABLES not in disabled_cis_rules
   tags:
-      - level1
-      - patch
+      - level1-server
+      - level1-workstation
+      - audit
       - rule_6.1.13
 
-- name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | PATCH | Audit SGID executables"
+- name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables"
   block:
       - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables | Find all SGID executables"
         shell: df {{ item.mount }} -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -2000
@@ -280,6 +296,7 @@
   when:
       - SEC_ID_AUDIT_SGID_EXECUTABLES not in disabled_cis_rules
   tags:
-      - level1
-      - patch
+      - level1-server
+      - level1-workstation
+      - audit
       - rule_6.1.14
