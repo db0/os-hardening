@@ -93,8 +93,8 @@ linuxcis_aide_cron:
   aide_weekday: '{{ linuxcis_aide_cron.aide_weekday }}'
 
 # 1.4.1 Bootloader password
-linuxcis_bootloader_file: {{ linuxcis_bootloader_path }}grub.cfg
-linuxcis_bootloader_user: {{ linuxcis_bootloader_path }}user.cfg
+linuxcis_bootloader_file: {{ UEFI_BOOTLOADER_PATH }}grub.cfg
+linuxcis_bootloader_user: {{ UEFI_BOOTLOADER_PATH }}user.cfg
 linuxcis_bootloader_password: {{ linuxcis_bootloader_password_hash }}
 linuxcis_set_boot_pass: {{ linuxcis_set_boot_pass }}
 

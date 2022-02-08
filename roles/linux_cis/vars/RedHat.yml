@@ -2,6 +2,7 @@
 
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/redhat/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
+GRUB_CFG_PATH: /etc/grub2.cfg
 
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 SELINUX_PKG: libselinux
