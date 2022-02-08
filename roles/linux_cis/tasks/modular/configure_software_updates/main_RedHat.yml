@@ -68,7 +68,8 @@
   when:
       - SEC_ID_ACTIVATE_GPG_GLOBALLY not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_1.2.3
 
@@ -89,7 +90,8 @@
   when:
       - SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - audit
       - rule_1.2.2
       - skip_ansible_lint

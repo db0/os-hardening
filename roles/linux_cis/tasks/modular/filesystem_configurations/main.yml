@@ -93,6 +93,7 @@
         modprobe:
             name: usb-storage
             state: absent
+        when: not system_is_container
   when:
       - SEC_ID_DISABLE_USB_STORAGE not in disabled_cis_rules
       - linuxcis_level2
