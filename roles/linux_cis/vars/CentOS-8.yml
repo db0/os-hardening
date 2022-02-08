@@ -3,6 +3,15 @@
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/centos/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
 
-SEC_1_2_1_GPG_FILE: RPM-GPG-KEY-centosofficial
-SEC_1_7_SELINUX_PKG: libselinux
-SEC_2_2_2_XORG_PKG: 'xorg-x11-server-*'
+RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+SELINUX_PKG: libselinux
+SETROUBLESHOOT_PKG: setroubleshoot
+XORG_PKG: 'xorg-x11-server-*'
+XINETD_PKG: xinetd
+FIREWALL_PKGS:
+  firewalld:
+  - firewalld
+  nftables:
+  - nftables
+  iptables:
+  - iptables

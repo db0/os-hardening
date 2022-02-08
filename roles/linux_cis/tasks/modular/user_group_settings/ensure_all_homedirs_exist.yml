@@ -1,0 +1,26 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST }} | L1 | AUDIT | Ensure all users' home directories exist | Find users missing home directories"
+  shell: set -o pipefail ; pwck -r | grep -P {{ ld_regex | quote }}
+  check_mode: false
+  register: linuxcis_users_missing_home
+  changed_when: linuxcis_homedirs_exist_audit | length > 0
+  # failed_when: 0: success, 1: no grep match, 2: pwck found something
+  failed_when: linuxcis_users_missing_home.rc not in [0,1,2]
+
+- name: "{{ SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST }} | L1 | AUDIT | Ensure all users' home directories exist | set fact missinghome dirs"
+  set_fact:
+      missing_home_dirs: "{{ linuxcis_homedirs_exist_audit | map(attribute='id') | list }}"
+
+- name: "{{ SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST }} | L1 | PATCH | Ensure all users' home directories exist | create missing home dirs"
+  shell: "mkhomedir_helper {{ item }}"
+  with_items:
+      - "{{ missing_home_dirs }}"
+  when: linuxcis_users_missing_home is changed
+
+- name: "{{ SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST }} | L1 | Audit| Ensure all users' home directories exist | Warning"
+  debug:
+      msg: "WARNING! {{ item }} user home directory has been created please ensure any SELINUX settings are applied"
+  with_items:
+      - "{{ missing_home_dirs }}"
+  when: linuxcis_users_missing_home is changed

@@ -37,12 +37,17 @@
     - not linuxcis_selinux_disable
     - SEC_ID_MANDATORY_ACCESS_CONTROL not in disabled_cis_rules
 
-- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+- name: "SECTION | {{ SEC_ID_WARNING_BANNERS }} | Command Line Warning Banners"
   include_tasks: "../modular/warning_banners/main.yml"
   when:
-    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
+    - SEC_ID_WARNING_BANNERS not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_UPDATES_AND_PATCHES }} | Updates and Patches"
   include_tasks: "../modular/updates_and_patches/main.yml"
   when:
     - SEC_ID_UPDATES_AND_PATCHES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_CRYPTO_POLICY_NOT_LEGACY }}, SEC_ID_ENSURE_CRYPTO_POLICY_FUTURE_FIPS | Crypto Policy"
+  include_tasks: "../modular/configure_crypto_policy/main.yml"
+  when:
+  - not system_is_ec2

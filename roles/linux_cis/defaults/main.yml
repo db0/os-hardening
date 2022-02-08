@@ -10,6 +10,9 @@ linuxcis_section4: true
 linuxcis_section5: true
 linuxcis_section6: true
 
+system_is_container: false
+container_vars_file: is_container.yml
+
 # Disable all level 2 CIS rules
 # Set to false to skip all level2 modifications
 linuxcis_level2: true
@@ -54,6 +57,8 @@ run_audit: false
 
 # Enable/Disable SELinux
 linuxcis_selinux_disable: false
+# Only for CIS for Red Hat 7
+# For 8+, this is expected to always be enforcing
 linuxcis_selinux_state: enforcing
 
 # Misc. environment variables
@@ -63,9 +68,6 @@ system_is_ec2: false
 
 # Change to false if using EFI boot changes 1.1.1.4 to stop vfat
 linuxcis_legacy_boot: true
-
-# If set true uses the tmp.mount service else using fstab configuration
-linuxcis_tmp_svc: false
 
 # These variables correspond with the CIS rule IDs or paragraph numbers defined in
 # the CIS benchmark documents.
@@ -106,6 +108,21 @@ linuxcis_net_snmp: false
 linuxcis_allow_autofs: false
 
 ## Section 1 vars
+
+# 1.1.2
+# These settings go into the /etc/fstab file for the /tmp mount settings
+# The value must contain nosuid,nodev,noexec to conform to CIS standards
+# linuxcis_tmp_tmpfs_settings: "defaults,rw,nosuid,nodev,noexec,relatime 0 0"
+# If set true uses the tmp.mount service else using fstab configuration
+linuxcis_tmp_svc: false
+
+# 1.2.1
+# This is the login information for your RedHat Subscription
+# DO NOT USE PLAIN TEXT PASSWORDS!!!!!
+# The intent here is to use a password utility like Ansible Vault here
+rhel8cis_rh_sub_user: user
+rhel8cis_rh_sub_password: password
+
 # 1.3.3 var log location variable
 linuxcis_varlog_location: "/var/log/sudo.log"
 
@@ -118,6 +135,7 @@ linuxcis_rhnsd_required: false
 # 1.4.2 Bootloader password
 linuxcis_set_boot_pass: false
 linuxcis_bootloader_password_hash: 'grub.pbkdf2.sha512.changethispart'
+linuxcis_bootloader_password: random
 
 # System network parameters (host only OR host and router)
 linuxcis_is_router: false
@@ -130,10 +148,10 @@ linuxcis_config_aide: true
 # AIDE cron settings
 linuxcis_aide_cron:
     cron_user: root
-    cron_file: /etc/crontab
+    cron_file: /etc/cron.d/aide.cron
     aide_job: '/usr/sbin/aide --check'
-    aide_minute: '0'
-    aide_hour: '5'
+    aide_minute: 0
+    aide_hour: 5
     aide_day: '*'
     aide_month: '*'
     aide_weekday: '*'
@@ -143,6 +161,10 @@ linuxcis_selinux_pol: targeted
 
 # Whether or not to run tasks related to auditing/patching the desktop environment
 linuxcis_gui: no
+
+# 1.10/1.11 Set crypto policy (LEGACY, DEFAULT, FUTURE, FIPS)
+# Control 1.10 sates not ot use LEGACY and control 1.11 says to use FUTURE or FIPS.
+linuxcis_crypto_policy: "FUTURE"
 
 # Set to 'true' if X Windows is needed in your environment
 linuxcis_xwindows_required: no
@@ -210,6 +232,9 @@ linuxcis_logrotate: "daily"
 # linuxcis_audit_backlog_limit value needs to be 8192 or larger to conform to CIS standards
 linuxcis_audit_backlog_limit: 8192
 
+# The max_log_file parameter should be based on your sites policy
+linuxcis_max_log_file_size: 10
+
 # RHEL-07-4.2.1.4/4.2.1.5 remote and destation log server name
 linuxcis_remote_log_server: logagg.example.com
 
@@ -220,7 +245,9 @@ linuxcis_system_is_log_server: false
 
 # SSH variables
 linuxcis_ssh_loglevel: INFO
-linuxcis_ssh_maxsessions: 10
+linuxcis_ssh_maxsessions: 4
+linuxcis_inactivelock:
+    lock_days: 30
 linuxcis_sshd:
     clientalivecountmax: 3
     clientaliveinterval: 300
@@ -242,10 +269,22 @@ linuxcis_pam_faillock:
     fail_for_root: no
     remember: 5
     pwhash: sha512
-linuxcis_inactivelock:
-    lock_days: 30
 
-# Accounte listed below will not have INACTIVE field set in shadow file
+# 5.3.1/5.3.2 Custom authselect profile settings. Settings in place now will fail, they are place holders from the control example
+# Due to the way many multiple options and ways to configure this control needs to be enabled and settings adjusted to minimise risk
+linuxcis_use_authconfig: false
+linuxcis_authselect:
+    custom_profile_name: custom-profile
+    default_file_to_copy: "sssd --symlink-meta"
+    options: with-sudo with-faillock without-nullok
+
+# 5.3.1 Enable automation to create custom profile settings, using the settings above
+linuxcis_authselect_custom_profile_create: false
+
+# 5.3.2 Enable automation to select custom profile options, using the settings above
+linuxcis_authselect_custom_profile_select: false
+
+# Accounts listed below will not have INACTIVE field set in shadow file
 linuxcis_inactive_whitelist:
     - root
     - vagrant
@@ -265,8 +304,16 @@ linuxcis_vartmp:
     opts: "defaults,nodev,nosuid,noexec,bind"
     enabled: no
 
-# Interactive user UID starting point
-linuxcis_rule_5_4_2_min_uid: 1000
+## PAM
+linuxcis_pam_password:
+    minlen: "14"
+    minclass: "4"
+
+# UID settings for interactive users
+# These are discovered via logins.def is set true
+discover_int_uid: false
+min_int_uid: 1000
+max_int_uid: 65533
 
 # RHEL-07-5.4.5
 # Session timeout setting file (TMOUT setting can be set in multiple files)
@@ -277,13 +324,13 @@ linuxcis_shell_session_timeout:
 # RHEL-07-5.4.1.5 Allow ansible to expire password for account with a last changed date in the future. False will just display users in violation, true will expire those users passwords
 linuxcis_futurepwchgdate_autofix: true
 
-# 5.4.2
-linuxcis_int_gid: 1000
-
 # 5.6 Group to be used for su
 # this group needs to exists groups will not be created for remediation this is considered sys admins
 
 # linuxcis_sugroup: sugroup
+
+# wheel users list
+linuxcis_sugroup_users: "root"
 
 ## Section6 vars
 

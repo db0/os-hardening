@@ -2,10 +2,11 @@
 
 - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup"
   block:
-  - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | install"
+  - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | Install AIDE"
     package:
       name: aide
       state: installed
+
   - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
     shell: /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'
     args:
@@ -18,26 +19,28 @@
     - linuxcis_config_aide
     - SEC_ID_AIDE_SETUP not in disabled_cis_rules
   tags:
-    - level1
+    - level1-server
+    - level1-workstation
+    - scored
     - aide
     - patch
-    - rule_1.3.1
+    - rule_1.4.1
 
 
 - name: "{{ SEC_ID_AIDE_SCHEDULE }} | L1 | PATCH | Ensure filesystem integrity is regularly checked | cron"
-  cron:
-    name: Run AIDE integrity check
-    minute: "{{ linuxcis_aide_cron['aide_minute'] | default('0') }}"
-    hour: "{{ linuxcis_aide_cron['aide_hour'] | default('5') }}"
-    day: "{{ linuxcis_aide_cron['aide_day'] | default('*') }}"
-    month: "{{ linuxcis_aide_cron['aide_month'] | default('*') }}"
-    weekday: "{{ linuxcis_aide_cron['aide_weekday'] | default('*') }}"
-    job: "{{ linuxcis_aide_cron['aide_job'] }}"
+  template:
+    src: aide.cron.j2
+    dest: /etc/cron.d/aide.cron
+    owner: root
+    group: root
+    mode: 0644
   when:
     - SEC_ID_AIDE_SCHEDULE not in disabled_cis_rules
   tags:
-    - level1
+    - level1-server
+    - level1-workstation
+    - scored
     - aide
     - file_integrity
     - patch
-    - rule_1.3.2
+    - rule_1.4.2

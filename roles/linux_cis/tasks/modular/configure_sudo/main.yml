@@ -4,16 +4,15 @@
   package:
       name: sudo
       state: present
-  become: true
   when:
       - SEC_ID_ENSURE_SUDO_INSTALLED not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
+      - scored
       - sudo
       - patch
-      - rule_5.2.1
-#   vars:
-#       ansible_python_interpreter: /bin/python
+      - rule_1.3.1
 
 - name: "{{ SEC_ID_ENSURE_SUDO_PTY }} | L1 | AUDIT | Ensure sudo commands use pty"
   lineinfile:
@@ -22,13 +21,14 @@
       line: 'Defaults    use_pty'
       state: present
       validate: '/usr/sbin/visudo -cf %s'
-  become: true
   when:
       - SEC_ID_ENSURE_SUDO_PTY not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
+      - scored
       - patch
-      - rule_5.2.2
+      - rule_1.3.2
 
 - name: "{{ SEC_ID_ENSURE_SUDO_LOG_EXISTS }} | L1 | PATCH | Ensure sudo log file exists"
   lineinfile:
@@ -37,10 +37,11 @@
       line: 'Defaults    logfile="{{ linuxcis_varlog_location }}"'
       state: present
       validate: '/usr/sbin/visudo -cf %s'
-  become: true
   when:
       - SEC_ID_ENSURE_SUDO_LOG_EXISTS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
+      - scored
       - patch
-      - rule_5.2.3
+      - rule_1.3.3

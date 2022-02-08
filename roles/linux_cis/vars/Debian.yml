@@ -1,3 +1,6 @@
 ---
 
-SEC_2_2_2_XORG_PKG: 'xserver-xorg*'
+XORG_PKG: 'xserver-xorg*'
+SELINUX_PKG: libselinux
+SETROUBLESHOOT_PKG: setroubleshoot
+XINETD_PKG: xinetd

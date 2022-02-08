@@ -1,0 +1,4 @@
+---
+
+- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+  include_tasks: "command_line_warning_banners.yml"

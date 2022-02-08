@@ -1,0 +1,26 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED }} | L2 | AUDIT | Ensure auditing for processes that start prior to auditd is enabled | Get GRUB_CMDLINE_LINUX"
+  shell: grep 'GRUB_CMDLINE_LINUX=' /etc/default/grub | sed 's/.$//'
+  args:
+      warn: false
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: linuxcis_auditd_grub_cmdline_linux_out
+
+- name: "{{ SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED }} | L2 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Replace existing setting"
+  replace:
+      dest: /etc/default/grub
+      regexp: 'audit=.'
+      replace: 'audit=1'
+  notify: grub2cfg
+  when: "'audit=' in linuxcis_auditd_grub_cmdline_linux_out.stdout"
+
+- name: "{{ SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED }} | L2 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Add audit setting if missing"
+  lineinfile:
+      path: /etc/default/grub
+      regexp: '^GRUB_CMDLINE_LINUX='
+      line: '{{ linuxcis_auditd_grub_cmdline_linux_out.stdout }} audit=1"'
+  notify: grub2cfg
+  when: "'audit=' not in linuxcis_auditd_grub_cmdline_linux_out.stdout"

@@ -1,0 +1,31 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_DCCP_DISABLED }} | L2 | PATCH | Ensure DCCP is disabled"
+  include_tasks: disable_network_protocol.yml
+  vars:
+    network_protocol: dccp
+    cis_level: L2
+    cis_section: "{{ SEC_ID_ENSURE_DCCP_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_DCCP_DISABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - patch
+      - rule_3.4.1
+
+- name: "{{ SEC_ID_ENSURE_SCTP_DISABLED }} | L2 | PATCH | Ensure SCTP is disabled"
+  include_tasks: disable_network_protocol.yml
+  vars:
+    network_protocol: sctp
+    cis_level: L2
+    cis_section: "{{ SEC_ID_ENSURE_SCTP_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_SCTP_DISABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - patch
+      - rule_3.4.2

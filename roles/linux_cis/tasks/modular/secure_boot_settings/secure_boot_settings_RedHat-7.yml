@@ -1,0 +1,48 @@
+---
+
+- name: "{{ SEC_ID_BOOT_PASSWORD }} | L1 | PATCH | Ensure bootloader password is set"
+  include_tasks: "ensure_bootloader_password_set.yml"
+  when:
+      - ansible_distribution_version >= '7.2'
+      - linuxcis_set_boot_pass
+      - SEC_ID_BOOT_PASSWORD not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - grub
+      - patch
+      - rule_1.4.1
+
+- name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured"
+  include_tasks: "ensure_bootloader_configured.yml"
+  when:
+      - SEC_ID_BOOTLOADER_PERMS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - grub
+      - patch
+      - rule_1.4.2
+
+- name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode"
+  block:
+      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Emergency service"
+        lineinfile:
+            dest: /usr/lib/systemd/system/emergency.service
+            regexp: '/sbin/sulogin'
+            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+
+      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Rescue service"
+        lineinfile:
+            dest: /usr/lib/systemd/system/rescue.service
+            regexp: '/sbin/sulogin'
+            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+  when:
+      - SEC_ID_SINGLE_USER_AUTH_NEEDED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_1.4.3

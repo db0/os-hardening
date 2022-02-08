@@ -1,0 +1,17 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure nfs-utils is not installed or the nfs-server service is masked | nfs-utils "
+  package:
+      name: nfs-utils
+      state: absent
+  when:
+      - not linuxcis_nfs_rpc_server and not linuxcis_nfs_server
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure nfs-utils is not installed or the nfs-server service is masked | nfs-server "
+  systemd:
+      name: nfs-server
+      masked: true
+  when:
+      - linuxcis_nfs_rpc_server and not linuxcis_nfs_server
+  tags: always

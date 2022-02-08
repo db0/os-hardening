@@ -1,0 +1,9 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_IPTABLES_ARE_FLUSHED_WITH_NFTABLES }} | L1 | PATCH | Ensure iptables are flushed with nftables| Flush IPv4 tables"
+  command: iptables -F
+
+- name: "{{ SEC_ID_ENSURE_IPTABLES_ARE_FLUSHED_WITH_NFTABLES }} | L1 | PATCH | Ensure iptables are flushed with nftables | Flush IPv6 tables"
+  command: ip6tables -F
+  when:
+      - linuxcis_ipv6_required

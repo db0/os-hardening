@@ -1,0 +1,8 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED }} | L2 | PATCH | Ensure SELinux policy is configured"
+  selinux:
+      conf: /etc/selinux/config
+      policy: "{{ linuxcis_selinux_pol }}"
+      state: enforcing
+  tags: always

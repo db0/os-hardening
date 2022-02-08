@@ -1,0 +1,64 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | AUDIT | Ensure logging is configured | rsyslog current config message out"
+  shell: cat /etc/rsyslog.conf
+  args:
+      warn: false
+  become: yes
+  changed_when: false
+  failed_when: false
+  register: linuxcis_rsyslog_audit_out
+
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | Debug out rsyslog settings"
+  debug:
+      msg:
+          - "These are the current logging configurations for rsyslog, please review:"
+          - "{{ linuxcis_rsyslog_audit_out.stdout_lines }}"
+  when:
+      - not linuxcis_rsyslog_ansiblemanaged
+
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | Set logging settings lineinfile"
+  blockinfile:
+      path: /etc/rsyslog.conf
+      state: present
+      marker: "# {mark} MAIL LOG SETTINGS (ANSIBLE MANAGED)"
+      block: |
+        # mail logging additions to meet CIS standards
+        mail.*                                                  -/var/log/mail
+        mail.info                                               -/var/log/mail.info
+        mail.warning                                            -/var/log/mail.warning
+        mail.err                                                /var/log/mail.err
+      insertafter: '# Log all the mail messages in one place.'
+  notify: restart rsyslog
+  when:
+      - linuxcis_rsyslog_ansiblemanaged
+
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | Misc. log setting"
+  blockinfile:
+      path: /etc/rsyslog.conf
+      state: present
+      marker: "# {mark} MISC. LOG SETTINGS (ANSIBLE MANAGED)"
+      block: |
+        # misc. logging additions to meet CIS standards
+        *.=warning;*.=err                                        -/var/log/warn
+        *.crit                                                   /var/log/warn
+        *.*;mail.none;news.none                                  /var/log/messages
+      insertafter: '#### RULES ####'
+  notify: restart rsyslog
+  when:
+      - linuxcis_rsyslog_ansiblemanaged
+
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | Local log settings"
+  blockinfile:
+      path: /etc/rsyslog.conf
+      state: present
+      marker: "#{mark} LOCAL LOG SETTINGS (ANSIBLE MANAGED)"
+      block: |
+        # local log settings
+        local0,local1.*                                          -/var/log/localmessages
+        local2,local3.*                                          -/var/log/localmessages
+        local4,local5.*                                          -/var/log/localmessages
+        local6,local7.*                                          -/var/log/localmessages
+        *.emrg                                                    :omusrmsg:*
+      insertafter: '#### RULES ####'
+  notify: restart rsyslog

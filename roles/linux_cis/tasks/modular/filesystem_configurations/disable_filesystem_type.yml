@@ -7,8 +7,10 @@
       line: "install {{ filesystem_type }} /bin/true"
       create: yes
       mode: '0600'
+  tags: always
 
-- name: "{{ cis_level }} | PATCH | Remove {{ filesystem_type }} module"
+- name: "{{ cis_level }} | PATCH | Ensure mounting of {{ filesystem_type }} filesystems is disabled | Disable {{ filesystem_type }}"
   modprobe:
       name: "{{ filesystem_type }}"
       state: absent
+  tags: always

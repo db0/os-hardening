@@ -1,0 +1,38 @@
+---
+
+- name: "SECTION | {{ SEC_ID_ENSURE_IPTABLES_INSTALLED }} | Ensure iptables packages are installed"
+  include_tasks: ensure_firewall_package_installed.yml
+  vars:
+    cis_section: "{{ SEC_ID_ENSURE_IPTABLES_INSTALLED }}"
+    cis_section_description: "Ensure FirewallD is installed"
+  when:
+  - SEC_ID_ENSURE_IPTABLES_INSTALLED not in disabled_cis_rules
+  tags:
+  - level1-server
+  - level1-workstation
+  - patch
+  - rule_3.5.1.1
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_INSTALLED_WITH_IPTABLES }} | L1 | PATCH | Ensure nftables is not installed with iptables"
+  package:
+      name: nftables
+      state: absent
+  when:
+      - SEC_ID_ENSURE_NFTABLES_NOT_INSTALLED_WITH_IPTABLES not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_3.5.3.2
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_NOT_INSTALLED_WITH_IPTABLES }} | L1 | PATCH | Ensure firewalld is either not installed or masked with iptables"
+  package:
+      name: firewalld
+      state: absent
+  when:
+      - SEC_ID_ENSURE_FIREWALLD_NOT_INSTALLED_WITH_IPTABLES not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_3.5.3.3
+
+# Rest of the rules are TODO

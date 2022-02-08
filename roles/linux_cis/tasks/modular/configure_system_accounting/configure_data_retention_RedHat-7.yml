@@ -1,0 +1,68 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_AUDIT_LOG_STORAGE_ENABLED }} | L2 | PATCH | Ensure audit log storage size is configured"
+  lineinfile:
+      dest: /etc/audit/auditd.conf
+      regexp: "^max_log_file( |=)"
+      line: "max_log_file = {{ linuxcis_max_log_file_size }}"
+      state: present
+  notify: restart auditd
+  when:
+      - SEC_ID_ENSURE_AUDIT_LOG_STORAGE_ENABLED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - auditd
+      - patch
+      - rule_4.1.2.1
+
+- name: "{{ SEC_ID_ENSURE_AUDIT_LOGS_NOT_AUTOMATICALLY_DELETED }} | L2 | PATCH | Ensure audit logs are not automatically deleted"
+  lineinfile:
+      dest: /etc/audit/auditd.conf
+      regexp: "^max_log_file_action"
+      line: "max_log_file_action = {{ linuxcis_auditd['max_log_file_action'] }}"
+      state: present
+  notify: restart auditd
+  when:
+      - SEC_ID_ENSURE_AUDIT_LOGS_NOT_AUTOMATICALLY_DELETED not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - auditd
+      - patch
+      - rule_4.1.2.2
+
+- name: "{{ SEC_ID_ENSURE_SYSTEM_DISABLED_WHEN_AUDIT_FULL }} | L2 | PATCH | Ensure system is disabled when audit logs are full"
+  lineinfile:
+      dest: /etc/audit/auditd.conf
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+  loop:
+      - { regexp: '^space_left_action', line: "space_left_action = {{ linuxcis_auditd['space_left_action'] }}" }
+      - { regexp: '^action_mail_acct', line: "action_mail_acct = {{ linuxcis_auditd['action_mail_acct'] }}" }
+      - { regexp: '^admin_space_left_action', line: "admin_space_left_action = {{ linuxcis_auditd['admin_space_left_action'] }}" }
+  notify: restart auditd
+  when:
+      - SEC_ID_ENSURE_SYSTEM_DISABLED_WHEN_AUDIT_FULL not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - auditd
+      - patch
+      - rule_4.1.2.3
+
+- name: "{{ SEC_ID_ENSURE_AUDIT_BACKLOG_LIMIT_SUFFICIENT }} | L2 | PATCH | Ensure audit_backlog_limit is sufficient"
+  include_tasks: ensure_backlog_limit_sufficient.yml
+  when:
+      - SEC_ID_ENSURE_AUDIT_BACKLOG_LIMIT_SUFFICIENT not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - grub
+      - patch
+      - rule_4.1.2.4

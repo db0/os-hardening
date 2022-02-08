@@ -1,0 +1,47 @@
+---
+
+- name: |
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP }} | PATCH | Ensure /tmp is configured"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NODEV }} | PATCH | Ensure nodev option set on /tmp partition"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NOSUID }} | PATCH | Ensure nosuid option set on /tmp partition"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NOEXEC }} | PATCH | Ensure noexec option set on /tmp partition"
+        "via fstab"
+  mount:
+      name: /tmp
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      state: present
+      opts: defaults,{% if SEC_ID_CONFIGURE_TMP_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_TMP_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_TMP_NOSUID not in disabled_cis_rules %}nosuid{% endif %}
+  notify: remount tmp
+  loop: "{{ ansible_mounts }}"
+  when:
+      - item.mount == "/tmp"
+      - not linuxcis_tmp_svc
+      - SEC_ID_CONFIGURE_TMP not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NODEV not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NOSUID not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NOEXEC not in disabled_cis_rules
+  tags:
+      - always
+
+- name: |
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP }} | PATCH | Ensure /tmp is configured"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NODEV }} | PATCH | Ensure nodev option set on /tmp partition"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NOSUID }} | PATCH | Ensure nosuid option set on /tmp partition"
+        "SCORED | {{ SEC_ID_CONFIGURE_TMP_NOEXEC }} | PATCH | Ensure noexec option set on /tmp partition"
+        "via systemd"
+  template:
+      src: etc/systemd/system/tmp.mount.j2
+      dest: /etc/systemd/system/tmp.mount
+      owner: root
+      group: root
+      mode: 0644
+  notify: systemd restart tmp.mount
+  when:
+      - linuxcis_tmp_svc
+      - SEC_ID_CONFIGURE_TMP not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NODEV not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NOSUID not in disabled_cis_rules or
+        SEC_ID_CONFIGURE_TMP_NOEXEC not in disabled_cis_rules
+  tags:
+      - always

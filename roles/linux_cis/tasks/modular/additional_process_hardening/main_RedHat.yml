@@ -1,0 +1,30 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted"
+  include_tasks: "ensure_core_dumps_restricted.yml"
+  when:
+      - SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - sysctl
+      - patch
+      - rule_1.6.1
+
+- name: "{{ SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED }} | L1 | PATCH | Ensure address space layout randomization (ASLR) is enabled"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+      dist_tasks:
+      - "ensure_aslr_enabled_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_aslr_enabled_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_aslr_enabled_{{ ansible_facts.distribution }}.yml"
+      - "ensure_aslr_enabled_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.6.2

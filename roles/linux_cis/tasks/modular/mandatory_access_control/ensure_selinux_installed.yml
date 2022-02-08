@@ -1,0 +1,7 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_INSTALLED }} | {{ cis_level }} | PATCH | Ensure SELinux is installed"
+  package:
+      name: "{{ SELINUX_PKG }}"
+      state: present
+  tags: always

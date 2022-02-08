@@ -1,0 +1,265 @@
+---
+
+- name: "SECTION | {{ SEC_ID_TIME_SYNCHRONIZATION }} | Time Synchronization"
+  include_tasks: "time_synchronization.yml"
+
+- name: "{{ SEC_ID_ENSURE_XORG_NOT_INSTALLED }} | L1 | PATCH | Ensure X Org not installed | Distribution Specific Tasks"
+  include_tasks: "ensure_xorg_not_installed_RedHat-7.yml"
+  when:
+      - not linuxcis_xwindows_required
+      - SEC_ID_ENSURE_XORG_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - scored
+      - xwindows
+      - patch
+      - rule_2.2.2
+
+- name: "{{ SEC_ID_AVAHI_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure Avahi Server is not installed | disabled"
+  service:
+      name: avahi-daemon
+      state: stopped
+      enabled: no
+  when:
+      - not linuxcis_avahi_server
+      - "'avahi' in ansible_facts.packages"
+      - SEC_ID_AVAHI_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - avahi
+      - services
+      - patch
+      - rule_2.2.3
+
+- name: "{{ SEC_ID_CUPS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure CUPS is not installed"
+  package:
+      name: cups
+      state: absent
+  when:
+      - not linuxcis_cups_server
+      - SEC_ID_CUPS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - cups
+      - services
+      - patch
+      - rule_2.2.4
+
+- name: "{{ SEC_ID_DHCP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
+  package:
+      name: dhcp
+      state: absent
+  when:
+      - not linuxcis_dhcp_server
+      - SEC_ID_DHCP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dhcp
+      - services
+      - patch
+      - rule_2.2.5
+
+- name: "{{ SEC_ID_LDAP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure LDAP server is not installed"
+  package:
+      name: openldap-servers
+      state: absent
+  when:
+      - not linuxcis_ldap_server
+      - SEC_ID_LDAP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ldap
+      - services
+      - patch
+      - rule_2.2.6
+
+- name: "{{ SEC_ID_DNS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DNS server is not installed"
+  package:
+      name: bind
+      state: absent
+  when:
+      - not linuxcis_named_server
+      - SEC_ID_DNS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dns
+      - services
+      - patch
+      - rule_2.2.7
+
+- name: "{{ SEC_ID_FTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure FTP server is not installed"
+  package:
+      name: vsftpd
+      state: absent
+  when:
+      - not linuxcis_vsftpd_server
+      - SEC_ID_FTP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ftp
+      - services
+      - patch
+      - rule_2.2.8
+
+- name: "{{ SEC_ID_HTTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP server is not installed"
+  package:
+      name: httpd
+      state: absent
+  when:
+      - not linuxcis_httpd_server
+      - SEC_ID_HTTP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ldap
+      - services
+      - patch
+      - rule_2.2.9
+
+- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not installed"
+  package:
+      name: dovecot
+      state: absent
+  when:
+      - not linuxcis_dovecot_server
+      - SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dovecot
+      - services
+      - patch
+      - rule_2.2.10
+
+- name: "{{ SEC_ID_ENSURE_SAMBA_NOT_ENABLED }} | L1 | PATCH | Ensure Samba server is not installed"
+  package:
+      name: samba
+      state: absent
+  when:
+      - not linuxcis_smb_server
+      - SEC_ID_ENSURE_SAMBA_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - samba
+      - services
+      - patch
+      - rule_2.2.11
+
+- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP Proxy server is not installed"
+  package:
+      name: squid
+      state: absent
+  when:
+      - not linuxcis_squid_server
+      - SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - squid
+      - services
+      - patch
+      - rule_2.2.12
+
+- name: "{{ SEC_ID_SNMP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure net-snmp is not installed"
+  package:
+      name: net-snmp
+      state: absent
+  when:
+      - not linuxcis_snmp_server
+      - SEC_ID_SNMP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - squid
+      - services
+      - patch
+      - rule_2.2.13
+
+- name: "{{ SEC_ID_NIS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure NIS server is not installed"
+  package:
+      name: ypserv
+      state: absent
+  when:
+      - not linuxcis_nis_server
+      - SEC_ID_NIS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - nis
+      - services
+      - patch
+      - rule_2.2.14
+
+- name: "{{ SEC_ID_TELNET_SERVER_NOT_INSTALLED }} | L1 | PATCH | Ensure telnet-server is not installed"
+  package:
+      name: telnet-server
+      state: absent
+  when:
+      - not linuxcis_telnet_server
+      - SEC_ID_TELNET_SERVER_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - telnet
+      - services
+      - patch
+      - rule_2.2.15
+
+- name: "{{ SEC_ID_MTA_CONFIGURED_LOCAL_ONLY }} | L1 | PATCH | Ensure mail transfer agent is configured for local-only mode"
+  lineinfile:
+      dest: /etc/postfix/main.cf
+      regexp: "^(#)?inet_interfaces"
+      line: "inet_interfaces = loopback-only"
+  notify: restart postfix
+  when:
+      - not linuxcis_is_mail_server
+      - "'postfix' in ansible_facts.packages"
+      - SEC_ID_MTA_CONFIGURED_LOCAL_ONLY not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_2.2.16
+
+- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure nfs-utils is not installed or the nfs-server service is masked"
+  include_tasks: "ensure_nfs_utils_not_installed.yml"
+  tags:
+      - level1
+      - scored
+      - nfs
+      - services
+      - patch
+      - rule_2.2.17
+
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked"
+  include_tasks: "ensure_rpcbind_not_installed.yml"
+  when:
+      - "'rpcbind' in ansible_facts.packages"
+      - SEC_ID_ENSURE_RPC_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - rpc
+      - services
+      - patch
+      - rule_2.2.18
+
+- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync is not installed or the rsyncd services are masked"
+  include_tasks: "ensure_rsync_not_installed.yml"
+  when:
+      - not linuxcis_rsyncd_server
+      - "'rsync' in ansible_facts.packages"
+      - SEC_ID_ENSURE_RSYNC_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - rsync
+      - services
+      - patch
+      - rule_2.2.19

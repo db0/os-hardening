@@ -1,0 +1,37 @@
+---
+
+- name: "PRELIM | Setup crypto-policy"
+  block:
+      - name: "PRELIM | Install crypto-policies"
+        dnf:
+            name:
+                - crypto-policies
+                - crypto-policies-scripts
+            state: present
+
+      - name: "PRELIM | Gather system-wide crypto-policy"
+        shell: update-crypto-policies --show
+        args:
+            warn: false
+        changed_when: false
+        check_mode: false
+        register: system_wide_crypto_policy
+  when:
+      - SEC_ID_ENSURE_CRYPTO_POLICY_NOT_LEGACY not in disabled_cis_rules or
+        SEC_ID_ENSURE_CRYPTO_POLICY_FUTURE_FIPS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - rule_1.10 or
+        rule_1.11
+      - crypto
+
+- name: "PRELIM | Install authconfig"
+  package:
+      name: authconfig
+      state: present
+  when:
+      - linuxcis_use_authconfig
+      # - rhel8cis_rule_5_3_1 or
+      #   rhel8cis_rule_5_3_2 or
+      #   rhel8cis_rule_5_3_3

@@ -1,0 +1,15 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_LOGROTATE_CONFIGURED }} | L1 | AUDIT | Ensure logrotate is configured | Get logrotate settings"
+  find:
+      paths: /etc/logrotate.d/
+  register: linuxcis_log_rotates
+
+- name: "{{ SEC_ID_ENSURE_LOGROTATE_CONFIGURED }} | L1 | PATCH | Ensure logrotate is configured"
+  replace:
+      path: "{{ item.path }}"
+      regexp: '^(\s*)(daily|weekly|monthly|yearly)$'
+      replace: "\\1{{ linuxcis_logrotate }}"
+  with_items:
+      - "{{ linuxcis_log_rotates.files }}"
+      - { path: "/etc/logrotate.conf" }

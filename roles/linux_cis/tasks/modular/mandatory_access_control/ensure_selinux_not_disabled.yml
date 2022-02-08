@@ -1,0 +1,10 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_NOT_DISABLED_IN_BOOTLOADER }} | {{ cis_level }} | PATCH | Ensure SELinux is not disabled in bootloader configuration"
+  replace:
+      dest: /etc/default/grub
+      regexp: '(selinux|enforcing)\s*=\s*0\s*'
+  register: selinux_grub_patch
+  ignore_errors: yes
+  notify: grub2cfg
+  tags: always

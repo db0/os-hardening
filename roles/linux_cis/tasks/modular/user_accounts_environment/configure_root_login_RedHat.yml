@@ -1,14 +1,40 @@
 ---
 
-# TODO: Actually check that /etc/consoletty has not been re-enabled
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/considerations_in_adopting_rhel_8/security_considerations-in-adopting-rhel-8
 # 8.7.2. securetty is now disabled by default
-- name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console "
-  debug:
-    msg: "INFO: /etc/consoletty disabled by default in RedHat/CentOS 8"
+
+# this will just display the list of consoles. The site will need to confirm the allowed consoles are correct and change manually if needed.
+- name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console"
+  block:
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console | Check if securetty file exists"
+        stat:
+            path: /etc/securetty
+        register: linuxcis_securetty_check
+
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console | Capture consoles"
+        shell: cat /etc/securetty
+        args:
+            warn: false
+        changed_when: false
+        register: linuxcis_securetty_audit
+        when: linuxcis_securetty_check.stat.exists
+
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT |Ensure root login is restricted to system console | Display Console"
+        debug:
+            msg:
+                - "These are the consoles with root login access, please review:"
+                - "{{ linuxcis_securetty_audit.stdout_lines }}"
+        when: linuxcis_securetty_check.stat.exists
+
+      - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console | Display that no securetty file exists"
+        debug:
+            msg:
+                - "There is no /etc/securetty file, this has been removed by default in RHEL8+"
+        when: not linuxcis_securetty_check.stat.exists
   when:
       - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - audit
       - rule_5.6

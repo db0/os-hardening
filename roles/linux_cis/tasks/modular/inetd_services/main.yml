@@ -2,14 +2,14 @@
 
 - name: "{{ SEC_ID_ENSURE_XINETD_NOT_INSTALLED }} | L1 | PATCH | Ensure xinetd is not installed"
   package:
-      name: xinetd
+      name: "{{ XINETD_PKG }}"
       state: absent
-#   vars:
-#       ansible_python_interpreter: /bin/python
   when:
       - ("'xinetd' in ansible_facts.packages") and not linuxcis_xinetd_required
       - SEC_ID_ENSURE_XINETD_NOT_INSTALLED not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
+      - scored
       - patch
       - rule_2.1.1

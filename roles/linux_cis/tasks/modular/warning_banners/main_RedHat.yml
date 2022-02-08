@@ -1,0 +1,30 @@
+---
+
+- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+  include_tasks: "command_line_warning_banners.yml"
+
+- name: "{{ SEC_ID_ENSURE_GDM_LOGIN_BANNER_CONFIGURED }} | L1 | PATCH | Ensure GDM login banner is configured"
+  lineinfile:
+      dest: "{{ item.file }}"
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      state: present
+      create: true
+      owner: root
+      group: root
+      mode: 0644
+  with_items:
+      - { file: '/etc/dconf/profile/gdm', regexp: 'user-db', line: 'user-db:user' }
+      - { file: '/etc/dconf/profile/gdm', regexp: 'system-db', line: 'system-db:gdm' }
+      - { file: '/etc/dconf/profile/gdm', regexp: 'file-db', line: 'file-db:/usr/share/gdm/greeter-dconf-defaults' }
+      - { file: '/etc/dconf/db/gdm.d/01-banner-message', regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]' }
+      - { file: '/etc/dconf/db/gdm.d/01-banner-message', regexp: 'banner-message-enable', line: 'banner-message-enable=true' }
+      - { file: '/etc/dconf/db/gdm.d/01-banner-message', regexp: 'banner-message-text', line: "banner-message-text='{{ linuxcis_warning_banner }}' " }
+  when:
+      - linuxcis_gui
+      - SEC_ID_ENSURE_GDM_LOGIN_BANNER_CONFIGURED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_1.8.2

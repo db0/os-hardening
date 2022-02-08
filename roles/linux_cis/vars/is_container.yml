@@ -1,0 +1,95 @@
+---
+
+# File to skip controls if container
+# Based on standard image no changes
+# it expected all pkgs required for the container are alreday installed
+
+## controls
+
+# Authconfig
+linuxcis_use_authconfig: false
+
+# Firewall
+linuxcis_firewall: None
+
+# SElinux
+linuxcis_selinux_disable: true
+
+
+## Related individual rules
+# Aide
+linuxcis_rule_1_4_1: false
+linuxcis_rule_1_4_2: false
+
+# auditd
+linuxcis_rule_4_1_1_1: false
+linuxcis_rule_4_1_2_1: false
+linuxcis_rule_4_1_2_2: false
+linuxcis_rule_4_1_2_3: false
+
+# time sync
+linuxcis_rule_2_2_1_1: false
+linuxcis_rule_2_2_1_2: false
+
+# cron
+linuxcis_rule_5_1_1: false
+linuxcis_rule_5_1_2: false
+linuxcis_rule_5_1_3: false
+linuxcis_rule_5_1_4: false
+linuxcis_rule_5_1_5: false
+linuxcis_rule_5_1_6: false
+linuxcis_rule_5_1_7: false
+linuxcis_rule_5_1_8: false
+
+# crypto
+linuxcis_rule_1_10: false
+linuxcis_rule_1_11: false
+
+# grub
+linuxcis_rule_1_5_1: false
+linuxcis_rule_1_5_2: false
+linuxcis_rule_1_5_3: false
+
+## mounts
+# /tmp
+linuxcis_rule_1_1_2: false
+linuxcis_rule_1_1_3: false
+linuxcis_rule_1_1_4: false
+linuxcis_rule_1_1_5: false
+#/var
+linuxcis_rule_1_1_6: false
+# /var/tmp
+linuxcis_rule_1_1_7: false
+linuxcis_rule_1_1_8: false
+linuxcis_rule_1_1_9: false
+linuxcis_rule_1_1_10: false
+# /var/log
+linuxcis_rule_1_1_11: false
+# /var/log/audit
+linuxcis_rule_1_1_12: false
+# /home
+linuxcis_rule_1_1_13: false
+linuxcis_rule_1_1_14: false
+# /dev/shm
+linuxcis_rule_1_1_15: false
+linuxcis_rule_1_1_16: false
+linuxcis_rule_1_1_17: false
+# usb-storage
+linuxcis_rule_1_1_23: false
+
+# logging
+linuxcis_rule_4_2_1_1: false
+linuxcis_rule_4_2_1_2: false
+linuxcis_rule_4_2_1_3: false
+linuxcis_rule_4_2_1_4: false
+linuxcis_rule_4_2_1_5: false
+linuxcis_rule_4_2_1_6: false
+linuxcis_rule_4_2_2_1: false
+linuxcis_rule_4_2_2_2: false
+linuxcis_rule_4_2_2_3: false
+
+# systemd
+linuxcis_rule_1_6_1: false
+
+# Users/passwords/accounts
+linuxcis_rule_5_5_2: false

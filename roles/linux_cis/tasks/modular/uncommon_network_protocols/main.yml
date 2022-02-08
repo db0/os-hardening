@@ -1,35 +1,10 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_DCCP_DISABLED }} | L2 | PATCH | Ensure DCCP is disabled"
-  lineinfile:
-      dest: /etc/modprobe.d/CIS.conf
-      regexp: "^(#)?install dccp(\\s|$)"
-      line: "install dccp /bin/true"
-      create: yes
-      owner: root
-      group: root
-      mode: 0600
-  when:
-      - SEC_ID_ENSURE_DCCP_DISABLED not in disabled_cis_rules
-      - linuxcis_level2
-  tags:
-      - level2
-      - patch
-      - rule_3.4.1
-
-- name: "{{ SEC_ID_ENSURE_SCTP_DISABLED }} | L2 | PATCH | Ensure SCTP is disabled"
-  lineinfile:
-      dest: /etc/modprobe.d/CIS.conf
-      regexp: "^(#)?install sctp(\\s|$)"
-      line: "install sctp /bin/true"
-      create: yes
-      owner: root
-      group: root
-      mode: 0600
-  when:
-      - SEC_ID_ENSURE_SCTP_DISABLED not in disabled_cis_rules
-      - linuxcis_level2
-  tags:
-      - level2
-      - patch
-      - rule_3.4.2
+- name: "SECTION | {{ SEC_ID_NETWORK_UNCOMMON_NETWORK_PROTOCOLS }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "main_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.distribution }}.yml"
+      - "main_{{ ansible_facts.os_family }}.yml"

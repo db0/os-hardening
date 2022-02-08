@@ -1,0 +1,7 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_XORG_NOT_INSTALLED }} | L1 | PATCH | Ensure X11 Server components are not installed"
+  package:
+      state: absent
+      name: "{{ XORG_PKG }}"
+  tags: always

@@ -1,0 +1,105 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_INSTALLED }} | L1 | PATCH | Ensure SELinux is installed"
+  include_tasks: "ensure_selinux_installed.yml"
+  vars:
+    cis_level: L1
+  when:
+      - not linuxcis_selinux_disable
+      - SEC_ID_ENSURE_SELINUX_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.6.1.1
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_NOT_DISABLED_IN_BOOTLOADER }} | L1 | PATCH | Ensure SELinux is not disabled in bootloader configuration"
+  include_tasks: "ensure_selinux_not_disabled.yml"
+  vars:
+    cis_level: L1
+  when:
+      - not linuxcis_selinux_disable
+      - SEC_ID_ENSURE_SELINUX_NOT_DISABLED_IN_BOOTLOADER not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.6.1.2
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED }} | L1 | PATCH | Ensure SELinux policy is configured\n
+         {{ SEC_ID_ENSURE_SELINUX_MODE_ENFORCING_OR_PERMISSIVE }} | L1 | PATCH | Ensure the SELinux state is enforcing or permissive"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    cis_level: L1
+    dist_tasks:
+      - "ensure_selinux_policy_configured_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_selinux_policy_configured_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_selinux_policy_configured_{{ ansible_facts.distribution }}.yml"
+      - "ensure_selinux_policy_configured_{{ ansible_facts.os_family }}.yml"
+  when:
+      - not linuxcis_selinux_disable
+      - SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED not in disabled_cis_rules
+      - SEC_ID_ENSURE_SELINUX_MODE_ENFORCING_OR_PERMISSIVE not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - selinux
+      - patch
+      - rule_1.6.1.3
+      - rule_1.6.1.4
+
+- name: "{{ SEC_ID_ENSURE_SELINUX_MODE_ENFORCING }} | L2 | PATCH | Ensure the SELinux state is enforcing"
+  include_tasks: "ensure_selinux_enforcing.yml"
+  when:
+      - not linuxcis_selinux_disable
+      - not linuxcis_selinux_state == "permissive"
+      - SEC_ID_ENSURE_SELINUX_MODE_ENFORCING not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - selinux
+      - patch
+      - rule_1.6.1.5
+
+- name: "{{ SEC_ID_ENSURE_NO_UNCONFINED_SERVICES_EXIST }} | L1 | AUDIT | Ensure no unconfined daemons exist"
+  include_tasks: "ensure_no_unconfined_services.yml"
+  vars:
+    cis_level: L1
+  when:
+      - SEC_ID_ENSURE_NO_UNCONFINED_SERVICES_EXIST not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_1.6.1.6
+
+- name: "{{ SEC_ID_ENSURE_SETROUBLESHOOT_NOT_INSTALLED }} | L1 | PATCH | Ensure SETroubleshoot is not installed"
+  include_tasks: "ensure_setroubleshoot_not_installed.yml"
+  vars:
+    cis_level: L1
+  when:
+      - SEC_ID_ENSURE_SETROUBLESHOOT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - scored
+      - selinux
+      - patch
+      - rule_1.6.1.7
+
+- name: "{{ SEC_ID_ENSURE_MCSTRANS_NOT_INSTALLED }} | L1 | PATCH | Ensure the MCS Translation Service (mcstrans) is not installed"
+  include_tasks: "ensure_mcstrans_not_installed.yml"
+  vars:
+    cis_level: L1
+  when:
+      - SEC_ID_ENSURE_MCSTRANS_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.6.1.8

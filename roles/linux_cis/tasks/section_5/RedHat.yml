@@ -10,6 +10,11 @@
   when:
     - SEC_ID_CONFIGURE_SSH not in disabled_cis_rules
 
+- name: "SECTION | {{ SEC_ID_CONFIGURE_AUTHSELECT }} | Configure authselect"
+  include_tasks: "../modular/configure_authselect/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_AUTHSELECT not in disabled_cis_rules
+
 - name: "SECTION | {{ SEC_ID_CONFIGURE_PAM }} | Configure PAM"
   include_tasks: "../modular/configure_pam/main.yml"
   when:

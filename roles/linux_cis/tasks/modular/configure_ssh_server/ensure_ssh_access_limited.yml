@@ -1,0 +1,53 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SSH_ACCESS_LIMITED }} | L1 | PATCH | Ensure SSH access is limited | Add line to sshd_config for allowusers"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^AllowUsers"
+      insertbefore: "# Accept locale-related environment variables"
+      line: AllowUsers {{ linuxcis_sshd['allowusers'] }}
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - "linuxcis_sshd['allowusers']|default('') | length > 0"
+
+- name: "{{ SEC_ID_ENSURE_SSH_ACCESS_LIMITED }} | L1 | PATCH | Ensure SSH access is limited | Add line to sshd_config for allowgroups"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^AllowGroups"
+      insertbefore: "# Accept locale-related environment variables"
+      line: AllowGroups {{ linuxcis_sshd['allowgroups'] }}
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - "linuxcis_sshd['allowgroups']|default('') | length > 0"
+
+- name: "{{ SEC_ID_ENSURE_SSH_ACCESS_LIMITED }} | L1 | PATCH | Ensure SSH access is limited | Add line to sshd_config for denyusers"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^DenyUsers"
+      insertbefore: "# Accept locale-related environment variables"
+      line: DenyUsers {{ linuxcis_sshd['denyusers'] }}
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - "linuxcis_sshd['denyusers']|default('') | length > 0"
+
+- name: "{{ SEC_ID_ENSURE_SSH_ACCESS_LIMITED }} | L1 | PATCH | Ensure SSH access is limited | Add line to sshd_config for denygroups"
+  lineinfile:
+      state: present
+      dest: /etc/ssh/sshd_config
+      regexp: "^DenyGroups"
+      insertbefore: "# Accept locale-related environment variables"
+      line: DenyGroups {{ linuxcis_sshd['denygroups'] }}
+      validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
+  notify:
+      - restart sshd
+  when:
+      - "linuxcis_sshd['denygroups']|default('') | length > 0"

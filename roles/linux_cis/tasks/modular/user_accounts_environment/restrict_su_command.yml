@@ -11,18 +11,19 @@
         when:
             - SEC_ID_ENSURE_SU_COMMAND_RESTRICTED not in disabled_cis_rules
         tags:
-            - level1
+            - level1-server
+            - level1-workstation
             - patch
             - rule_5.7
 
       - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | PATCH | Ensure access to the su command is restricted | wheel group contains root"
-        group:
-            name: root
-            groups: "{{ linuxcis_sugroup }}"
+        user:
+            name: "{{ linuxcis_sugroup_users }}"
+            groups: "{{ linuxcis_sugroup | default('wheel') }}"
   when:
       - SEC_ID_ENSURE_SU_COMMAND_RESTRICTED not in disabled_cis_rules
-      - linuxcis_sugroup is defined
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_5.7

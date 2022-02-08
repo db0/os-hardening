@@ -1,0 +1,79 @@
+# File created initially via RHEL9 CIS ansible-lockdown remdiation role
+{% if SEC_ID_ENSURE_SUDOERS_CHANGES_COLLECTED not in disabled_cis_rules %}
+-w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d/ -p wa -k scope
+{% endif %}
+{% if SEC_ID_ENSURE_LOGIN_LOGOUT_EVENTS_COLLECTED not in disabled_cis_rules %}
+-w /var/log/faillog -p wa -k logins
+-w /var/log/lastlog -p wa -k logins
+{% endif %}
+{% if SEC_ID_ENSURE_SESSION_INIT_INFO_COLLECTED not in disabled_cis_rules %}
+-w /var/run/utmp -p wa -k session
+-w /var/log/wtmp -p wa -k logins
+-w /var/log/btmp -p wa -k logins
+{% endif %}
+{% if SEC_ID_ENSURE_DATE_TIME_EVENTS_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+-a always,exit -F arch=b64 -S clock_settime -k time-change
+-a always,exit -F arch=b32 -S clock_settime -k time-change
+-w /etc/localtime -p wa -k time-change
+{% endif %}
+{% if SEC_ID_ENSURE_MANDATORY_ACCESS_CONTROL_EVENTS_COLLECTED not in disabled_cis_rules %}
+-w /etc/selinux/ -p wa -k MAC-policy
+-w /usr/share/selinux/ -p wa -k MAC-policy
+{% endif %}
+{% if SEC_ID_ENSURE_NETWORK_ENVIRONMENT_EVENTS_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+-w /etc/issue -p wa -k system-locale
+-w /etc/issue.net -p wa -k system-locale
+-w /etc/hosts -p wa -k system-locale
+-w /etc/sysconfig/network -p wa -k system-locale
+{% endif %}
+{% if SEC_ID_ENSURE_DISC_ACC_CTRL_PERM_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>={{ min_int_uid }} -F auid!=4294967295 -k perm_mod
+{% endif %}
+{% if SEC_ID_ENSURE_UNAUTH_FILE_ACCESS_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=access
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=access
+{% endif %}
+{% if SEC_ID_ENSURE_USER_GROUP_EVENTS_COLLECTED not in disabled_cis_rules %}
+-w /etc/group -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/security/opasswd -p wa -k identity
+{% endif %}
+{% if SEC_ID_ENSURE_FS_MOUNTS_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b32 -S mount -F auid>={{ min_int_uid }} -F auid!=4294967295 -k mounts
+-a always,exit -F arch=b64 -S mount -F auid>={{ min_int_uid }} -F auid!=4294967295 -k mounts
+{% endif %}
+{% if SEC_ID_ENSURE_PRIV_COMMANDS_COLLECTED not in disabled_cis_rules %}
+{% for proc in priv_procs.stdout_lines -%}
+-a always,exit -F path={{ proc }} -F perm=x -F auid>={{ min_int_uid }} -F auid!=4294967295 -k privileged
+{% endfor %}
+{% endif %}
+{% if SEC_ID_ENSURE_FILE_DELETION_EVENTS_COLLECTED not in disabled_cis_rules %}
+-a always,exit -F arch=b32 -S rmdir,unlink,unlinkat,rename -S renameat -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=delete
+-a always,exit -F arch=b64 -S rmdir,unlink,unlinkat,rename -S renameat -F auid>={{ min_int_uid }} -F auid!=4294967295 -F key=delete
+{% endif %}
+{% if SEC_ID_ENSURE_KERNEL_MODULE_ACTIONS_COLLECTED not in disabled_cis_rules %}
+-w /usr/sbin/insmod -p x -k modules
+-w /usr/sbin/rmmod -p x -k modules
+-w /usr/sbin/modprobe -p x -k modules
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
+{% endif %}
+{% if SEC_ID_ENSURE_SUDO_COMMANDS_COLLECTED not in disabled_cis_rules %}
+-w /var/log/sudo.log -p wa -k actions
+{% endif %}
+{% if SEC_ID_ENSURE_AUDIT_CONFIG_IMMUTABLE not in disabled_cis_rules %}
+-e 2
+{% endif %}

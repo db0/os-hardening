@@ -8,24 +8,26 @@
 
 - name: "{{ SEC_ID_ENSURE_LOGFILE_PERMISSIONS }} | L1 | PATCH | Ensure permissions on all logfiles are configured"
   command: find /var/log -type f -exec chmod g-wx,o-rwx "{}" +
+  args:
+      warn: false
   changed_when: false
   failed_when: false
   when:
       - SEC_ID_ENSURE_LOGFILE_PERMISSIONS not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - automated
       - rule_4.2.3
 
 - name: "{{ SEC_ID_ENSURE_LOGROTATE_CONFIGURED }} | L1 | AUDIT | Ensure logrotate is configured"
-  find:
-      paths: /etc/logrotate.d/
-  register: log_rotates
+  include_tasks: ensure_logrotate_configured.yml
   when:
       - SEC_ID_ENSURE_LOGROTATE_CONFIGURED not in disabled_cis_rules
+      - "'logrotate' in ansible_facts.packages"
   tags:
-      - level1
-      - audit
-      - manual
+      - level1-server
+      - level1-workstation
+      - patch
       - rule_4.2.4

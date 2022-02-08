@@ -4,3 +4,7 @@ SUPPORTED_DISTRIBUTIONS:
   RedHat:
     - '7'
     - '8'
+
+linuxcis_allowed_crypto_policies:
+    - 'FUTURE'
+    - 'FIPS'

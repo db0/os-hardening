@@ -1,0 +1,35 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | AUDIT | Ensure nftables base chains exist | Get current chains for INPUT"
+  shell: nft list ruleset | grep 'hook input'
+  register: linuxcis_nftables_input_chains_out
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | AUDIT | Ensure nftables base chains exist | Get current chains for FORWARD"
+  shell: nft list ruleset | grep 'hook forward'
+  register: linuxcis_nftables_forward_chains_out
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | AUDIT | Ensure nftables base chains exist | Get current chains for OUTPUT"
+  shell: nft list ruleset | grep 'hook output'
+  register: linuxcis_nftables_output_chains_out
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | AUDIT | Ensure nftables base chains exist | Display chains for review"
+  debug:
+      msg:
+          - "Below are the current INPUT chains"
+          - "{{ linuxcis_nftables_input_chains_out.stdout_lines }}"
+          - "Below are the current FORWARD chains"
+          - "{{ linuxcis_nftables_forward_chains_out.stdout_lines }}"
+          - "Below are teh current OUTPUT chains"
+          - "{{ linuxcis_nftables_output_chains_out.stdout_lines }}"
+  when:
+      - not linuxcis_nft_tables_autoChainCreate
+
+- name: "{{ SEC_ID_ENSURE_NFTABLES_BASE_CHAINS_EXISTS }} | L1 | PATCH | Ensure nftables base chains exist | Create chains if needed"
+  command: "{{ item }}"
+  failed_when: false
+  with_items:
+      - nft create chain inet "{{ linuxcis_nft_tables_tableName }}" input { type filter hook input priority 0 \; }
+      - nft create chain inet "{{ linuxcis_nft_tables_tableName }}" forward { type filter hook forward priority 0 \; }
+      - nft create chain inet "{{ linuxcis_nft_tables_tableName }}" output { type filter hook output priority 0 \; }
+  when:
+      - linuxcis_nft_tables_autoChainCreate

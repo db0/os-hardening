@@ -1,0 +1,9 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables | IPv4"
+  include_tasks: iptables/configure_iptables_ipv4.yml
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables | IPv6"
+  include_tasks: iptables/configure_iptables_ipv6.yml
+  when:
+  - linuxcis_ipv6_required

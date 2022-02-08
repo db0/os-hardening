@@ -1,0 +1,18 @@
+---
+
+- name: "{{ cis_section }} | {{ cis_level }} | AUDIT | Ensure separate partition exists for {{ required_mount }}| Absent"
+  debug:
+      msg: "Warning! {{ required_mount }} doesn't exist. This is a manual task"
+  register: var_mount_absent
+  changed_when: var_mount_absent.skipped is undefined
+  when:
+      - required_mount not in mount_names
+  tags: always
+
+- name: "{{ cis_section }} | {{ cis_level }} | AUDIT | Ensure separate partition exists for {{ required_mount }} | Present"
+  debug:
+      msg: "Congratulations: {{ required_mount }} exists."
+  register: var_mount_present
+  when:
+      - required_mount in mount_names
+  tags: always

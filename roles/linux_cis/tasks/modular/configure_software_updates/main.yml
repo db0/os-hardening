@@ -1,82 +1,10 @@
 ---
 
-- name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | PATCH | Ensure GPG keys are configured"
-  command: gpg --quiet --with-fingerprint /etc/pki/rpm-gpg/{{ SEC_1_2_1_GPG_FILE }}
-  when:
-      - SEC_ID_CONFIGURE_GPG_KEYS not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.2.1
-
-- name: "{{ SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS }} | L1 | AUDIT | Ensure package manager repositories are configured"
-  block:
-      - name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure package manager repositories are configured"
-        shell: yum repolist
-        changed_when: false
-        register: repolist
-        tags:
-            - skip_ansible_lint
-
-      - name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure package manager repositories are configured"
-        debug:
-            msg:
-                - "Please check against site policy repos listed below match expected:"
-                - "{{ repolist.stdout_lines }}"
-  when:
-      - SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS not in disabled_cis_rules
-  tags:
-      - level1
-      - audit
-      - rule_1.2.2
-      - skip_ansible_lint
-
-- name: "{{ SEC_ID_ACTIVATE_GPG_GLOBALLY }} | L1 | PATCH | Ensure gpgcheck is globally activated"
-  block:
-      - name: "{{ SEC_ID_ACTIVATE_GPG_GLOBALLY }} | L1 | AUDIT | Ensure gpgcheck is globally activated"
-        find:
-            paths: /etc/yum.repos.d
-            patterns: "*.repo"
-        register: yum_repos
-        changed_when: false
-
-      - name: "{{ SEC_ID_ACTIVATE_GPG_GLOBALLY }} | L1 | PATCH | Ensure gpgcheck is globally activated"
-        replace:
-            path: "{{ item.path }}"
-            regexp: "^gpgcheck=0"
-            replace: "gpgcheck=1"
-        loop: "{{ yum_repos.files }}"
-  when:
-      - SEC_ID_ACTIVATE_GPG_GLOBALLY not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.2.3
-
-
-- name: "{{ SEC_ID_CONFIGURE_RHSM }} | L1 | AUDIT | Ensure Red Hat Subscription Manager connection is configured"
-  shell: subscription-manager identity
-  changed_when: false
-  failed_when: false
-  when:
-      - ansible_distribution == "RedHat"
-      - SEC_ID_CONFIGURE_RHSM not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.2.4
-      - skip_ansible_lint
-
-- name: "{{ SEC_ID_DISABLE_RHNSD }} | L1 | PATCH | Disable the rhnsd Daemon"
-  service:
-      name: rhnsd
-      state: stopped
-      enabled: no
-      masked: true
-  when:
-      - ansible_distribution == "RedHat" and not linuxcis_rhnsd_required
-      - SEC_ID_DISABLE_RHNSD not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.2.5
+- name: "SECTION | {{ SEC_ID_CONFIGURE_SOFTWARE_UPDATES }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "main_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.distribution }}.yml"
+      - "main_{{ ansible_facts.os_family }}.yml"

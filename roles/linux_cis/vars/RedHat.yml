@@ -3,5 +3,15 @@
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/redhat/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
 
-SEC_1_2_1_GPG_FILE: RPM-GPG-KEY-redhat-release
-SEC_1_7_SELINUX_PKG: libselinux
+RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+SELINUX_PKG: libselinux
+SETROUBLESHOOT_PKG: setroubleshoot
+XORG_PKG: 'xorg-x11-server-*'
+XINETD_PKG: xinetd
+FIREWALL_PKGS:
+  firewalld:
+  - firewalld
+  nftables:
+  - nftables
+  iptables:
+  - iptables

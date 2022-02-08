@@ -1,70 +1,10 @@
 ---
 
-- name: "{{ SEC_ID_BOOT_PASSWORD }} | L1 | PATCH | Ensure bootloader password is set"
-  copy:
-      dest: "{{ linuxcis_bootloader_path }}user.cfg"
-      content: "GRUB2_PASSWORD={{ linuxcis_bootloader_password_hash }}"
-      owner: root
-      group: root
-      mode: "{% if linuxcis_legacy_boot %}0600{% else %}0700{% endif %}"
-  notify: grub2cfg
-  when:
-      - ansible_distribution_version >= '7.2'
-      - linuxcis_set_boot_pass
-      - SEC_ID_BOOT_PASSWORD not in disabled_cis_rules
-  tags:
-      - level1
-      - grub
-      - patch
-      - rule_1.4.1
-
-- name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured"
-  block:
-      - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured | Update grub config settings"
-        file:
-            path: "{{ linuxcis_bootloader_path }}grub.cfg"
-            owner: root
-            group: root
-            mode: 0600
-        when:
-            - linuxcis_legacy_boot
-
-      - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured | UEFI"
-        mount:
-            name: /boot/efi
-            src: "UUID={{ item.uuid }}"
-            fstype: vfat
-            state: present
-            opts: defaults,umask=0027,fmask=0077,uid=0,gid=0
-            passno: '0'
-        loop: "{{ ansible_mounts }}"
-        when:
-            - not linuxcis_legacy_boot
-            - item.mount == "/boot/efi"
-  when:
-      - SEC_ID_BOOTLOADER_PERMS not in disabled_cis_rules
-  tags:
-      - level1
-      - grub
-      - patch
-      - rule_1.4.2
-
-- name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode"
-  block:
-      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Emergency service"
-        lineinfile:
-            dest: /usr/lib/systemd/system/emergency.service
-            regexp: '/sbin/sulogin'
-            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
-
-      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Rescue service"
-        lineinfile:
-            dest: /usr/lib/systemd/system/rescue.service
-            regexp: '/sbin/sulogin'
-            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
-  when:
-      - SEC_ID_SINGLE_USER_AUTH_NEEDED not in disabled_cis_rules
-  tags:
-      - level1
-      - patch
-      - rule_1.4.3
+- name: "SECTION | {{ SEC_ID_SECURE_BOOT_SETTINGS }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "secure_boot_settings_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "secure_boot_settings_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "secure_boot_settings_{{ ansible_facts.distribution }}.yml"
+      - "secure_boot_settings_{{ ansible_facts.os_family }}.yml"

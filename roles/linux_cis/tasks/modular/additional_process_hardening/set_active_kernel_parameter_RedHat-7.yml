@@ -1,0 +1,11 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | Set active kernel parameter"
+  sysctl:
+      name: fs.suid_dumpable
+      value: '0'
+      state: present
+      reload: yes
+      sysctl_set: yes
+      ignoreerrors: yes
+  tags: always

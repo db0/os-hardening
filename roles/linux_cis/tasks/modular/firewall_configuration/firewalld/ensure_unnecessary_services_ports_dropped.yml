@@ -1,0 +1,18 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DROPS_UNNECESSARY_SERVICES_PORTS }} | L1 | AUDIT | Ensure firewalld drops unnecessary services and ports | Get list of services and ports"
+  shell: "firewall-cmd --get-active-zones | awk '!/:/ {print $1}' | while read ZN; do firewall-cmd --list-all --zone=$ZN; done"
+  args:
+      warn: false
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: linuxcis_firewalld_servicesport_out
+  tags: always
+
+- name: "{{ SEC_ID_ENSURE_FIREWALLD_DROPS_UNNECESSARY_SERVICES_PORTS }} | L1 | AUDIT | Ensure firewalld drops unnecessary services and ports | Show services and ports"
+  debug:
+      msg:
+          - "The items below are the services and ports that are accepted, please correct as needed"
+          - "{{ linuxcis_firewalld_servicesport_out.stdout_lines }}"
+  tags: always

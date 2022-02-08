@@ -1,10 +1,5 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES }} | Disable unused network protocols and devices"
-  include_tasks: "../modular/disable_unused_protocols_devices/main.yml"
-  when:
-    - SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES not in disabled_cis_rules
-
 - name: "SECTION | {{ SEC_ID_NETWORK_PARAMETERS_HOST_ONLY }} | Network Parameters (Host Only)"
   include_tasks: "../modular/network_paramets_host_only/main.yml"
   when:
@@ -24,3 +19,13 @@
   include_tasks: "../modular/firewall_configuration/main.yml"
   when:
     - SEC_ID_FIREWALL_CONFIGURATION not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | Disable Wireless"
+  include_tasks: "../modular/disable_wireless/main.yml"
+  when:
+    - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_DISABLE_IPV6 }} | Disable Ipv6"
+  include_tasks: "../modular/disable_ipv6/main.yml"
+  when:
+    - SEC_ID_ENSURE_DISABLE_IPV6 not in disabled_cis_rules

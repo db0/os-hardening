@@ -1,0 +1,75 @@
+# Setting added via ansible CIS remediation playbook
+
+{% if SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED not in disabled_cis_rules %}
+# Filesystem sysctl
+# CIS 1.6.1
+fs.suid_dumpable = 0
+{% endif %}
+{% if SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED not in disabled_cis_rules %}
+# Kernel sysctl
+# CIS 1.6.2
+kernel.randomize_va_space = 2
+{% endif %}
+
+# Network sysctl
+{% if SEC_ID_ENSURE_IP_FORWARDING_DISABLED not in disabled_cis_rules %}
+# CIS 3.1.1
+net.ipv4.ip_forward = 0
+{% if SEC_ID_ENSURE_IP_FORWARDING_DISABLED not in disabled_cis_rules and linuxcis_ipv6_required %}
+net.ipv6.conf.all.forwarding = 0
+{% endif %}
+{% endif %}
+{% if SEC_ID_ENSURE_PACKET_REDIRECT_DISABLED not in disabled_cis_rules %}
+# CIS 3.1.2
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
+{% endif %}
+{% if SEC_ID_ENSURE_SOURCE_ROUTED_PACKETS_NOT_ACCEPTED not in disabled_cis_rules %}
+# CIS 3.2.1
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+{% if SEC_ID_ENSURE_SOURCE_ROUTED_PACKETS_NOT_ACCEPTED not in disabled_cis_rules and linuxcis_ipv6_required %}
+net.ipv6.conf.all.accept_source_route = 0
+net.ipv6.conf.default.accept_source_route = 0
+{% endif %}
+{% endif %}
+{% if SEC_ID_ENSURE_ICMP_REDIRECTS_NOT_ACCEPTED not in disabled_cis_rules %}
+# CIS 3.2.2
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+{% if SEC_ID_ENSURE_ICMP_REDIRECTS_NOT_ACCEPTED not in disabled_cis_rules and linuxcis_ipv6_required %}
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv6.conf.default.accept_redirects = 0
+{% endif %}
+{% endif %}
+{% if SEC_ID_ENSURE_SECURE_ICMP_REDIRECTS_NOT_ACCEPTED not in disabled_cis_rules %}
+# CIS 3.2.3
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+{% endif %}
+{% if SEC_ID_ENSURE_SUSPICIOUS_PACKETS_LOGGED not in disabled_cis_rules %}
+# CIS 3.2.4
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+{% endif %}
+{% if SEC_ID_ENSURE_BROADCAST_ICMP_REQUESTS_IGNORED not in disabled_cis_rules %}
+# CIS 3.2.5
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+{% endif %}
+{% if SEC_ID_ENSURE_BOGUS_ICMP_RESPONSES_IGNORED not in disabled_cis_rules %}
+# CIS 3.2.6
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+{% endif %}
+{% if SEC_ID_ENSURE_REVERSE_PATH_FILTERING_ENABLED not in disabled_cis_rules %}
+# CIS 3.2.7
+net.ipv4.conf.default.rp_filter = 1
+{% endif %}
+{% if SEC_ID_ENSURE_TCP_SYN_COOKIES_ENABLED not in disabled_cis_rules %}
+# CIS 3.2.8
+net.ipv4.tcp_syncookies = 1
+{% endif %}
+{% if SEC_ID_ENSURE_ROUTER_ADVERTISEMENTS_NOT_ACCEPTED not in disabled_cis_rules %}
+# CIS 3.2.9
+net.ipv6.conf.all.accept_ra = 0
+net.ipv6.conf.default.accept_ra = 0
+{% endif %}

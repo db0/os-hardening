@@ -1,0 +1,39 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | AUDIT | Ensure root PATH Integrity | Determine empty value"
+  shell: 'echo $PATH | grep ::'
+  become: yes
+  register: path_colon
+  changed_when: false
+  failed_when: path_colon.rc == 0
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | AUDIT | Ensure root PATH Integrity | Determin colon end"
+  shell: 'echo $PATH | grep :$'
+  become: yes
+  register: path_colon_end
+  changed_when: false
+  failed_when: path_colon_end.rc == 0
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | AUDIT | Ensure root PATH Integrity | Determine dot in path"
+  shell: "/bin/bash --login -c 'env | grep ^PATH=' | grep ^PATH | sed -e 's/PATH=//' -e 's/::/:/' -e 's/:$//' -e 's/:/\\n/g'"
+  become: yes
+  register: dot_in_path
+  changed_when: false
+  failed_when: '"." in dot_in_path.stdout_lines'
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | AUDIT | Ensure root PATH Integrity | Alert on empty value, colon end, and dot in path"
+  debug:
+      msg:
+          - "The following paths have an empty value: {{ path_colon.stdout_lines }}"
+          - "The following paths have colon end: {{ path_colon_end.stdout_lines }}"
+          - "The following paths have a dot in the path: {{ dot_in_path.stdout_lines }}"
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | PATCH | Ensure root PATH Integrity | Determine rights and owner"
+  file: >
+      path='{{ item }}'
+      follow=yes
+      state=directory
+      owner=root
+      mode='o-w,g-w'
+  loop: "{{ dot_in_path.stdout_lines }}"
+

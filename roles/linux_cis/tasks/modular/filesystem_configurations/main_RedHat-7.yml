@@ -1,0 +1,199 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_TMP }} | PATCH | Ensure /tmp is configured"
+  include_tasks: "ensure_tmp_configured.yml"
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - mounts
+      - rule_1.1.2
+      - rule_1.1.3
+      - rule_1.1.4
+      - rule_1.1.5
+
+- name: "{{ SEC_ID_CONFIGURE_SHM }} | L1 | AUDIT | Ensure /dev/shm is configured"
+  block:
+      - name: "{{ SEC_ID_CONFIGURE_SHM }} | L1 | AUDIT | Ensure separate partition exists for {{ required_mount }} | Absent"
+        debug:
+            msg: "Warning! {{ required_mount }} doesn't exist. This is a manual task"
+        register: dev_shm_mount_absent
+        changed_when: dev_shm_mount_absent.skipped is undefined
+        when:
+            - required_mount not in mount_names
+      - name: "{{ SEC_ID_CONFIGURE_SHM }} | L1 | AUDIT | Ensure separate partition exists for {{ required_mount }} | Present"
+        debug:
+            msg: "Congratulations: {{ required_mount }} exists."
+        register: dev_shm_mount_present
+        when:
+            - required_mount in mount_names
+  vars:
+      required_mount: '/dev/shm'
+  when:
+      - SEC_ID_CONFIGURE_SHM not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - mounts
+      - rule_1.1.6
+
+- name: |
+         "{{ SEC_ID_CONFIGURE_SHM_NODEV }} | L1 | PATCH | Ensure noexec option set on /dev/shm partition | skips if mount absent"
+         "{{ SEC_ID_CONFIGURE_SHM_NOSUID }} | L1 | PATCH | Ensure nosuid option set on /dev/shm partition | skips if mount absent"
+         "{{ SEC_ID_CONFIGURE_SHM_NOEXEC }} | L1 | PATCH | Ensure noexec option set on /dev/shm partition | skips if mount absent"
+  mount:
+      name: /dev/shm
+      src: tmpfs
+      fstype: tmpfs
+      state: present
+      opts: defaults,{% if SEC_ID_CONFIGURE_SHM_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_SHM_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_SHM_NOSUID not in disabled_cis_rules %}nosuid{% endif %},seclabel
+  notify: remount dev_shm
+  when:
+      - SEC_ID_CONFIGURE_SHM_NODEV not in disabled_cis_rules
+      - SEC_ID_CONFIGURE_SHM_NOSUID not in disabled_cis_rules
+      - SEC_ID_CONFIGURE_SHM_NOEXEC not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - mounts
+      - rule_1.1.7
+      - rule_1.1.8
+      - rule_1.1.9
+
+- name: "{{ SEC_ID_SEPARATE_VAR }} | L2 | AUDIT | Ensure separate partition exists for {{ required_mount }} | skips if mount absent"
+  include_tasks: "ensure_separate_filesystem_partition.yml"
+  vars:
+      required_mount: '/var'
+      cis_section: "{{ SEC_ID_SEPARATE_VAR }}"
+      cis_level: L2
+  when:
+      - SEC_ID_SEPARATE_VAR not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - scored
+      - audit
+      - mounts
+      - rule_1.1.10
+
+- name: "{{ SEC_ID_SEPARATE_VAR_TMP }} | L2 | AUDIT | Ensure separate partition exists for {{ required_mount }} | skips if mount absent"
+  include_tasks: "ensure_separate_filesystem_partition.yml"
+  vars:
+      required_mount: '/var/tmp'
+      cis_section: "{{ SEC_ID_SEPARATE_VAR_TMP }}"
+      cis_level: L2
+  when:
+      - SEC_ID_SEPARATE_VAR_TMP not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - scored
+      - audit
+      - mounts
+      - rule_1.1.11
+
+- name: |
+          "{{ SEC_ID_CONFIGURE_VAR_TMP_NODEV }} | L1 | PATCH | Ensure noexec option set on /var/tmp partition | skips if mount absent"
+          "{{ SEC_ID_CONFIGURE_VAR_TMP_NOSUID }} | L1 | PATCH | Ensure nodec option set on /var/tmp partition | skips if mount absent"
+          "{{ SEC_ID_CONFIGURE_VAR_TMP_NOEXEC }} | L1 | PATCH | Ensure nosuid option set on /var/tmp partition | skips if mount absent"
+  mount:
+      name: /var/tmp
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      state: present
+      opts: defaults,{% if SEC_ID_CONFIGURE_VAR_TMP_NOEXEC not in disabled_cis_rules %}noexec,{% endif %}{% if SEC_ID_CONFIGURE_VAR_TMP_NODEV not in disabled_cis_rules %}nodev,{% endif %}{% if SEC_ID_CONFIGURE_VAR_TMP_NOSUID not in disabled_cis_rules %}nosuid{% endif %}
+  loop: "{{ ansible_mounts }}"
+  when:
+      - var_tmp_mount_present is defined
+      - item.mount == "/var/tmp"
+      - SEC_ID_CONFIGURE_VAR_TMP_NODEV not in disabled_cis_rules
+      - SEC_ID_CONFIGURE_VAR_TMP_NOSUID not in disabled_cis_rules
+      - SEC_ID_CONFIGURE_VAR_TMP_NOEXEC not in disabled_cis_rules
+
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - mounts
+      - skip_ansible_lint
+
+
+- name: "{{ SEC_ID_SEPARATE_VAR_LOG }} | L2 | AUDIT | Ensure separate partition exists for {{ required_mount }} | skips if mount absent"
+  include_tasks: "ensure_separate_filesystem_partition.yml"
+  vars:
+      required_mount: '/var/log'
+      cis_section: "{{ SEC_ID_SEPARATE_VAR_LOG }}"
+      cis_level: L2
+  when:
+      - SEC_ID_SEPARATE_VAR_LOG not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - scored
+      - audit
+      - mounts
+      - rule_1.1.15
+
+- name: "{{ SEC_ID_SEPARATE_VAR_LOG_AUDIT }} | L2 | AUDIT | Ensure separate partition exists for {{ required_mount }} | skips if mount absent"
+  include_tasks: "ensure_separate_filesystem_partition.yml"
+  vars:
+      required_mount: '/var/log/audit'
+      cis_section: "{{ SEC_ID_SEPARATE_VAR_LOG_AUDIT }}"
+      cis_level: L2
+  when:
+      - SEC_ID_SEPARATE_VAR_LOG_AUDIT not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - scored
+      - audit
+      - mounts
+      - rule_1.1.16
+
+- name: "{{ SEC_ID_SEPARATE_HOME }} | L2 | AUDIT | Ensure separate partition exists for {{ required_mount }} | skips if mount absent"
+  include_tasks: "ensure_separate_filesystem_partition.yml"
+  vars:
+      required_mount: '/home'
+      cis_section: "{{ SEC_ID_SEPARATE_HOME }}"
+      cis_level: L2
+  when:
+      - SEC_ID_SEPARATE_HOME not in disabled_cis_rules
+      - linuxcis_level2
+  tags:
+      - level2-server
+      - level2-workstation
+      - scored
+      - audit
+      - mounts
+      - rule_1.1.17
+
+- name: "{{ SEC_ID_CONFIGURE_HOME_NODEV }} | L1 | PATCH | Ensure nodev option set on /home partition | skips if mount absent"
+  mount:
+      name: /home
+      src: "{{ item.device }}"
+      fstype: "{{ item.fstype }}"
+      state: present
+      opts: defaults,{% if SEC_ID_CONFIGURE_HOME_NODEV not in disabled_cis_rules %}nodev{% endif %}
+  loop: "{{ ansible_mounts }}"
+  when:
+      - home_mount_present is defined
+      - item.mount == "/home"
+      - SEC_ID_CONFIGURE_HOME_NODEV not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - mounts
+      - rule_1.1.18
+      - skip_ansible_lint

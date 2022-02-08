@@ -1,0 +1,18 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_SSH_PRIVATE_HOST_KEY_FILES }} | L1 | AUDIT | Ensure permissions on SSH private host key files are configured"
+  find:
+      paths:
+          - /etc/ssh
+      patterns: 'ssh_host_*_key'
+      recurse: true
+      file_type: any
+  register: rhel_sshd_priv_results_out
+
+- name: "{{ SEC_ID_ENSURE_SSH_PRIVATE_HOST_KEY_FILES }} | L1 | AUDIT | Ensure permissions on SSH private host key files are configured"
+  file:
+      path: "{{ item.path }}"
+      owner: root
+      group: root
+      mode: 0600
+  loop: "{{ rhel_sshd_priv_results_out.files }}"
