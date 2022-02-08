@@ -8,6 +8,8 @@
       - "disable_unused_filesystems_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
       - "disable_unused_filesystems_{{ ansible_facts.distribution }}.yml"
       - "disable_unused_filesystems_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_FILESYSTEM_CONFIGURATIONS }} | Distribution Specific Order"
   include_tasks: "{{ lookup('first_found', dist_tasks) }}"
@@ -17,6 +19,8 @@
       - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
       - "main_{{ ansible_facts.distribution }}.yml"
       - "main_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_FILESYSTEM_CONFIGURATIONS not in disabled_cis_rules
 
 - name: |
       "{{ SEC_ID_CONFIGURE_MEDIA_NODEV }} | L1 | PATCH | Ensure removable media partitions include noexec option"
