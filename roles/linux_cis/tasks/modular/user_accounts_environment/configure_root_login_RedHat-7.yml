@@ -16,6 +16,7 @@
   when:
       - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - audit
       - rule_5.6

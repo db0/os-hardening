@@ -245,7 +245,9 @@ linuxcis_system_is_log_server: false
 
 # SSH variables
 linuxcis_ssh_loglevel: INFO
-linuxcis_ssh_maxsessions: 10
+linuxcis_ssh_maxsessions: 4
+linuxcis_inactivelock:
+    lock_days: 30
 linuxcis_sshd:
     clientalivecountmax: 3
     clientaliveinterval: 300
@@ -267,8 +269,6 @@ linuxcis_pam_faillock:
     fail_for_root: no
     remember: 5
     pwhash: sha512
-linuxcis_inactivelock:
-    lock_days: 30
 
 # 5.3.1/5.3.2 Custom authselect profile settings. Settings in place now will fail, they are place holders from the control example
 # Due to the way many multiple options and ways to configure this control needs to be enabled and settings adjusted to minimise risk
@@ -309,8 +309,11 @@ linuxcis_pam_password:
     minlen: "14"
     minclass: "4"
 
-# Interactive user UID starting point
-linuxcis_rule_5_4_2_min_uid: 1000
+# UID settings for interactive users
+# These are discovered via logins.def is set true
+discover_int_uid: false
+min_int_uid: 1000
+max_int_uid: 65533
 
 # RHEL-07-5.4.5
 # Session timeout setting file (TMOUT setting can be set in multiple files)
@@ -321,13 +324,13 @@ linuxcis_shell_session_timeout:
 # RHEL-07-5.4.1.5 Allow ansible to expire password for account with a last changed date in the future. False will just display users in violation, true will expire those users passwords
 linuxcis_futurepwchgdate_autofix: true
 
-# 5.4.2
-linuxcis_int_gid: 1000
-
 # 5.6 Group to be used for su
 # this group needs to exists groups will not be created for remediation this is considered sys admins
 
 # linuxcis_sugroup: sugroup
+
+# wheel users list
+linuxcis_sugroup_users: "root"
 
 ## Section6 vars
 
