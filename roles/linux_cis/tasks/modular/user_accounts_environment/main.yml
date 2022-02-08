@@ -1,8 +1,10 @@
 ---
 
 
-- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Set Shadow Suite Parameters"
+- name: "SECTION | {{ SEC_ID_SET_SHADOW_SUITE_PARAMETERS }} | Set Shadow Suite Parameters"
   include_tasks: shadow_suite_parameters.yml
+  when:
+      - SEC_ID_SET_SHADOW_SUITE_PARAMETERS not in disabled_cis_rules
 
 - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | Ensure system accounts are secured"
   block:
