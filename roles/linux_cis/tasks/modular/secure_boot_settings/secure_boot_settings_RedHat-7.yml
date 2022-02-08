@@ -15,7 +15,13 @@
       - rule_1.4.1
 
 - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured"
-  include_tasks: "ensure_bootloader_configured.yml"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}.yml"
   when:
       - SEC_ID_BOOTLOADER_PERMS not in disabled_cis_rules
   tags:
