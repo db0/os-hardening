@@ -15,7 +15,7 @@
         with_items:
             - { name: minlen, value: "{{ linuxcis_pam_password.minlen }}" }
             - { name: minclass, value: "{{ linuxcis_pam_password.minclass }}" }
-        when: linuxcis_rule_5_4_1
+        when: SEC_ID_ENSURE_PASSWORD_CREATION_REQS not in disabled_cis_rules
 
       - name: |
           "{{ SEC_ID_ENSURE_PASSWORD_CREATION_REQS }} | L1 | PATCH | Ensure password creation requirements are configured | Set system-auth retry settings
