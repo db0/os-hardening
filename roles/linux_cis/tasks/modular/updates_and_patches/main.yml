@@ -8,9 +8,8 @@
       - SEC_ID_ENSURE_UPDATES_AND_PATCHES_INSTALLED not in disabled_cis_rules
       - not system_is_ec2
   tags:
-      - level1
+      - level1-server
+      - level1-workstation
       - patch
       - rule_1.9
       - skip_ansible_lint
-#   vars:
-#       ansible_python_interpreter: /bin/python

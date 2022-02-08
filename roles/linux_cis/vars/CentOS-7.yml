@@ -6,6 +6,7 @@ GRUB_CFG_PATH: /etc/grub2.cfg
 
 AUDITD_PKG: audit
 CRON_PKG: cronie
+GDM_PKG: gdm
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot

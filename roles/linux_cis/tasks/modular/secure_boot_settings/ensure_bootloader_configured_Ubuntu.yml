@@ -1,11 +1,8 @@
 ---
 
-- debug:
-    var: grub_cfg.stat
-
 - name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured | Update grub config settings"
   file:
-      path: "{{ grub_cfg.stat.source }}"
+      path: "{{ grub_cfg.stat.path }}"
       owner: root
       group: root
       mode: 0600

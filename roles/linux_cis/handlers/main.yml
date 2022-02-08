@@ -179,3 +179,6 @@
 - name: systemd_daemon_reload
   systemd:
       daemon-reload: true
+
+- name: reload gdm
+  command: dpkg-reconfigure gdm3

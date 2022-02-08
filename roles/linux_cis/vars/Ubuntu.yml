@@ -5,6 +5,7 @@ GRUB_CFG_PATH: /boot/grub/grub.cfg
 
 AUDITD_PKG: auditd
 CRON_PKG: cron
+GDM_PKG: gdm3
 XORG_PKG: 'xserver-xorg*'
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
