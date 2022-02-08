@@ -1,0 +1,15 @@
+---
+UEFI_BOOTLOADER_PATH: /boot/efi/EFI/ubuntu/
+LEGACY_BOOTLOADER_PATH: /boot/grub/
+
+XORG_PKG: 'xserver-xorg*'
+SELINUX_PKG: libselinux
+SETROUBLESHOOT_PKG: setroubleshoot
+XINETD_PKG: xinetd
+FIREWALL_PKGS:
+  ufw:
+  - ufw
+  nftables:
+  - nftables
+  iptables:
+  - iptables
