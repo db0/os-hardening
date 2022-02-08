@@ -1,0 +1,95 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_NIS_CLIENT_NOT_INSTALLED }} | L1 | PATCH | Ensure NIS client is not installed"
+  package:
+      name: nis
+      state: absent
+  when:
+      - not linuxcis_ypbind_required
+      - "'ypbind' in ansible_facts.packages"
+      - SEC_ID_ENSURE_NIS_CLIENT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - nis
+      - patch
+      - rule_2.3.1
+
+- name: "{{ SEC_ID_ENSURE_RSH_CLIENT_NOT_INSTALLED }} | L1 | PATCH | Ensure rsh client is not installed"
+  package:
+      name: rsh-client
+      state: absent
+  when:
+      - not linuxcis_rsh_required
+      - "'rsh' in ansible_facts.packages"
+      - SEC_ID_ENSURE_RSH_CLIENT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - rsh
+      - patch
+      - rule_2.3.2
+
+- name: "{{ SEC_ID_ENSURE_TALK_CLIENT_NOT_INSTALLED }} | L1 | PATCH | Ensure talk client is not installed"
+  package:
+      name: talk
+      state: absent
+#   vars:
+#       ansible_python_interpreter: /bin/python
+  when:
+      - not linuxcis_talk_required
+      - "'talk' in ansible_facts.packages"
+      - SEC_ID_ENSURE_TALK_CLIENT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - talk
+      - patch
+      - rule_2.3.3
+
+- name: "{{ SEC_ID_ENSURE_TELNET_CLIENT_NOT_INSTALLED }} | L1 | PATCH | Ensure telnet client is not installed"
+  package:
+      name: telnet
+      state: absent
+#   vars:
+#       ansible_python_interpreter: /bin/python
+  when:
+      - "'telnet' in ansible_facts.packages"
+      - not linuxcis_telnet_required
+      - SEC_ID_ENSURE_TELNET_CLIENT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - telnet
+      - patch
+      - rule_2.3.4
+
+- name: "{{ SEC_ID_ENSURE_LDAP_CLIENT_NOT_INSTALLED }} | L1 | PATCH | Ensure LDAP client is not installed"
+  package:
+      name: ldap-utils
+      state: absent
+  when:
+      - not linuxcis_openldap_clients_required
+      - "'openldap-client' in ansible_facts.packages"
+      - SEC_ID_ENSURE_LDAP_CLIENT_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ldap_client
+      - patch
+      - rule_2.3.5
+
+- name: "{{ SEC_ID_ENSURE_RPC_NOT_ENABLED }} | L1 | PATCH | Ensure rpcbind is not installed or the rpcbind services are masked"
+  package:
+      name: rpcbind
+      state: absent
+  when:
+      - "'rpcbind' in ansible_facts.packages"
+      - SEC_ID_ENSURE_RPC_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - rpc
+      - services
+      - patch
+      - rule_2.2.18

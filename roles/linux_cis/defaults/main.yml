@@ -184,6 +184,11 @@ linuxcis_time_synchronization_servers:
     - 2.pool.ntp.org
     - 3.pool.ntp.org
 
+ubuntucis_ntp_server_list: "0.debian.pool.ntp.org 1.debian.pool.ntp.org"
+ubuntucis_ntp_fallback_server_list: "2.debian.pool.ntp.org 3.debian.pool.ntp.org"
+# ubuntucis_chrony_user is the user that chrony will use, default is _chrony
+ubuntucis_chrony_user: "_chrony"
+
 linuxcis_chrony_server_options: "minpoll 8"
 linuxcis_ntp_server_options: "iburst"
 
