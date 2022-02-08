@@ -2,12 +2,13 @@ Linux CIS Hardening
 ================
 
 
-Configure Linux 7 machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
+Configure Linux machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
 
 Currently Supported
 
 * RHEL/Centos 7 - [CIS RedHat Enterprise Linux 7 Benchmark v3.1.1 - 05-21-2021 ](https://www.cisecurity.org/cis-benchmarks/)
 * RHEL/Centos 8
+* RHEL 9
 
 Caution(s)
 ---------
@@ -36,7 +37,10 @@ This is a much quicker, very lightweight, checking (where possible) config compl
 A new form of auditing has been developed, by using a small (12MB) go binary called [goss](https://github.com/aelsabbahy/goss) along with the relevant configurations to check. Without the need for infrastructure or other tooling.
 This audit will not only check the config has the correct setting but aims to capture if it is running with that configuration also trying to remove [false positives](https://www.mindpointgroup.com/blog/is-compliance-scanning-still-relevant/) in the process.
 
-Refer to [RHEL7-CIS-Audit](https://github.com/ansible-lockdown/RHEL7-CIS-Audit).
+Refer to:
+- [RHEL7-CIS-Audit](https://github.com/ansible-lockdown/RHEL7-CIS-Audit).
+- [RHEL8-CIS-Audit](https://github.com/ansible-lockdown/RHEL8-CIS-Audit).
+- [RHEL9-CIS-Audit](https://github.com/ansible-lockdown/RHEL9-CIS-Audit).
 
 Documentation
 -------------
