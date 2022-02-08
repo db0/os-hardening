@@ -180,5 +180,8 @@
   systemd:
       daemon-reload: true
 
+- name: grub update
+  command: update-grub
+
 - name: reload gdm
   command: dpkg-reconfigure gdm3
