@@ -1,0 +1,55 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS }} | L1 | AUDIT | Ensure users' home directories permissions are 750 or more restrictive"
+  stat:
+      path: "{{ item }}"
+  with_items: "{{ linuxcis_passwd | selectattr('uid', '>=', 1000) | selectattr('uid', '!=', 65534) | map(attribute='dir') | list }}"
+  register: linuxcis_homedir_perms_audit
+
+- name: "{{ SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS }} | L1 | AUDIT | Ensure users' home directories permissions are 750 or more restrictive"
+  command: find -H {{ item.0 | quote }} -not -type l -perm /027
+  check_mode: false
+  register: linuxcis_homedir_perms_patch_audit
+  changed_when: linuxcis_homedir_perms_patch_audit.stdout != ""
+  when:
+      - ansible_check_mode
+      - item.1.exists
+  with_together:
+      - "{{ linuxcis_homedir_perms_audit.results | map(attribute='item') | list }}"
+      - "{{ linuxcis_homedir_perms_audit.results | map(attribute='stat') | list }}"
+  loop_control:
+      label: "{{ item.0 }}"
+
+- name: "{{ SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS }} | L1 | AUDIT | Ensure users' home directories permissions are 750 or more restrictive"
+  file:
+      path: "{{ item.0 }}"
+      recurse: yes
+      mode: a-st,g-w,o-rwx
+  register: linuxcis_homedir_perms_patch
+  when:
+      - not ansible_check_mode
+      - item.1.exists
+  with_together:
+      - "{{ linuxcis_homedir_perms_audit.results | map(attribute='item') | list }}"
+      - "{{ linuxcis_homedir_perms_audit.results | map(attribute='stat') | list }}"
+  loop_control:
+      label: "{{ item.0 }}"
+
+# set default ACLs so the homedir has an effective umask of 0027
+- name: "{{ SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS }} | L1 | PATCH | Ensure users' home directories permissions are 750 or more restrictive"
+  acl:
+      path: "{{ item.0 }}"
+      default: yes
+      state: present
+      recursive: yes
+      etype: "{{ item.1.etype }}"
+      permissions: "{{ item.1.mode }}"
+  when: not linuxcis_system_is_container
+  with_nested:
+      - "{{ (ansible_check_mode | ternary(linuxcis_homedir_perms_patch_audit, linuxcis_homedir_perms_patch)).results |
+        rejectattr('skipped', 'defined') | map(attribute='item') | map('first') | list }}"
+      -
+          - etype: group
+            mode: rx
+          - etype: other
+            mode: '0'

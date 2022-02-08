@@ -1,0 +1,25 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_USERS_DOTFILE_PERMS }} | L1 | AUDIT | Ensure users' dot files are not group or world-writable | Check for files"
+  shell: find /home/ -name "\.*" -perm /g+w,o+w
+  become: yes
+  changed_when: false
+  failed_when: false
+  register: linuxcis_dotfile_perms_audit
+
+- name: "{{ SEC_ID_ENSURE_USERS_DOTFILE_PERMS }} | L1 | AUDIT | Ensure users' dot files are not group or world-writable | Alert on files found"
+  debug:
+      msg: "Good news! We have not found any group or world-writable dot files on your sytem"
+  failed_when: false
+  changed_when: false
+  when:
+      - linuxcis_dotfile_perms_audit.stdout is not defined
+
+- name: "{{ SEC_ID_ENSURE_USERS_DOTFILE_PERMS }} | L1 | PATCH | Ensure users' dot files are not group or world-writable | Changes files if configured"
+  file:
+      path: '{{ item }}'
+      mode: go-w
+  with_items: "{{ linuxcis_dotfile_perms_audit.stdout_lines }}"
+  when:
+      - linuxcis_dotfile_perms_audit.stdout is defined
+      - linuxcis_dotperm_ansiblemanaged

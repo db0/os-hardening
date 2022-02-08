@@ -1,0 +1,326 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_ETC_SHADOW_NOT_EMPTY }} | L1 | PATCH |  Ensure /etc/shadow password fields are not empty"
+  command: passwd -l {{ item }}
+  changed_when: false
+  failed_when: false
+  loop: "{{ empty_password_accounts.stdout_lines }}"
+  when:
+      - empty_password_accounts.rc
+      - SEC_ID_ENSURE_ETC_SHADOW_NOT_EMPTY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.2
+
+- name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_PASSWD }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/passwd"
+  shell: sed -i '/^+/ d' /etc/passwd
+  args:
+      warn: false
+  changed_when: false
+  failed_when: false
+  when:
+      - rhel9cis_rule_6_2_2
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.2
+      - skip_ansible_lint
+
+- name: "{{ SEC_ID_ENSURE_ROOT_PATH_INTEGRITY }} | L1 | PATCH | Ensure root PATH Integrity"
+  include_tasks: "ensure_root_path_integrity.yml"
+  when:
+      - SEC_ID_ENSURE_ROOT_PATH_INTEGRITY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.10
+
+- name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_SHADOW }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/shadow"
+  shell: sed -i '/^+/ d' /etc/shadow
+  args:
+      warn: false
+  changed_when: false
+  failed_when: false
+  when:
+      - rhel9cis_rule_6_2_4
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.4
+      - skip_ansible_lint
+
+- name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_GROUP }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/group"
+  shell: sed -i '/^+/ d' /etc/group
+  args:
+      warn: false
+  changed_when: false
+  failed_when: false
+  when:
+      - rhel9cis_rule_6_2_5
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.5
+      - skip_ansible_lint
+
+- name: "{{ SEC_ID_ENSURE_ONLY_ROOT_UID_0 }} | L1 | PATCH | Ensure root is the only UID 0 account"
+  command: passwd -l {{ item }}
+  changed_when: false
+  failed_when: false
+  loop: "{{ uid_zero_accounts_except_root.stdout_lines }}"
+  when:
+      - uid_zero_accounts_except_root.rc
+      - SEC_ID_ENSURE_ONLY_ROOT_UID_0 not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.9
+
+- name: "{{ SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS }} | L1 | PATCH | Ensure users' home directories permissions are 750 or more restrictive"
+  include_tasks: "ensure_user_homedir_permissions.yml"
+  when:
+      - SEC_ID_ENSURE_USERS_HOMEDIRS_PERMS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.13
+
+- name: "{{ SEC_ID_ENSURE_USERS_OWN_HOMEDIRS }} | L1 | PATCH | Ensure users own their home directories"
+  file:
+      path: "{{ item.dir }}"
+      owner: "{{ item.id }}"
+      state: directory
+  with_items: "{{ linuxcis_passwd | selectattr('uid', '>=', 1000) | selectattr('uid', '!=', 65534) | list }}"
+  loop_control:
+      label: "{{ linuxcis_passwd_label }}"
+  when:
+      - SEC_ID_ENSURE_USERS_OWN_HOMEDIRS not in disabled_cis_rules
+  tags:
+      - skip_ansible_lint
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.12
+
+- name: "{{ SEC_ID_ENSURE_USERS_DOTFILE_PERMS }} | L1 | PATCH | Ensure users' dot files are not group or world-writable"
+  include_tasks: "ensure_user_dotfile_perms.yml"
+  when:
+      - SEC_ID_ENSURE_USERS_DOTFILE_PERMS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.14
+
+- name: "{{ SEC_ID_ENSURE_NO_DOTFORWARD }} | L1 | PATCH | Ensure no users have .forward files"
+  file:
+      state: absent
+      dest: "~{{ item }}/.forward"
+  loop: "{{ users.stdout_lines }}"
+  when:
+      - SEC_ID_ENSURE_NO_DOTFORWARD not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.15
+
+- name: "{{ SEC_ID_ENSURE_NO_DOTNETRC }} | L1 | PATCH | Ensure no users have .netrc files"
+  file:
+      state: absent
+      dest: "~{{ item }}/.netrc"
+  with_items: "{{ users.stdout_lines }}"
+  when:
+      - SEC_ID_ENSURE_NO_DOTNETRC not in disabled_cis_rules
+  tags:
+      - level1
+      - patch
+      - rule_6.2.16
+
+- name: "{{ SEC_ID_ENSURE_NO_DOTRHOSTS }} | L1 | PATCH | Ensure no users have .rhosts files"
+  file:
+      state: absent
+      dest: "~{{ item }}/.rhosts"
+  with_items: "{{ users.stdout_lines }}"
+  when:
+      - SEC_ID_ENSURE_NO_DOTRHOSTS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.17
+
+- name: "{{ SEC_ID_ENSURE_ETC_PASSWRD_EXIST_IN_ETC_GROUP }} | L1 | PATCH | Ensure all groups in /etc/passwd exist in /etc/group"
+  block:
+      - name: "{{ SEC_ID_ENSURE_ETC_PASSWRD_EXIST_IN_ETC_GROUP }} | L1 | AUDIT | Ensure all groups in /etc/passwd exist in /etc/group | Check /etc/passwd entries"
+        shell: pwck -r | grep 'no group' | awk '{ gsub("[:\47]",""); print $2}'
+        changed_when: false
+        failed_when: false
+        check_mode: false
+        register: passwd_gid_check
+
+      - name: "{{ SEC_ID_ENSURE_ETC_PASSWRD_EXIST_IN_ETC_GROUP }} | L1 | AUDIT | Ensure all groups in /etc/passwd exist in /etc/group | Print message that all groups match between passwd and group files"
+        debug:
+            msg: "Good News! There are no users that have non-existent GUIDs (Groups)"
+        when: passwd_gid_check.stdout is not defined
+
+      - name: "{{ SEC_ID_ENSURE_ETC_PASSWRD_EXIST_IN_ETC_GROUP }} | L1 | AUDIT | Ensure all groups in /etc/passwd exist in /etc/group | Print warning about users with invalid GIDs missing GID entries in /etc/group"
+        debug:
+            msg: "WARNING: The following users have non-existent GIDs (Groups): {{ passwd_gid_check.stdout_lines | join (', ') }}"
+        changed_when: false
+        when: passwd_gid_check.stdout is defined
+  when:
+      - SEC_ID_ENSURE_ETC_PASSWRD_EXIST_IN_ETC_GROUP not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.3
+
+- name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_UIDS }} | L1 | PATCH | Ensure no duplicate UIDs exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_UIDS }} | L1 | AUDIT | Ensure no duplicate UIDs exist | Check for duplicate UIDs"
+        shell: "pwck -r | awk -F: '{if ($3 in uid) print $1 ; else uid[$3]}' /etc/passwd"
+        changed_when: false
+        failed_when: false
+        register: user_uid_check
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_UIDS }} | L1 | AUDIT | Ensure no duplicate UIDs exist | Print message that no duplicate UIDs exist"
+        debug:
+            msg: "Good News! There are no duplicate UID's in the system"
+        when: user_uid_check.stdout is not defined
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_UIDS }} | L1 | AUDIT | Ensure no duplicate UIDs exist | Print warning about users with duplicate UIDs"
+        debug:
+            msg: "Warning: The following users have UIDs that are duplicates: {{ user_uid_check.stdout_lines }}"
+        when: user_uid_check.stdout is defined
+  when:
+      - SEC_ID_ENSURE_NO_DUPLICATE_UIDS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.7
+
+- name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GIDS }} | L1 | PATCH | Ensure no duplicate GIDs exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GIDS }} | L1 | AUDIT | Ensure no duplicate GIDs exist | Check for duplicate GIDs"
+        shell: "pwck -r | awk -F: '{if ($3 in users) print $1 ; else users[$3]}' /etc/group"
+        changed_when: false
+        failed_when: false
+        register: user_user_check
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GIDS }} | L1 | AUDIT | Ensure no duplicate GIDs exist | Print message that no duplicate GID's exist"
+        debug:
+            msg: "Good News! There are no duplicate GIDs in the system"
+        when: user_user_check.stdout is not defined
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GIDS }} | L1 | AUDIT | Ensure no duplicate GIDs exist | Print warning about users with duplicate GIDs"
+        debug:
+            msg: "Warning: The following groups have duplicate GIDs: {{ user_user_check.stdout_lines }}"
+        when: user_user_check.stdout is defined
+  when:
+      - SEC_ID_ENSURE_NO_DUPLICATE_GIDS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.8
+
+- name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_USERNAMES }} | L1 | PATCH | Ensure no duplicate user names exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_USERNAMES }} | L1 | AUDIT | Ensure no duplicate user names exist | Check for duplicate User Names"
+        shell: "pwck -r | awk -F: '{if ($1 in users) print $1 ; else users[$1]}' /etc/passwd"
+        changed_when: false
+        failed_when: false
+        register: user_username_check
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_USERNAMES }} | L1 | AUDIT | Ensure no duplicate user names exist | Print message that no duplicate user names exist"
+        debug:
+            msg: "Good News! There are no duplicate user names in the system"
+        when: user_username_check.stdout is not defined
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_USERNAMES }} | L1 | AUDIT | Ensure no duplicate user names exist | Print warning about users with duplicate User Names"
+        debug:
+            msg: "Warning: The following user names are duplicates: {{ user_username_check.stdout_lines }}"
+        when: user_username_check.stdout is defined
+  when:
+      - SEC_ID_ENSURE_NO_DUPLICATE_USERNAMES not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.5
+
+- name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GROUPNAMES }} | L1 | PATCH | Ensure no duplicate group names exist"
+  block:
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GROUPNAMES }} | L1 | AUDIT | Ensure no duplicate group names exist | Check for duplicate group names"
+        shell: 'getent passwd | cut -d: -f1 | sort -n | uniq -d'
+        changed_when: false
+        failed_when: false
+        register: group_group_check
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GROUPNAMES }} | L1 | AUDIT | Ensure no duplicate group names exist | Print message that no duplicate groups exist"
+        debug:
+            msg: "Good News! There are no duplicate group names in the system"
+        when: group_group_check.stdout is defined
+
+      - name: "{{ SEC_ID_ENSURE_NO_DUPLICATE_GROUPNAMES }} | L1 | AUDIT | Ensure no duplicate group names exist | Print warning about users with duplicate group names"
+        debug:
+            msg: "Warning: The following group names are duplicates: {{ group_group_check.stdout_lines }}"
+        when: group_group_check.stdout is not defined
+  when:
+      - SEC_ID_ENSURE_NO_DUPLICATE_GROUPNAMES not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.6
+
+- name: "{{ SEC_ID_ENSURE_SHADOW_GROUP_EMPTY }} | L1 | AUDIT | Ensure shadow group is empty"
+  block:
+      - name: "{{ SEC_ID_ENSURE_SHADOW_GROUP_EMPTY }} | L1 | AUDIT | Ensure shadow group is empty"
+        shell: "grep ^shadow:[^:]*:[^:]*:[^:]+ /etc/group"
+        changed_when: false
+        failed_when: false
+        register: users_in_shadow_group
+
+      - name: "{{ SEC_ID_ENSURE_SHADOW_GROUP_EMPTY }} | L1 | AUDIT | Ensure shadow group is empty | Print no user in shadow group"
+        debug:
+            msg: "Good News! There are no users in the shadow group"
+        when: users_is_shadow_group.stdout is undefined
+
+      - name: "{{ SEC_ID_ENSURE_SHADOW_GROUP_EMPTY }}  L1 | AUDIT | Ensure shadow group is empty | Print no user in shadow group"
+        debug:
+            msg: "Warning: The following users are in the shadow group: {{ users_is_shadow_group.stdout_lines }}"
+        when: users_is_shadow_group.stdout is defined
+  when:
+      - SEC_ID_ENSURE_SHADOW_GROUP_EMPTY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.4
+
+- name: "{{ SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST }} | L1 | PATCH | Ensure all users' home directories exist"
+  include_tasks: "ensure_all_homedirs_exist.yml"
+  vars:
+      ld_regex: >-
+         ^user '(?P<user>.*)': directory '(?P<dir>.*)' does not exist$
+      ld_users: "{{ linuxcis_users_missing_home.stdout_lines | map('regex_replace', ld_regex, '\\g<user>') | list }}"
+      linuxcis_homedirs_exist_audit: "{{ linuxcis_passwd | selectattr('uid', '>=', 1000) | selectattr('id', 'in', ld_users) | list }}"
+  when:
+      - SEC_ID_ENSURE_ALL_HOMEDIRS_EXIST not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_6.2.11
