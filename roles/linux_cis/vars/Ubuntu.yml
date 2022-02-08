@@ -3,6 +3,7 @@ UEFI_BOOTLOADER_PATH: /boot/efi/EFI/ubuntu/
 LEGACY_BOOTLOADER_PATH: /boot/grub/
 GRUB_CFG_PATH: /boot/grub/grub.cfg
 
+AUDITD_PKG: auditd
 XORG_PKG: 'xserver-xorg*'
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot

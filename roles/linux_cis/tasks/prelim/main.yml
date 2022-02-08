@@ -64,7 +64,7 @@
 
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_SYSTEM_ACCOUNTING }} | Configure System Accounting (auditd)"
   package:
-      name: audit
+      name: "{{ AUDITD_PKG }}"
       state: present
   when: linuxcis_level2
 
