@@ -187,14 +187,21 @@ linuxcis_time_synchronization_servers:
 linuxcis_chrony_server_options: "minpoll 8"
 linuxcis_ntp_server_options: "iburst"
 
+# Section 3 Control Variables
+# Control 3.1.2
+# ubtu20cis_install_network_manager determines if this role can install network manager on Ubuntu Deployents
+ubuntucis_install_network_manager: true
+
 # 3.4.2 | PATCH | Ensure /etc/hosts.allow is configured
 linuxcis_host_allow:
     - "10.0.0.0/255.0.0.0"
     - "172.16.0.0/255.240.0.0"
     - "192.168.0.0/255.255.0.0"
 
-# Firewall Service - either firewalld or iptables
-linuxcis_firewall: firewalld
+# Firewall Service for RedHat - either firewalld, nftables or iptables
+redhatcis_firewall: firewalld
+# Firewall Service for Ubuntu - either ufw, nftables or iptables
+ubuntucis_firewall: iptables
 linuxcis_default_zone: public
 
 linuxcis_firewall_services:

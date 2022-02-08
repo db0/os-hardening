@@ -70,7 +70,7 @@
 
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_CRON }} | Configure cron"
   package:
-      name: cronie
+      name: "{{ CRON_PKG }}"
       state: present
 
 - name: PRELIM | Distribution-specific Preliminary tasks

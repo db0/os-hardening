@@ -20,7 +20,7 @@
             - FORWARD
             - OUTPUT
   when:
-      - linuxcis_firewall == "iptables"
+      - redhatcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
   tags:
       - level1-server
@@ -54,7 +54,7 @@
             jump: DROP
             ip_version: ipv6
   when:
-      - linuxcis_firewall == "iptables"
+      - redhatcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
@@ -79,7 +79,7 @@
       - { chain: INPUT, protocol: udp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: icmp, ctstate: ESTABLISHED }
   when:
-      - linuxcis_firewall == "iptables"
+      - redhatcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
@@ -109,7 +109,7 @@
             - "{{ linuxcis_3_4_4_2_4_otcp.stdout_lines }}"
         when: linuxcis_3_4_4_2_4_otcp.stdout is defined
   when:
-      - linuxcis_firewall == "iptables"
+      - redhatcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS not in disabled_cis_rules
   tags:
       - level1-server
@@ -123,7 +123,7 @@
       enabled: true
       state: started
   when:
-      - linuxcis_firewall == "iptables"
+      - redhatcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED not in disabled_cis_rules
   tags:
       - level1-server

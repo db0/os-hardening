@@ -10,7 +10,7 @@
 linuxcis_use_authconfig: false
 
 # Firewall
-linuxcis_firewall: None
+redhatcis_firewall: None
 
 # SElinux
 linuxcis_selinux_disable: true

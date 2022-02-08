@@ -4,6 +4,7 @@ LEGACY_BOOTLOADER_PATH: /boot/grub/
 GRUB_CFG_PATH: /boot/grub/grub.cfg
 
 AUDITD_PKG: auditd
+CRON_PKG: cron
 XORG_PKG: 'xserver-xorg*'
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
