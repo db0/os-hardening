@@ -13,4 +13,6 @@
   modprobe:
       name: "{{ filesystem_type }}"
       state: absent
+  # Workaround for built-in modules
+  ignore_errors: yes
   tags: always
