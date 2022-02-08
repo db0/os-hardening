@@ -25,4 +25,4 @@ linuxcis_sshd:
 
 # Workarounds for Docker
 linuxcis_skip_for_travis: true
-linuxcis_selinux_disable: true
+linuxcis_mandatory_access_control_disable: true

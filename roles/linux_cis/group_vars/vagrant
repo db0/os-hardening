@@ -25,4 +25,4 @@ linuxcis_sshd:
 
 # Vagrant can touch code that Docker cannot
 linuxcis_skip_for_travis: false
-linuxcis_selinux_disable: false
+linuxcis_mandatory_access_control_disable: false

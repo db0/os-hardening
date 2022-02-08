@@ -55,8 +55,8 @@ run_audit: false
 #### Detailed settings found at the end of this document ####
 
 
-# Enable/Disable SELinux
-linuxcis_selinux_disable: false
+# Enable/Disable SELinux or AppArmor
+linuxcis_mandatory_access_control_disable: false
 # Only for CIS for Red Hat 7
 # For 8+, this is expected to always be enforcing
 linuxcis_selinux_state: enforcing

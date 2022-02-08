@@ -29,7 +29,7 @@
 - name: "SECTION | {{ SEC_ID_MANDATORY_ACCESS_CONTROL }} | Mandatory Access Control"
   include_tasks: "../modular/mandatory_access_control/main.yml"
   when:
-    - not linuxcis_selinux_disable
+    - not linuxcis_mandatory_access_control_disable
     - SEC_ID_MANDATORY_ACCESS_CONTROL not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"

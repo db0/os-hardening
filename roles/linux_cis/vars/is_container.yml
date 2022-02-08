@@ -12,8 +12,8 @@ linuxcis_use_authconfig: false
 # Firewall
 redhatcis_firewall: None
 
-# SElinux
-linuxcis_selinux_disable: true
+# Mandatory Access Control
+linuxcis_mandatory_access_control_disable: true
 
 
 ## Related individual rules
