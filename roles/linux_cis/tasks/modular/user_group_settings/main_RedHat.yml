@@ -21,7 +21,7 @@
   changed_when: false
   failed_when: false
   when:
-      - rhel9cis_rule_6_2_2
+      - SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_PASSWD not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -46,7 +46,7 @@
   changed_when: false
   failed_when: false
   when:
-      - rhel9cis_rule_6_2_4
+      - SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_SHADOW not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -61,7 +61,7 @@
   changed_when: false
   failed_when: false
   when:
-      - rhel9cis_rule_6_2_5
+      - SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_GROUP not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
