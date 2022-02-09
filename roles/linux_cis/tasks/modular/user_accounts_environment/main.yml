@@ -88,17 +88,12 @@
 
 - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured"
   block:
-      - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/bashrc"
-        replace:
-            path: /etc/bashrc
-            regexp: '(^\s+umask) 0[012][0-6]'
-            replace: '\1 027'
-
       - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/profile"
         replace:
             path: /etc/profile
             regexp: '(^\s+umask) 0[012][0-6]'
             replace: '\1 027'
+        loop: "{{ DEFAULT_USER_SHELL_UMASK_FILES }}"
   when:
       - SEC_ID_ENSURE_DEFAULT_USER_UMASK not in disabled_cis_rules
   tags:

@@ -130,13 +130,13 @@
 
 - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | PATCH | Ensure no world writable files exist"
   block:
-      - name: "6.1.10 | L1 | AUDIT | Ensure no world writable files exist | Get list of world-writable files"
+      - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | AUDIT | Ensure no world writable files exist | Get list of world-writable files"
         shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type f -perm -0002
         args:
             warn: false
         failed_when: false
         changed_when: false
-        register: rhel_07_6_1_10_perms_results
+        register: linuxcis_world_w_seek_results
 
       - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | AUDIT | Ensure no world writable files exist | Alert no world-writable files exist"
         debug:
@@ -144,16 +144,16 @@
         failed_when: false
         changed_when: false
         when:
-            - rhel_07_6_1_10_perms_results.stdout is not defined
+            - linuxcis_world_w_seek_results.stdout is not defined
 
       - name: "{{ SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES }} | L1 | PATCH | Ensure no world writable files exist | Adjust world-writable files if they exist (Configurable)"
         file:
             path: '{{ item }}'
             mode: o-w
             state: touch
-        with_items: "{{ rhel_07_6_1_10_perms_results.stdout_lines }}"
+        with_items: "{{ linuxcis_world_w_seek_results.stdout_lines }}"
         when:
-            - rhel_07_6_1_10_perms_results.stdout_lines is defined
+            - linuxcis_world_w_seek_results.stdout_lines is defined
             - linuxcis_no_world_write_adjust
   when:
       - SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES not in disabled_cis_rules
@@ -168,7 +168,7 @@
       - name: "{{ SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS }} | L1 | AUDIT | Ensure no unowned files or directories exist | Finding all unowned files or directories"
         command: find "{{ item.mount }}" -xdev -nouser
         check_mode: false
-        register: rhel_07_6_1_11_audit
+        register: linuxcis_unowned_seek_results
         failed_when: false
         changed_when: false
         when: item['device'].startswith('/dev') and not 'bind' in item['options']
@@ -182,7 +182,7 @@
         when:
             - item.stdout_lines is defined
             - item.stdout_lines | length > 0
-        with_items: "{{ rhel_07_6_1_11_audit.results }}"
+        with_items: "{{ linuxcis_unowned_seek_results.results }}"
   when:
       - SEC_ID_ENSURE_NO_UNOWNED_FILES_DIRS not in disabled_cis_rules
   tags:
@@ -196,7 +196,7 @@
       - name: "{{ SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS }} | L1 | AUDIT | Ensure no ungrouped files or directories exist | Finding all ungrouped files or directories"
         command: find "{{ item.mount }}" -xdev -nogroup
         check_mode: false
-        register: rhel_07_6_1_12_audit
+        register: linuxcis_ungrouped_seek_results
         failed_when: false
         changed_when: false
         when: item['device'].startswith('/dev') and not 'bind' in item['options']
@@ -206,7 +206,7 @@
         debug:
             msg: "Warning - Manual intervention is required -- missing group on items in {{ item }}!"
         changed_when: item | length > 0
-        with_items: "{{ rhel_07_6_1_12_audit.results |map(attribute='stdout_lines') }}"
+        with_items: "{{ linuxcis_ungrouped_seek_results.results |map(attribute='stdout_lines') }}"
   when:
       - SEC_ID_ENSURE_NO_UNGROUPED_FILES_DIRS not in disabled_cis_rules
   tags:
@@ -222,7 +222,7 @@
         become: yes
         failed_when: false
         changed_when: false
-        register: rhel_07_6_1_13_perms_results
+        register: linuxcis_suids_seek_perms_results
         with_items: "{{ ansible_mounts }}"
 
       - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables |  Alert no SUID executables exist"
@@ -231,14 +231,14 @@
         failed_when: false
         changed_when: false
         when:
-            - rhel_07_6_1_13_perms_results.stdout is not defined
+            - linuxcis_suids_seek_perms_results.stdout is not defined
 
       - name: "{{ SEC_ID_AUDIT_SUID_EXECUTABLES }} | L1 | AUDIT | Audit SUID executables |  Alert SUID executables exist"
         debug:
             msg: "Warning - Manual intervention is required -- SUID set on items in {{ item.item.mount }}: {{ item.stout_lines | join(', ') }}"
-        with_items: "{{ rhel_07_6_1_13_perms_results.stdout_lines }}"
+        with_items: "{{ linuxcis_suids_seek_perms_results.stdout_lines }}"
         when:
-            - rhel_07_6_1_13_perms_results.stdout is defined
+            - linuxcis_suids_seek_perms_results.stdout is defined
   when:
       - SEC_ID_AUDIT_SUID_EXECUTABLES not in disabled_cis_rules
   tags:
@@ -254,7 +254,7 @@
         become: yes
         failed_when: false
         changed_when: false
-        register: rhel_07_6_1_14_perms_results
+        register: linuxcis_sgids_seek_perms_results
         with_items: "{{ ansible_mounts }}"
 
       - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables |  Alert no SGID executables exist"
@@ -263,14 +263,14 @@
         failed_when: false
         changed_when: false
         when:
-            - rhel_07_6_1_14_perms_results.stdout is not defined
+            - linuxcis_sgids_seek_perms_results.stdout is not defined
 
       - name: "{{ SEC_ID_AUDIT_SGID_EXECUTABLES }} | L1 | AUDIT | Audit SGID executables |  Alert SGID executables exist"
         debug:
             msg: "Warning - Manual intervention is required -- SGID set on items in {{ item.item.mount }}: {{ item.stout_lines | join(', ') }}"
-        with_items: "{{ rhel_07_6_1_14_perms_results.stdout_lines }}"
+        with_items: "{{ linuxcis_sgids_seek_perms_results.stdout_lines }}"
         when:
-            - rhel_07_6_1_14_perms_results.stdout is defined
+            - linuxcis_sgids_seek_perms_results.stdout is defined
   when:
       - SEC_ID_AUDIT_SGID_EXECUTABLES not in disabled_cis_rules
   tags:
