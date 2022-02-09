@@ -156,6 +156,7 @@
   tags:
       - skip_ansible_lint
 
+# Used for redhat
 - name: grub2cfg
   shell: "grub2-mkconfig -o {{ grub_cfg.stat.lnk_source }}"
   args:
@@ -163,6 +164,10 @@
   ignore_errors: True
   tags:
       - skip_ansible_lint
+
+# Used for Ubuntu
+- name: update-grub
+  command: update-grub
 
 - name: restart rsyslog
   become: yes
@@ -179,3 +184,20 @@
 - name: systemd_daemon_reload
   systemd:
       daemon-reload: true
+
+- name: reload gdm
+  command: dpkg-reconfigure gdm3
+
+- name: reload ufw
+  ufw:
+      state: reloaded
+
+- name: "make iptables persistent"
+  shell: bash -c "iptables-save > /etc/iptables/rules.v4"
+  changed_when: ubuntu20cis_iptables_save.rc == 0
+  failed_when: ubuntu20cis_iptables_save.rc > 0
+
+- name: "make ip6tables persistent"
+  shell: bash -c "iptables-save > /etc/iptables/rules.v4"
+  changed_when: ubuntu20cis_iptables_save.rc == 0
+  failed_when: ubuntu20cis_iptables_save.rc > 0

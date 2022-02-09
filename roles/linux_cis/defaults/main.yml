@@ -55,8 +55,8 @@ run_audit: false
 #### Detailed settings found at the end of this document ####
 
 
-# Enable/Disable SELinux
-linuxcis_selinux_disable: false
+# Enable/Disable SELinux or AppArmor
+linuxcis_mandatory_access_control_disable: false
 # Only for CIS for Red Hat 7
 # For 8+, this is expected to always be enforcing
 linuxcis_selinux_state: enforcing
@@ -184,8 +184,18 @@ linuxcis_time_synchronization_servers:
     - 2.pool.ntp.org
     - 3.pool.ntp.org
 
+ubuntucis_ntp_server_list: "0.debian.pool.ntp.org 1.debian.pool.ntp.org"
+ubuntucis_ntp_fallback_server_list: "2.debian.pool.ntp.org 3.debian.pool.ntp.org"
+# ubuntucis_chrony_user is the user that chrony will use, default is _chrony
+ubuntucis_chrony_user: "_chrony"
+
 linuxcis_chrony_server_options: "minpoll 8"
 linuxcis_ntp_server_options: "iburst"
+
+# Section 3 Control Variables
+# Control 3.1.2
+# ubtu20cis_install_network_manager determines if this role can install network manager on Ubuntu Deployents
+ubuntucis_install_network_manager: true
 
 # 3.4.2 | PATCH | Ensure /etc/hosts.allow is configured
 linuxcis_host_allow:
@@ -193,13 +203,23 @@ linuxcis_host_allow:
     - "172.16.0.0/255.240.0.0"
     - "192.168.0.0/255.255.0.0"
 
-# Firewall Service - either firewalld or iptables
-linuxcis_firewall: firewalld
+# Firewall Service for RedHat - either firewalld, nftables or iptables
+redhatcis_firewall: firewalld
+# Firewall Service for Ubuntu - either ufw, nftables or iptables
+ubuntucis_firewall: iptables
 linuxcis_default_zone: public
 
 linuxcis_firewall_services:
     - ssh
     - dhcpv6-client
+
+# Control 3.5.1.5
+# ubuntucis_ufw_allow_out_ports are the ports for the firewall to allow
+# if you want to allow out on all ports set variable to "all", example ubuntucis_ufw_allow_out_ports: "all"
+ubuntucis_ufw_allow_out_ports:
+    - 53
+    - 80
+    - 443
 
 # 3.5.2.x
 # NFT firewall
@@ -241,6 +261,13 @@ linuxcis_remote_log_server: logagg.example.com
 # RHEL-07-4.2.1.5
 linuxcis_system_is_log_server: false
 
+# Control 4.3 - Used in Ubuntu CIS only
+# linuxcis_logrotate_create_settings are the settings for the create parameter in /etc/logrotate.conf
+# The permissions need to be 640 or more restrictive.
+# If you would like to include user/group settings to this parameter format the var as below
+# linuxcis_logrotate_create_settings: "0640 root utmp"
+linuxcis_logrotate_create_settings: "0640"
+
 ## Section5 vars
 
 # SSH variables
@@ -269,6 +296,12 @@ linuxcis_pam_faillock:
     fail_for_root: no
     remember: 5
     pwhash: sha512
+
+# Section 5 Control Variables
+# Control 5.2.1 - For Ubuntu CIS Only
+# ubuntucis_sudo_package is the name of the sudo package to install
+# The possible values are "sudo" or "sudo-ldap"
+ubuntucis_sudo_package: "sudo"
 
 # 5.3.1/5.3.2 Custom authselect profile settings. Settings in place now will fail, they are place holders from the control example
 # Due to the way many multiple options and ways to configure this control needs to be enabled and settings adjusted to minimise risk

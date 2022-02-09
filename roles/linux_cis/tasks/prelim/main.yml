@@ -32,27 +32,17 @@
 
       - name: "PRELIM | AUDIT | set legacy boot and grub path | Bios"
         set_fact:
-            linuxcis_bootloader_path: "{{ UEFI_BOOTLOADER_PATH }}"
             linuxcis_legacy_boot: false
-            grub2_path: /etc/grub2.cfg
         when: linuxcis_efi_boot.stat.exists
 
       - name: "PRELIM | set grub fact | UEFI"
         set_fact:
-            linuxcis_bootloader_path: "{{ UEFI_BOOTLOADER_PATH }}"
             linuxcis_legacy_boot: true
-            grub2_path: /etc/grub2-efi.cfg
         when: not linuxcis_efi_boot.stat.exists
-
-# - name: debug legacy boot var
-#   debug:
-#       msg: |
-#           legacy_boot={{ rhel8cis_legacy_boot }}
-#           grub2_path={{ grub2_path }}
 
 - name: "PRELIM | AUDIT | Ensure permissions on bootloader config are configured | Get grub config file stats"
   stat:
-      path: "{{ grub2_path }}"
+      path: "{{ GRUB_CFG_PATH }}"
   changed_when: false
   register: grub_cfg
   when:
@@ -74,13 +64,13 @@
 
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_SYSTEM_ACCOUNTING }} | Configure System Accounting (auditd)"
   package:
-      name: audit
+      name: "{{ AUDITD_PKG }}"
       state: present
   when: linuxcis_level2
 
 - name: "PRELIM | Section {{ SEC_ID_CONFIGURE_CRON }} | Configure cron"
   package:
-      name: cronie
+      name: "{{ CRON_PKG }}"
       state: present
 
 - name: PRELIM | Distribution-specific Preliminary tasks

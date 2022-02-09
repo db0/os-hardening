@@ -5,7 +5,6 @@
   vars:
     cis_level: L2
   when:
-      - not linuxcis_selinux_disable
       - SEC_ID_ENSURE_SELINUX_INSTALLED not in disabled_cis_rules
       - linuxcis_level2
   tags:
@@ -20,7 +19,6 @@
   vars:
     cis_level: L2
   when:
-      - not linuxcis_selinux_disable
       - SEC_ID_ENSURE_SELINUX_NOT_DISABLED_IN_BOOTLOADER not in disabled_cis_rules
       - linuxcis_level2
   tags:
@@ -40,7 +38,6 @@
       - "ensure_selinux_policy_configured_{{ ansible_facts.distribution }}.yml"
       - "ensure_selinux_policy_configured_{{ ansible_facts.os_family }}.yml"
   when:
-      - not linuxcis_selinux_disable
       - SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED not in disabled_cis_rules
       - linuxcis_level2
   tags:
@@ -55,7 +52,6 @@
 - name: "{{ SEC_ID_ENSURE_SELINUX_MODE_ENFORCING }} | L2 | PATCH | Ensure the SELinux state is enforcing"
   include_tasks: "ensure_selinux_enforcing.yml"
   when:
-      - not linuxcis_selinux_disable
       - SEC_ID_ENSURE_SELINUX_MODE_ENFORCING not in disabled_cis_rules
       - linuxcis_level2
   tags:

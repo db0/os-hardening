@@ -1,6 +1,6 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_CONFIGURE_CRON }} | Configure time-based job schedulers"
+- name: "SECTION | {{ SEC_ID_CONFIGURE_CRON }} | Configure cron"
   include_tasks: "../modular/configure_cron/main.yml"
   when:
     - SEC_ID_CONFIGURE_CRON not in disabled_cis_rules

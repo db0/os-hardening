@@ -24,7 +24,7 @@
             - item.shell != "      /bin/false"
             - item.shell != "      /usr/sbin/nologin"
 
-      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Lock accounts"
+      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Lock non-root system accounts"
         user:
             name: "{{ item.id }}"
             password_lock: true
@@ -40,7 +40,7 @@
             - item.shell != "      /bin/false"
             - item.shell != "      /usr/sbin/nologin"
   when:
-      - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
+      - SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
@@ -48,9 +48,15 @@
       - rule_5.5.2
 
 - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0"
-  shell: usermod -g 0 root
-  changed_when: false
-  failed_when: false
+  block:
+      - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0 | Set root group to GUID 0"
+        group:
+            name: root
+            gid: 0
+      - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0 | Set root user to root group"
+        user:
+            name: root
+            group: root
   when:
       - SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 not in disabled_cis_rules
   tags:
@@ -71,11 +77,7 @@
           TMOUT={{ linuxcis_shell_session_timeout.timeout }}
           readonly TMOUT
           export TMOUT
-  loop:
-      - dest: "{{ linuxcis_shell_session_timeout.file }}"
-        state: present
-      - dest: /etc/profile
-        state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  loop: "{{ DEFAULT_USER_SHELL_TIMEOUT_FILES }}"
   when:
       - SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT not in disabled_cis_rules
       - linuxcis_level2
@@ -86,17 +88,12 @@
 
 - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured"
   block:
-      - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/bashrc"
-        replace:
-            path: /etc/bashrc
-            regexp: '(^\s+umask) 0[012][0-6]'
-            replace: '\1 027'
-
       - name: "{{ SEC_ID_ENSURE_DEFAULT_USER_UMASK }} | L1 | PATCH | Ensure default user umask is configured | Set umask for /etc/profile"
         replace:
             path: /etc/profile
             regexp: '(^\s+umask) 0[012][0-6]'
             replace: '\1 027'
+        loop: "{{ DEFAULT_USER_SHELL_UMASK_FILES }}"
   when:
       - SEC_ID_ENSURE_DEFAULT_USER_UMASK not in disabled_cis_rules
   tags:
@@ -114,6 +111,20 @@
       - "configure_root_login_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
       - "configure_root_login_{{ ansible_facts.distribution }}.yml"
       - "configure_root_login_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_5.6
 
 - name: "SECTION | {{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | Restrict su command"
   include_tasks: restrict_su_command.yml
+  when:
+      - SEC_ID_ENSURE_SU_COMMAND_RESTRICTED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_5.7

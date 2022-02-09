@@ -2,7 +2,16 @@
 
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/centos/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
+GRUB_CFG_PATH: /etc/grub2.cfg
+GRUB_RECONFIG_HANDLER: grub2cfg
 
+AIDE_PKG: aide
+AUDITD_PKG:
+  - audit
+  - audit-libs
+CRON_PKG: cronie
+CRON_SRV: crond
+SUDO_PKG: sudo
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
@@ -15,3 +24,16 @@ FIREWALL_PKGS:
   - nftables
   iptables:
   - iptables
+  - iptables-services
+# Used in SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT
+DEFAULT_USER_SHELL_TIMEOUT_FILES:
+  - dest: "{{ linuxcis_shell_session_timeout.file }}"
+    state: present
+  - dest: /etc/profile
+    state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  - dest: /etc/bashrc
+    state: present
+# Used in SEC_ID_ENSURE_DEFAULT_USER_UMASK
+DEFAULT_USER_SHELL_UMASK_FILES:
+  - /etc/bashrc
+  - /etc/profile

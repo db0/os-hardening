@@ -1,0 +1,50 @@
+---
+
+- name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure GPG keys are configured"
+  block:
+      - name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure GPG keys are configured | Get apt gpg keys"
+        command: apt-key list
+        changed_when: false
+        failed_when: false
+        check_mode: false
+        register: linuxcis_apt_gpgkeys_out
+
+      - name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure GPG keys are configured | Message out apt gpg keys"
+        debug:
+            msg:
+                - "Alert!!!! Below are the apt gpg keys configured"
+                - "Please review to make sure they are configured"
+                - "in accordance with site policy"
+                - "{{ linuxcis_apt_gpgkeys_out.stdout_lines }}"
+  when:
+      - SEC_ID_CONFIGURE_GPG_KEYS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - notscored
+      - patch
+      - rule_1.2.1
+
+- name: "{{ SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS }} | L1 | AUDIT | Ensure package manager repositories are configured"
+  block:
+      - name: "{{ SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS }} | L1 | AUDIT | Ensure package manager repositories are configured | Get repositories"
+        command: apt-cache policy
+        changed_when: false
+        failed_when: false
+        check_mode: false
+        register: ubtu20cis_apt_policy_out
+
+      - name: "{{ SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS }} | L1 | AUDIT | Ensure package manager repositories are configured | Message out repository configs"
+        debug:
+            msg:
+                - "Alert!!!! Below are the apt package repositories"
+                - "Please review to make sure they conform to your sites policies"
+                - "{{ ubtu20cis_apt_policy_out.stdout_lines }}"
+  when:
+      - SEC_ID_CONFIGURE_PACKAGE_MANAGER_REPOS not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_1.2.2
+      - skip_ansible_lint

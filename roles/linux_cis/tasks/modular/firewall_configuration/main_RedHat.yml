@@ -1,7 +1,7 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_FIREWALL_PACKAGE_INSTALLED }} | Install Firewall Package"
-  include_tasks: ensure_firewall_package_installed.yml
+  include_tasks: ensure_firewall_package_installed_RedHat.yml
   vars:
     cis_section: "{{ SEC_ID_ENSURE_FIREWALL_PACKAGE_INSTALLED }}"
     cis_section_description: "Ensure Firewall package is installed"
@@ -17,17 +17,17 @@
 - name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Configure firewalld"
   include_tasks: configure_firewalld_RedHat.yml
   when:
-  - linuxcis_firewall == "firewalld"
+  - redhatcis_firewall == "firewalld"
   - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
   include_tasks: configure_nftables_RedHat.yml
   when:
-  - linuxcis_firewall == "nftables"
+  - redhatcis_firewall == "nftables"
   - SEC_ID_CONFIGURE_NFTABLES not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables"
   include_tasks: configure_iptables_RedHat.yml
   when:
-  - linuxcis_firewall == "iptables"
+  - redhatcis_firewall == "iptables"
   - SEC_ID_CONFIGURE_IPTABLES not in disabled_cis_rules

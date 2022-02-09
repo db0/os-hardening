@@ -1,0 +1,274 @@
+---
+
+- name: "SECTION | {{ SEC_ID_TIME_SYNCHRONIZATION }} | Time Synchronization"
+  include_tasks: "time_synchronization.yml"
+
+- name: "{{ SEC_ID_ENSURE_XORG_NOT_INSTALLED }} | L1 | PATCH | Ensure X Org not installed | Distribution Specific Tasks"
+  include_tasks: "ensure_xorg_not_installed_Ubuntu.yml"
+  when:
+      - not linuxcis_xwindows_required
+      - SEC_ID_ENSURE_XORG_NOT_INSTALLED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - scored
+      - xwindows
+      - patch
+      - rule_2.2.2
+
+- name: "{{ SEC_ID_AVAHI_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure Avahi Server is not installed | disabled"
+  service:
+      name: avahi-daemon
+      state: stopped
+      enabled: no
+  when:
+      - not linuxcis_avahi_server
+      - "'avahi' in ansible_facts.packages"
+      - SEC_ID_AVAHI_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - avahi
+      - services
+      - patch
+      - rule_2.2.3
+
+- name: "{{ SEC_ID_CUPS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure CUPS is not installed"
+  package:
+      name: cups
+      state: absent
+  when:
+      - not linuxcis_cups_server
+      - SEC_ID_CUPS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - cups
+      - services
+      - patch
+      - rule_2.2.4
+
+- name: "{{ SEC_ID_DHCP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DHCP Server is not installed"
+  package:
+      name: isc-dhcp-server
+      state: absent
+  when:
+      - not linuxcis_dhcp_server
+      - SEC_ID_DHCP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dhcp
+      - services
+      - patch
+      - rule_2.2.5
+
+- name: "{{ SEC_ID_LDAP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure LDAP server is not installed"
+  package:
+      name: slapd
+      state: absent
+  when:
+      - not linuxcis_ldap_server
+      - SEC_ID_LDAP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ldap
+      - services
+      - patch
+      - rule_2.2.6
+
+- name: "{{ SEC_ID_ENSURE_NFS_NOT_ENABLED }} | L1 | PATCH | Ensure nfs-utils is not installed or the nfs-server service is masked"
+  package:
+      name: nfs-kernel-server
+      state: absent
+  tags:
+      - level1
+      - scored
+      - nfs
+      - services
+      - patch
+      - rule_2.2.17
+
+
+- name: "{{ SEC_ID_DNS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure DNS server is not installed"
+  package:
+      name: bind9
+      state: absent
+  when:
+      - not linuxcis_named_server
+      - SEC_ID_DNS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dns
+      - services
+      - patch
+      - rule_2.2.7
+
+- name: "{{ SEC_ID_FTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure FTP server is not installed"
+  package:
+      name: vsftpd
+      state: absent
+  when:
+      - not linuxcis_vsftpd_server
+      - SEC_ID_FTP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ftp
+      - services
+      - patch
+      - rule_2.2.8
+
+- name: "{{ SEC_ID_HTTP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP server is not installed"
+  package:
+      name: apache2
+      state: absent
+  when:
+      - not linuxcis_httpd_server
+      - SEC_ID_HTTP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - ldap
+      - services
+      - patch
+      - rule_2.2.9
+
+- name: "{{ SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure IMAP and POP3 server is not installed"
+  package:
+      name: ['dovecot-imapd', 'dovecot-pop3d']
+      state: absent
+  when:
+      - not linuxcis_dovecot_server
+      - SEC_ID_IMAP_POP3_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - dovecot
+      - services
+      - patch
+      - rule_2.2.10
+
+- name: "{{ SEC_ID_ENSURE_SAMBA_NOT_ENABLED }} | L1 | PATCH | Ensure Samba server is not installed"
+  package:
+      name: samba
+      state: absent
+  when:
+      - not linuxcis_smb_server
+      - SEC_ID_ENSURE_SAMBA_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - samba
+      - services
+      - patch
+      - rule_2.2.11
+
+- name: "{{ SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure HTTP Proxy server is not installed"
+  package:
+      name: squid
+      state: absent
+  when:
+      - not linuxcis_squid_server
+      - SEC_ID_HTTP_PROXY_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - squid
+      - services
+      - patch
+      - rule_2.2.12
+
+- name: "{{ SEC_ID_SNMP_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure net-snmp is not installed"
+  package:
+      name: snmpd
+      state: absent
+  when:
+      - not linuxcis_snmp_server
+      - SEC_ID_SNMP_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - squid
+      - services
+      - patch
+      - rule_2.2.13
+
+- name: "{{ SEC_ID_NIS_SERVER_NOT_ENABLED }} | L1 | PATCH | Ensure NIS server is not installed"
+  package:
+      name: ypserv
+      state: absent
+  when:
+      - not linuxcis_nis_server
+      - SEC_ID_NIS_SERVER_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - nis
+      - services
+      - patch
+      - rule_2.2.14
+
+- name: "{{ SEC_ID_MTA_CONFIGURED_LOCAL_ONLY }} | L1 | PATCH | Ensure mail transfer agent is configured for local-only mode"
+  block:
+      - name: "{{ SEC_ID_MTA_CONFIGURED_LOCAL_ONLY }} | L1 | PATCH | Ensure mail transfer agent is configured for local-only mode | Make changes if exim4 installed"
+        lineinfile:
+            path: /etc/exim4/update-exim4.conf.conf
+            regexp: "{{ item.regexp }}"
+            line: "{{ item.line }}"
+        with_items:
+            - { regexp: '^dc_eximconfig_configtype', line: "dc_eximconfig_configtype='local'" }
+            - { regexp: '^dc_local_interfaces', line: "dc_local_interfaces='127.0.0.1 ; ::1'" }
+            - { regexp: '^dc_readhost', line: "dc_readhost=''" }
+            - { regexp: '^dc_relay_domains', line: "dc_relay_domains=''" }
+            - { regexp: '^dc_minimaldns', line: "dc_minimaldns='false'" }
+            - { regexp: '^dc_relay_nets', line: "dc_relay_nets=''" }
+            - { regexp: '^dc_smarthost', line: "dc_smarthost=''" }
+            - { regexp: '^dc_use_split_config', line: "dc_use_split_config='false'" }
+            - { regexp: '^dc_hide_mailname', line: "dc_hide_mailname=''" }
+            - { regexp: '^dc_mailname_in_oh', line: "dc_mailname_in_oh='true'" }
+            - { regexp: '^dc_localdelivery', line: "dc_localdelivery='mail_spool'" }
+        notify: restart exim4
+        when: "'exim4' in ansible_facts.packages"
+
+      - name: "{{ SEC_ID_MTA_CONFIGURED_LOCAL_ONLY }} | L1 | PATCH | Ensure mail transfer agent is configured for local-only mode | Make changes if postfix is installed"
+        lineinfile:
+            path: /etc/postfix/main.cf
+            regexp: '^(#)?inet_interfaces'
+            line: 'inet_interfaces = loopback-only'
+        notify: restart postfix
+        when: "'postfix' in ansible_facts.packages"
+
+      - name: "AUTOMATED | 2.1.15 | PATCH | Ensure mail transfer agent is configured for local-only mode | Message out other main agents"
+        debug:
+            msg:
+                - "Warning!! You are not using either exim4 or postfix"
+                - "Please review your vendors documentation to configure local-only mode"
+        when:
+            - "'exim4' not in ansible_facts.packages"
+            - "'postfix' not in ansible_facts.packages"
+  when:
+      - SEC_ID_MTA_CONFIGURED_LOCAL_ONLY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - automated
+      - scored
+      - patch
+      - rule_2.1.15
+      - postfix
+
+- name: "{{ SEC_ID_ENSURE_RSYNC_NOT_ENABLED }} | L1 | PATCH | Ensure rsync is not installed or the rsyncd services are masked"
+  include_tasks: "ensure_rsync_not_installed.yml"
+  when:
+      - not linuxcis_rsyncd_server
+      - "'rsync' in ansible_facts.packages"
+      - SEC_ID_ENSURE_RSYNC_NOT_ENABLED not in disabled_cis_rules
+  tags:
+      - level1
+      - scored
+      - rsync
+      - services
+      - patch
+      - rule_2.2.19

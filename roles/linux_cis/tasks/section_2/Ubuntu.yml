@@ -1,0 +1,16 @@
+---
+
+- name: "SECTION | {{ SEC_ID_SPECIAL_PURPOSE_SERVICES }} | Special Purpose Services"
+  include_tasks: "../modular/special_purpose_services/main.yml"
+  when:
+    - SEC_ID_SPECIAL_PURPOSE_SERVICES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_SERVICE_CLIENTS }} | Service Clients"
+  include_tasks: "../modular/service_clients/main.yml"
+  when:
+    - SEC_ID_SERVICE_CLIENTS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_NON_ESSENTIAL_SERVICES }} | Nonessential Services"
+  include_tasks: "../modular/non_essential_services/main.yml"
+  when:
+    - SEC_ID_NON_ESSENTIAL_SERVICES not in disabled_cis_rules

@@ -1,0 +1,38 @@
+---
+UEFI_BOOTLOADER_PATH: /boot/efi/EFI/ubuntu/
+LEGACY_BOOTLOADER_PATH: /boot/grub/
+GRUB_CFG_PATH: /boot/grub/grub.cfg
+GRUB_RECONFIG_HANDLER: update-grub
+
+AIDE_PKG:
+  - aide
+  - aide-common
+AUDITD_PKG:
+  - auditd
+  - audispd-plugins
+CRON_PKG: cron
+CRON_SRV: cron
+SUDO_PKG: "{{ ubuntucis_sudo_package }}"
+GDM_PKG: gdm3
+XORG_PKG: 'xserver-xorg*'
+FIREWALL_PKGS:
+  ufw:
+  - ufw
+  nftables:
+  - nftables
+  iptables:
+  - iptables
+  - iptables-persistent
+# Used in SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT
+DEFAULT_USER_SHELL_TIMEOUT_FILES:
+  - dest: "{{ linuxcis_shell_session_timeout.file }}"
+    state: present
+  - dest: /etc/profile
+    state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  - dest: /etc/bash.bashrc
+    state: present
+# Used in SEC_ID_ENSURE_DEFAULT_USER_UMASK
+DEFAULT_USER_SHELL_UMASK_FILES:
+  - /etc/bash.bashrc
+  - /etc/profile
+  - /etc/login.defs

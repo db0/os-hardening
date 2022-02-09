@@ -1,7 +1,12 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES }} | Disable unused network protocols and devices"
-  include_tasks: "../modular/disable_unused_protocols_devices/main.yml"
+- name: "SECTION | {{ SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES }} | Disable Wireless"
+  include_tasks: "../modular/disable_wireless/main.yml"
+  when:
+    - SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES }} | Disable Ipv6"
+  include_tasks: "../modular/disable_ipv6/main.yml"
   when:
     - SEC_ID_DISABLE_UNUSED_PROTOCOLS_DEVICES not in disabled_cis_rules
 

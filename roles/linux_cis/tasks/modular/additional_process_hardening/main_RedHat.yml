@@ -13,13 +13,10 @@
       - rule_1.6.1
 
 - name: "{{ SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED }} | L1 | PATCH | Ensure address space layout randomization (ASLR) is enabled"
-  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
-  vars:
-      dist_tasks:
-      - "ensure_aslr_enabled_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "ensure_aslr_enabled_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "ensure_aslr_enabled_{{ ansible_facts.distribution }}.yml"
-      - "ensure_aslr_enabled_{{ ansible_facts.os_family }}.yml"
+  debug:
+      msg: "Control being set via Handler 'update sysctl' which writes to /etc/sysctl.d/99-sysctl.conf"
+  notify:
+      - update sysctl
   when:
       - SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED not in disabled_cis_rules
   tags:

@@ -1,0 +1,11 @@
+---
+
+- name: "SECTION | {{ SEC_ID_SYSTEM_FILE_PERMISSIONS }} | System File Permissions"
+  include_tasks: "../modular/system_file_permissions/main.yml"
+  when:
+    - SEC_ID_SYSTEM_FILE_PERMISSIONS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_USER_GROUP_SETTINGS }} | User and Group Settings"
+  include_tasks: "../modular/user_group_settings/main.yml"
+  when:
+    - SEC_ID_USER_GROUP_SETTINGS not in disabled_cis_rules

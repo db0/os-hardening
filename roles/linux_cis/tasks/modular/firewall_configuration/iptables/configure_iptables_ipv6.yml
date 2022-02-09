@@ -1,36 +1,8 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy"
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH |  Ensure ip6tables loopback traffic is configured"
   block:
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | Ensure ip6tables default deny firewall policy | Configure ssh to be allowed"
-        iptables:
-            chain: INPUT
-            protocol: tcp
-            destination_port: "22"
-            jump: ACCEPT
-            ip_version: ipv6
-
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy | Set drop items"
-        iptables:
-            policy: DROP
-            chain: "{{ item }}"
-            ip_version: ipv6
-        with_items:
-            - INPUT
-            - FORWARD
-            - OUTPUT
-  when:
-      - linuxcis_firewall == "iptables"
-      - SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
-  tags:
-      - level1-server
-      - level1-workstation
-      - patch
-      - rule_3.4.4.2.1
-
-- name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH |  Ensure ip6tables loopback traffic is configured"
-  block:
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | INPUT Loopback ACCEPT"
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | INPUT Loopback ACCEPT"
         iptables:
             action: append
             chain: INPUT
@@ -38,7 +10,7 @@
             jump: ACCEPT
             ip_version: ipv6
 
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | OUTPUT Loopback ACCEPT"
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | OUTPUT Loopback ACCEPT"
         iptables:
             action: append
             chain: OUTPUT
@@ -46,23 +18,23 @@
             jump: ACCEPT
             ip_version: ipv6
 
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | INPUT Loopback 127.0.0.0/8"
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | INPUT Loopback 127.0.0.0/8"
         iptables:
             action: append
             chain: INPUT
             source: ::1
             jump: DROP
             ip_version: ipv6
+  notify: make ip6tables persistent
   when:
-      - linuxcis_firewall == "iptables"
-      - SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
+      - SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
       - patch
       - rule_3.4.4.2.2
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure ip6tables outbound and established connections are configured"
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure ip6tables outbound and established connections are configured"
   iptables:
       action: append
       chain: '{{ item.chain }}'
@@ -78,16 +50,16 @@
       - { chain: INPUT, protocol: tcp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: udp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: icmp, ctstate: ESTABLISHED }
+  notify: make ip6tables persistent
   when:
-      - linuxcis_firewall == "iptables"
-      - SEC_ID_ENSURE_IPTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
+      - SEC_ID_ENSURE_IP6TABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
       - patch
       - rule_3.4.4.2.3
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH | Ensure ip6tables firewall rules exist for all open ports"
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH | Ensure ip6tables firewall rules exist for all open ports"
   block:
       - name: "3.4.4.2.4 | L1 | AUDIT | Ensure ip6tables firewall rules exist for all open ports | Get list of TCP6 open ports"
         shell: netstat -ant |grep "tcp6.*LISTEN" | awk '{ print $4 }'| sed 's/.*://'
@@ -95,7 +67,7 @@
         failed_when: false
         register: linuxcis_3_4_4_2_4_otcp
 
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH |Ensure ip6tables firewall rules exist for all open ports| Adjust open tcp6 ports"
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH |Ensure ip6tables firewall rules exist for all open ports| Adjust open tcp6 ports"
         iptables:
             action: append
             chain: INPUT
@@ -108,23 +80,67 @@
         with_items:
             - "{{ linuxcis_3_4_4_2_4_otcp.stdout_lines }}"
         when: linuxcis_3_4_4_2_4_otcp.stdout is defined
+  notify: make ip6tables persistent
   when:
-      - linuxcis_firewall == "iptables"
-      - SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS not in disabled_cis_rules
+      - SEC_ID_ENSURE_IP6TABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
       - patch
       - rule_3.4.4.2.4
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED }} | L1 | PATCH | Ensure ip6tables service is enabled and active | Check if ip6tables is enabled"
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy"
+  block:
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | Ensure ip6tables default deny firewall policy | Configure ssh to be allowed"
+        iptables:
+            chain: INPUT
+            protocol: tcp
+            destination_port: "22"
+            jump: ACCEPT
+            ip_version: ipv6
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Configure SSH to be allowed out"
+        iptables:
+            chain: OUTPUT
+            protocol: tcp
+            source_port: "22"
+            jump: ACCEPT
+            ctstate: 'NEW,ESTABLISHED'
+            ip_version: ipv6
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Enable apt traffic"
+        iptables:
+            chain: INPUT
+            ctstate: 'ESTABLISHED'
+            jump: ACCEPT
+            ip_version: ipv6
+        when: ansible_facts.os_family == 'Debian'
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy | Set drop items"
+        iptables:
+            policy: DROP
+            chain: "{{ item }}"
+            ip_version: ipv6
+        with_items:
+            - INPUT
+            - FORWARD
+            - OUTPUT
+  notify: make ip6tables persistent
+  when:
+      - SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.4.4.2.1
+
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_SERVICE_ENABLED }} | L1 | PATCH | Ensure ip6tables service is enabled and active | Check if ip6tables is enabled"
   service:
       name: ip6tables
       enabled: true
       state: started
   when:
-      - linuxcis_firewall == "iptables"
-      - SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED not in disabled_cis_rules
+      - SEC_ID_ENSURE_IP6TABLES_SERVICE_ENABLED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation

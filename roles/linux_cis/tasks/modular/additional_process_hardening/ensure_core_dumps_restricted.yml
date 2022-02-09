@@ -2,21 +2,20 @@
 
 - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | Ensure core dumps are restricted | Update limits.conf file"
   lineinfile:
-      state: present
-      dest: /etc/security/limits.conf
-      regexp: '^#?\\*.*core'
-      line: '*                hard    core            0'
-      insertbefore: '^# End of file'
+      path: /etc/security/limits.d/99_zero_core.conf
+      regexp: '^\* hard core'
+      line: '* hard core 0'
+      create: true
+      owner: root
+      group: root
+      mode: '0644'
   tags: always
 
 - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | Set active kernel parameter"
-  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
-  vars:
-      dist_tasks:
-      - "set_active_kernel_parameter_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "set_active_kernel_parameter_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "set_active_kernel_parameter_{{ ansible_facts.distribution }}.yml"
-      - "set_active_kernel_parameter_{{ ansible_facts.os_family }}.yml"
+  debug:
+      msg: "Control being set via Handler 'update sysctl' which writes to /etc/sysctl.d/99-sysctl.conf"
+  notify:
+      - update sysctl
   tags: always
 
 - name: "{{ SEC_ID_ENSURE_CORE_DUMPS_ARE_RESTRICED }} | L1 | PATCH | Ensure core dumps are restricted | if systemd coredump"

@@ -4,8 +4,8 @@
   block:
   - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | Install AIDE"
     package:
-      name: aide
-      state: installed
+      name: "{{ AIDE_PKG }}"
+      state: present
 
   - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
     shell: /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'

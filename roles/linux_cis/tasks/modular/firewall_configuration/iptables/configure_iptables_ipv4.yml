@@ -1,31 +1,5 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy"
-  block:
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 |  PATCH |  Ensure iptables default deny firewall policy | Configure ssh to be allowed"
-        iptables:
-            chain: INPUT
-            protocol: tcp
-            destination_port: "22"
-            jump: ACCEPT
-
-      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Set drop items"
-        iptables:
-            policy: DROP
-            chain: "{{ item }}"
-        with_items:
-            - INPUT
-            - FORWARD
-            - OUTPUT
-  when:
-      - SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
-      - linuxcis_firewall == "iptables"
-  tags:
-      - level1-server
-      - level1-workstation
-      - patch
-      - rule_3.4.4.1.1
-
 - name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure iptables loopback traffic is configured"
   block:
       - name: "{{ SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | Ensure iptables loopback traffic is configured | INPUT Loopback ACCEPT"
@@ -48,8 +22,8 @@
             chain: INPUT
             source: 127.0.0.0/8
             jump: DROP
+  notify: make iptables persistent
   when:
-      - linuxcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
@@ -72,8 +46,8 @@
       - { chain: INPUT, protocol: tcp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: udp, ctstate: ESTABLISHED }
       - { chain: INPUT, protocol: icmp, ctstate: ESTABLISHED }
+  notify: make iptables persistent
   when:
-      - linuxcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
   tags:
       - level1-server
@@ -89,7 +63,7 @@
             warn: false
         changed_when: false
         failed_when: false
-        register: linuxcis_3_4_4_1_4_otcp
+        register: linuxcis_netstat_otcp_out
 
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | AUDIT | Ensure iptables firewall rules exist for all open ports | Get the list of udp open ports"
         shell: netstat -ant |grep "udp.*LISTEN" | awk '{ print $4 }'| sed 's/.*://'
@@ -97,7 +71,7 @@
             warn: false
         changed_when: false
         failed_when: false
-        register: linuxcis_3_4_4_1_4_oudp
+        register: linuxcis_netstat_oudp_out
 
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH | Ensure iptables firewall rules exist for all open ports | Adjust open tcp ports"
         iptables:
@@ -109,8 +83,8 @@
             ctstate: NEW
             jump: ACCEPT
         with_items:
-            - "{{ linuxcis_3_4_4_1_4_otcp.stdout_lines }}"
-        when: linuxcis_3_4_4_1_4_otcp.stdout is defined
+            - "{{ linuxcis_netstat_otcp_out.stdout_lines }}"
+        when: linuxcis_netstat_otcp_out.stdout is defined
 
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | PATCH | Ensure iptables firewall rules exist for all open ports | Adjust open udp ports"
         iptables:
@@ -122,10 +96,10 @@
             ctstate: NEW
             jump: ACCEPT
         with_items:
-            - "{{ linuxcis_3_4_4_1_4_oudp.stdout_lines }}"
-        when: linuxcis_3_4_4_1_4_otcp.stdout is defined
+            - "{{ linuxcis_netstat_oudp_out.stdout_lines }}"
+        when: linuxcis_netstat_otcp_out.stdout is defined
+  notify: make iptables persistent
   when:
-      - linuxcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS not in disabled_cis_rules
   tags:
       - level1-server
@@ -133,13 +107,54 @@
       - patch
       - rule_3.4.4.1.4
 
+# We need to put this section last or risk having our ansible connection being dropped
+- name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy"
+  block:
+      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 |  PATCH |  Ensure iptables default deny firewall policy | Configure ssh to be allowed in"
+        iptables:
+            chain: INPUT
+            protocol: tcp
+            destination_port: "22"
+            jump: ACCEPT
+
+      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Configure SSH to be allowed out"
+        iptables:
+            chain: OUTPUT
+            protocol: tcp
+            source_port: "22"
+            jump: ACCEPT
+            ctstate: 'NEW,ESTABLISHED'
+
+      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Enable apt traffic"
+        iptables:
+            chain: INPUT
+            ctstate: 'ESTABLISHED'
+            jump: ACCEPT
+        when: ansible_facts.os_family == 'Debian'
+
+      - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Set drop items"
+        iptables:
+            policy: DROP
+            chain: "{{ item }}"
+        with_items:
+            - INPUT
+            - FORWARD
+            - OUTPUT
+  notify: make iptables persistent
+  when:
+      - SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.4.4.1.1
+
 - name: "{{ SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED }} | L1 | PATCH | Ensure iptables service is enabled and active | Check if iptables is enabled"
   service:
       name: iptables
       enabled: true
       state: started
   when:
-      - linuxcis_firewall == "iptables"
       - SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED not in disabled_cis_rules
   tags:
       - level1-server

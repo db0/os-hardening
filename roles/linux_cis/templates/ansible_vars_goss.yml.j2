@@ -17,7 +17,7 @@ linuxcis_section4: {{ linuxcis_section4 }}
 linuxcis_section5: {{ linuxcis_section5 }}
 linuxcis_section6: {{ linuxcis_section6 }}
 
-linuxcis_selinux_disable: {{ linuxcis_selinux_disable }}
+linuxcis_mandatory_access_control_disable: {{ linuxcis_mandatory_access_control_disable }}
 linuxcis_selinux_state: {{ linuxcis_selinux_state }}
 
 
@@ -93,8 +93,8 @@ linuxcis_aide_cron:
   aide_weekday: '{{ linuxcis_aide_cron.aide_weekday }}'
 
 # 1.4.1 Bootloader password
-linuxcis_bootloader_file: {{ linuxcis_bootloader_path }}grub.cfg
-linuxcis_bootloader_user: {{ linuxcis_bootloader_path }}user.cfg
+linuxcis_bootloader_file: {{ UEFI_BOOTLOADER_PATH }}grub.cfg
+linuxcis_bootloader_user: {{ UEFI_BOOTLOADER_PATH }}user.cfg
 linuxcis_bootloader_password: {{ linuxcis_bootloader_password_hash }}
 linuxcis_set_boot_pass: {{ linuxcis_set_boot_pass }}
 
@@ -120,8 +120,8 @@ linuxcis_is_router: {{ linuxcis_is_router }}
 # Time Synchronization
 linuxcis_time_synchronization: {{ linuxcis_time_synchronization }}
 
-linuxcis_firewall: {{ linuxcis_firewall }}
-# linuxcis_firewall: iptables
+redhatcis_firewall: {{ redhatcis_firewall }}
+# redhatcis_firewall: iptables
 linuxcis_default_firewall_zone: {{ linuxcis_default_zone }}
 linuxcis_firewall_interface:
 - ['ens224']

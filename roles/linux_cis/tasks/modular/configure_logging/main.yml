@@ -1,33 +1,10 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_CONFIGURE_RSYSLOG }} | Configure rsyslog"
-  include_tasks: configure_rsyslog.yml
-
-- name: "SECTION | {{ SEC_ID_CONFIGURE_JOURNALD }} | Configure journald"
-  include_tasks: configure_journald.yml
-
-- name: "{{ SEC_ID_ENSURE_LOGFILE_PERMISSIONS }} | L1 | PATCH | Ensure permissions on all logfiles are configured"
-  command: find /var/log -type f -exec chmod g-wx,o-rwx "{}" +
-  args:
-      warn: false
-  changed_when: false
-  failed_when: false
-  when:
-      - SEC_ID_ENSURE_LOGFILE_PERMISSIONS not in disabled_cis_rules
-  tags:
-      - level1-server
-      - level1-workstation
-      - patch
-      - automated
-      - rule_4.2.3
-
-- name: "{{ SEC_ID_ENSURE_LOGROTATE_CONFIGURED }} | L1 | AUDIT | Ensure logrotate is configured"
-  include_tasks: ensure_logrotate_configured.yml
-  when:
-      - SEC_ID_ENSURE_LOGROTATE_CONFIGURED not in disabled_cis_rules
-      - "'logrotate' in ansible_facts.packages"
-  tags:
-      - level1-server
-      - level1-workstation
-      - patch
-      - rule_4.2.4
+- name: "SECTION | {{ SEC_ID_CONFIGURE_LOGGING }} | Distribution Specific Order"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "main_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "main_{{ ansible_facts.distribution }}.yml"
+      - "main_{{ ansible_facts.os_family }}.yml"

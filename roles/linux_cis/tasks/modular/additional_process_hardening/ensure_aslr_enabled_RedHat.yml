@@ -1,8 +1,0 @@
----
-
-- name: "{{ SEC_ID_ENSURE_ADDRESS_SPACE_RANDOMIZATION_ENABLED }} | L1 | PATCH | Ensure address space layout randomization (ASLR) is enabled"
-  debug:
-      msg: "Control being set via Handler 'update sysctl' which writes to /etc/sysctl.d/99-sysctl.conf"
-  notify:
-      - update sysctl
-  tags: always

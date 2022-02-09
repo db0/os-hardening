@@ -1,9 +1,7 @@
 ---
 - name: "{{ SEC_ID_ENSURE_AUDITD_INSTALLED }} | L2 | PATCH | Ensure auditd is installed"
-  package:
-      name:
-      - audit
-      - audit-libs
+  yum:
+      name: "{{ AUDITD_PKG }}"
       state: present
   when:
       - SEC_ID_ENSURE_AUDITD_INSTALLED not in disabled_cis_rules

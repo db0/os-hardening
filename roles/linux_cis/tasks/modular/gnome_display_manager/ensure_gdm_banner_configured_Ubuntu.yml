@@ -1,0 +1,17 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_GDM_LOGIN_BANNER_CONFIGURED }} | L1 | PATCH | Ensure GDM login banner is configured"
+  lineinfile:
+      path: /etc/gdm3/greeter.dconf-defaults
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+      insertafter: "{{ item.insertafter }}"
+      create: yes
+      owner: root
+      group: root
+      mode: 0644
+  notify: reload gdm
+  with_items:
+      - { regexp: '\[org\/gnome\/login-screen\]', line: '[org/gnome/login-screen]', insertafter: EOF }
+      - { regexp: 'banner-message-enable', line: 'banner-message-enable=true', insertafter: '\[org\/gnome\/login-screen\]'}
+      - { regexp: 'banner-message-text', line: "banner-message-text='{{ ubtu20cis_warning_banner | regex_replace('\n', ' ') | trim }}'", insertafter: 'banner-message-enable' }

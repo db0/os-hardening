@@ -7,7 +7,6 @@
     cis_level: L1
     cis_section: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }}"
   when:
-      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
       - SEC_ID_ENSURE_FS_CRAMFS_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
   tags:
@@ -25,7 +24,6 @@
     cis_level: L2
     cis_section: "{{ SEC_ID_ENSURE_FS_VFAT_DISABLED }}"
   when:
-      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
       - SEC_ID_ENSURE_FS_VFAT_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
       - linuxcis_level2
@@ -44,7 +42,6 @@
     cis_level: L2
     cis_section: "{{ SEC_ID_ENSURE_FS_SQUASHFS_DISABLED }}"
   when:
-      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
       - SEC_ID_ENSURE_FS_SQUASHFS_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
       - linuxcis_level2
@@ -63,7 +60,6 @@
     cis_level: L1
     cis_section: "{{ SEC_ID_ENSURE_FS_UDF_DISABLED }}"
   when:
-      - SEC_ID_DISABLE_UNUSED_FILESYSTEMS not in disabled_cis_rules
       - SEC_ID_ENSURE_FS_UDF_DISABLED not in disabled_cis_rules
       - ansible_connection != 'docker'
   tags:

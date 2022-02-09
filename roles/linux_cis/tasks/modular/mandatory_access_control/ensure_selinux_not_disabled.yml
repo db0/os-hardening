@@ -6,5 +6,5 @@
       regexp: '(selinux|enforcing)\s*=\s*0\s*'
   register: selinux_grub_patch
   ignore_errors: yes
-  notify: grub2cfg
+  notify: "{{ GRUB_RECONFIG_HANDLER }}"
   tags: always
