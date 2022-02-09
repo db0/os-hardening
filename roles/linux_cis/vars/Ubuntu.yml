@@ -2,6 +2,7 @@
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/ubuntu/
 LEGACY_BOOTLOADER_PATH: /boot/grub/
 GRUB_CFG_PATH: /boot/grub/grub.cfg
+GRUB_RECONFIG_HANDLER: update-grub
 
 AUDITD_PKG: auditd
 CRON_PKG: cron

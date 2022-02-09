@@ -3,6 +3,7 @@
 UEFI_BOOTLOADER_PATH: /boot/efi/EFI/rocky/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
 GRUB_CFG_PATH: /etc/grub2.cfg
+GRUB_RECONFIG_HANDLER: grub2cfg
 
 AUDITD_PKG: audit
 CRON_PKG: cronie

@@ -156,6 +156,7 @@
   tags:
       - skip_ansible_lint
 
+# Used for redhat
 - name: grub2cfg
   shell: "grub2-mkconfig -o {{ grub_cfg.stat.lnk_source }}"
   args:
@@ -163,6 +164,10 @@
   ignore_errors: True
   tags:
       - skip_ansible_lint
+
+# Used for Ubuntu
+- name: update-grub
+  command: update-grub
 
 - name: restart rsyslog
   become: yes
@@ -180,8 +185,6 @@
   systemd:
       daemon-reload: true
 
-- name: grub update
-  command: update-grub
 
 - name: reload gdm
   command: dpkg-reconfigure gdm3

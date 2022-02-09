@@ -33,7 +33,7 @@
         when:
             - "'apparmor' not in ubtu20cis_1_6_1_2_cmdline_settings.stdout"
             - "'security' not in ubtu20cis_1_6_1_2_cmdline_settings.stdout"
-        notify: grub update
+        notify: "{{ GRUB_RECONFIG_HANDLER }}"
 
       - name: "{{ SEC_ID_ENSURE_APPARMOR_NOT_DISABLED_IN_BOOTLOADER }} | L1 | PATCH | Ensure AppArmor is enabled in the bootloader configuration | Set apparmor settings if none exist | Replace apparmor settings when exists"
         replace:
@@ -46,7 +46,7 @@
         when:
             - "'apparmor' in ubtu20cis_1_6_1_2_cmdline_settings.stdout"
             - "'security' in ubtu20cis_1_6_1_2_cmdline_settings.stdout"
-        notify: grub update
+        notify: "{{ GRUB_RECONFIG_HANDLER }}"
   when:
       - SEC_ID_ENSURE_APPARMOR_NOT_DISABLED_IN_BOOTLOADER not in disabled_cis_rules
   tags:

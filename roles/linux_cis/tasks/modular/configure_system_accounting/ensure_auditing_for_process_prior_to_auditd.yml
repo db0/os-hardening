@@ -14,7 +14,7 @@
       dest: /etc/default/grub
       regexp: 'audit=.'
       replace: 'audit=1'
-  notify: grub2cfg
+  notify: "{{ GRUB_RECONFIG_HANDLER }}"
   when: "'audit=' in linuxcis_auditd_grub_cmdline_linux_out.stdout"
 
 - name: "{{ SEC_ID_ENSURE_AUDITING_FOR_PRE_AUDITD_SERVICES_ENABLED }} | L2 | PATCH | Ensure auditing for processes that start prior to auditd is enabled | Add audit setting if missing"
@@ -22,5 +22,5 @@
       path: /etc/default/grub
       regexp: '^GRUB_CMDLINE_LINUX='
       line: '{{ linuxcis_auditd_grub_cmdline_linux_out.stdout }} audit=1"'
-  notify: grub2cfg
+  notify: "{{ GRUB_RECONFIG_HANDLER }}"
   when: "'audit=' not in linuxcis_auditd_grub_cmdline_linux_out.stdout"
