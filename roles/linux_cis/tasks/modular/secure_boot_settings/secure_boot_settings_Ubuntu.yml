@@ -60,14 +60,14 @@
       - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Emergency service"
         lineinfile:
             dest: /usr/lib/systemd/system/emergency.service
-            regexp: '/sbin/sulogin'
-            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+            regexp: '/sbin/systemd-sulogin-shell'
+            line: 'ExecStart=-/bin/sh -c "/sbin/systemd-sulogin-shell; /usr/bin/systemctl --fail --no-block default"'
 
       - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Rescue service"
         lineinfile:
             dest: /usr/lib/systemd/system/rescue.service
-            regexp: '/sbin/sulogin'
-            line: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+            regexp: '/sbin/systemd-sulogin-shell'
+            line: 'ExecStart=-/bin/sh -c "/sbin/systemd-sulogin-shell; /usr/bin/systemctl --fail --no-block default"'
   when:
       - SEC_ID_SINGLE_USER_AUTH_NEEDED not in disabled_cis_rules
   tags:
