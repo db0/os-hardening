@@ -10,6 +10,8 @@ AUDITD_PKG:
   - audit
   - audit-libs
 CRON_PKG: cronie
+CRON_SRV: crond
+SUDO_PKG: sudo
 GDM_PKG: gdm
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
 SELINUX_PKG: libselinux

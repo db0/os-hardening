@@ -2,7 +2,7 @@
 
 - name: "{{ SEC_ID_ENSURE_CRON_ENABLED }} | L1 | PATCH | Ensure cron daemon is enabled and running"
   service:
-      name: crond
+      name: "{{ CRON_SRV }}"
       enabled: yes
       state: started
   when:

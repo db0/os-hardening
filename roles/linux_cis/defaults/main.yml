@@ -297,6 +297,12 @@ linuxcis_pam_faillock:
     remember: 5
     pwhash: sha512
 
+# Section 5 Control Variables
+# Control 5.2.1 - For Ubuntu CIS Only
+# ubuntucis_sudo_package is the name of the sudo package to install
+# The possible values are "sudo" or "sudo-ldap"
+ubuntucis_sudo_package: "sudo"
+
 # 5.3.1/5.3.2 Custom authselect profile settings. Settings in place now will fail, they are place holders from the control example
 # Due to the way many multiple options and ways to configure this control needs to be enabled and settings adjusted to minimise risk
 linuxcis_use_authconfig: false

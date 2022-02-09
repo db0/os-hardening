@@ -10,6 +10,8 @@ AUDITD_PKG:
   - audit
   - audit-libs
 CRON_PKG: cronie
+CRON_SRV: crond
+SUDO_PKG: sudo
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot

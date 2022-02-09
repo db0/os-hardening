@@ -2,7 +2,7 @@
 
 - name: "{{ SEC_ID_ENSURE_SUDO_INSTALLED }} | L1 | PATCH | Ensure sudo is installed"
   package:
-      name: sudo
+      name: "{{ SUDO_PKG }}"
       state: present
   when:
       - SEC_ID_ENSURE_SUDO_INSTALLED not in disabled_cis_rules
@@ -17,8 +17,9 @@
 - name: "{{ SEC_ID_ENSURE_SUDO_PTY }} | L1 | AUDIT | Ensure sudo commands use pty"
   lineinfile:
       dest: /etc/sudoers
-      regexp: '^Defaults    use_pty'
+      regexp: '^Defaults    use_'
       line: 'Defaults    use_pty'
+      insertafter: '^Defaults'
       state: present
       validate: '/usr/sbin/visudo -cf %s'
   when:
@@ -33,8 +34,9 @@
 - name: "{{ SEC_ID_ENSURE_SUDO_LOG_EXISTS }} | L1 | PATCH | Ensure sudo log file exists"
   lineinfile:
       dest: /etc/sudoers
-      regexp: '^Defaults    logfile="{{ linuxcis_varlog_location }}"'
+      regexp: '^Defaults    logfile'
       line: 'Defaults    logfile="{{ linuxcis_varlog_location }}"'
+      insertafter: '^Defaults'
       state: present
       validate: '/usr/sbin/visudo -cf %s'
   when:
