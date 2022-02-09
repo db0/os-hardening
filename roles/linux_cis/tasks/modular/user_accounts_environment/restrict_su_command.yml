@@ -2,14 +2,29 @@
 
 - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | PATCH | Ensure access to the su command is restricted"
   block:
+      - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | Ensure access to the su command is restricted | Check for pam_wheel.so module"
+        command: grep '^auth.*required.*pam_wheel' /etc/pam.d/su
+        changed_when: false
+        failed_when: false
+        check_mode: false
+        register: linuxcis_pam_wheel_status
+
+      - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | PATCH | Ensure access to the su command is restricted | Set pam_wheel if exists"
+        pamd:
+            name: su
+            type: auth
+            control: required
+            module_path: pam_wheel.so
+            module_arguments: 'use_uid group={{ ubtu20cis_su_group }}'
+        when: linuxcis_pam_wheel_status.stdout | length > 0
+
       - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | PATCH | Ensure access to the su command is restricted | Setting pam_wheel to use_uid"
         lineinfile:
-            state: present
-            dest: /etc/pam.d/su
-            regexp: '^(#)?auth\s+required\s+pam_wheel\.so'
+            path: /etc/pam.d/su
             line: 'auth            required        pam_wheel.so use_uid {% if linuxcis_sugroup is defined %}group={{ linuxcis_sugroup }}{% endif %}'
+            create: yes
         when:
-            - SEC_ID_ENSURE_SU_COMMAND_RESTRICTED not in disabled_cis_rules
+            - linuxcis_pam_wheel_status.stdout | length == 0
         tags:
             - level1-server
             - level1-workstation

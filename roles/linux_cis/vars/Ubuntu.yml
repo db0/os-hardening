@@ -23,3 +23,10 @@ FIREWALL_PKGS:
   iptables:
   - iptables
   - iptables-persistent
+DEFAULT_USER_SHELL_TIMEOUT_FILES:
+  - dest: "{{ linuxcis_shell_session_timeout.file }}"
+    state: present
+  - dest: /etc/profile
+    state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  - dest: /etc/bash.bashrc
+    state: present

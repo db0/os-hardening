@@ -24,7 +24,7 @@
             - item.shell != "      /bin/false"
             - item.shell != "      /usr/sbin/nologin"
 
-      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Lock accounts"
+      - name: "{{ SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED }} | L1 | PATCH | Ensure system accounts are secured | Lock non-root system accounts"
         user:
             name: "{{ item.id }}"
             password_lock: true
@@ -48,9 +48,15 @@
       - rule_5.5.2
 
 - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0"
-  shell: usermod -g 0 root
-  changed_when: false
-  failed_when: false
+  block:
+      - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0 | Set root group to GUID 0"
+        group:
+            name: root
+            gid: 0
+      - name: "{{ SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 }} | L1 | PATCH | Ensure default group for the root account is GID 0 | Set root user to root group"
+        user:
+            name: root
+            group: root
   when:
       - SEC_ID_ENSURE_ROOT_DEFAULT_GROUP_0 not in disabled_cis_rules
   tags:
@@ -71,11 +77,7 @@
           TMOUT={{ linuxcis_shell_session_timeout.timeout }}
           readonly TMOUT
           export TMOUT
-  loop:
-      - dest: "{{ linuxcis_shell_session_timeout.file }}"
-        state: present
-      - dest: /etc/profile
-        state: "{{ (linuxcis_shell_session_timeout.file == '/etc/profile') | ternary('present', 'absent') }}"
+  loop: "{{ DEFAULT_USER_SHELL_TIMEOUT_FILES }}"
   when:
       - SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT not in disabled_cis_rules
       - linuxcis_level2
