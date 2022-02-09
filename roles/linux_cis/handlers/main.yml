@@ -185,6 +185,19 @@
   systemd:
       daemon-reload: true
 
-
 - name: reload gdm
   command: dpkg-reconfigure gdm3
+
+- name: reload ufw
+  ufw:
+      state: reloaded
+
+- name: "make iptables persistent"
+  shell: bash -c "iptables-save > /etc/iptables/rules.v4"
+  changed_when: ubuntu20cis_iptables_save.rc == 0
+  failed_when: ubuntu20cis_iptables_save.rc > 0
+
+- name: "make ip6tables persistent"
+  shell: bash -c "iptables-save > /etc/iptables/rules.v4"
+  changed_when: ubuntu20cis_iptables_save.rc == 0
+  failed_when: ubuntu20cis_iptables_save.rc > 0

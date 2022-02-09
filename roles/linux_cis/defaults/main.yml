@@ -213,6 +213,14 @@ linuxcis_firewall_services:
     - ssh
     - dhcpv6-client
 
+# Control 3.5.1.5
+# ubuntucis_ufw_allow_out_ports are the ports for the firewall to allow
+# if you want to allow out on all ports set variable to "all", example ubuntucis_ufw_allow_out_ports: "all"
+ubuntucis_ufw_allow_out_ports:
+    - 53
+    - 80
+    - 443
+
 # 3.5.2.x
 # NFT firewall
 # not tested but added example for clarity - This will break connections

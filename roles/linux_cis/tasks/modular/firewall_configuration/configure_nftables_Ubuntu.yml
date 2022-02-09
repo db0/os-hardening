@@ -1,10 +1,10 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_NFTABLES_INSTALLED }} | Ensure nftables is installed"
-  include_tasks: ensure_firewall_package_installed_RedHat.yml
+  include_tasks: ensure_firewall_package_installed_Ubuntu.yml
   vars:
     cis_section: "{{ SEC_ID_ENSURE_NFTABLES_INSTALLED }}"
-    cis_section_description: "Ensure FirewallD is installed"
+    cis_section_description: "Ensure nftables is installed"
   when:
   - SEC_ID_ENSURE_NFTABLES_INSTALLED not in disabled_cis_rules
   tags:
@@ -13,9 +13,9 @@
   - patch
   - rule_3.5.1.1
 
-- name: "{{ SEC_ID_ENSURE_FIREWALLD_NOT_INSTALLED_WITH_NFTABLES }} | L1 | PATCH | Ensure firewalld is either not installed or masked with nftables"
+- name: "{{ SEC_ID_ENSURE_UFW_NOT_INSTALLED_WITH_NFTABLES }} | L1 | PATCH | Ensure ufw is either not installed or masked with nftables"
   package:
-      name: firewalld
+      name: ufw
       state: absent
   when:
       - SEC_ID_ENSURE_FIREWALLD_NOT_INSTALLED_WITH_NFTABLES not in disabled_cis_rules

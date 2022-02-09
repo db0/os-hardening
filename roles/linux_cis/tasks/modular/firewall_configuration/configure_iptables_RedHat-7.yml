@@ -1,7 +1,7 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_IPTABLES_INSTALLED }} | Ensure iptables packages are installed"
-  include_tasks: ensure_firewall_package_installed.yml
+  include_tasks: ensure_firewall_package_installed_RedHat.yml
   vars:
     cis_section: "{{ SEC_ID_ENSURE_IPTABLES_INSTALLED }}"
     cis_section_description: "Ensure FirewallD is installed"
@@ -35,4 +35,10 @@
       - patch
       - rule_3.5.3.3
 
-# Rest of the rules are TODO
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables | IPv4"
+  include_tasks: iptables/configure_iptables_ipv4.yml
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables | IPv6"
+  include_tasks: iptables/configure_iptables_ipv6.yml
+  when:
+  - linuxcis_ipv6_required

@@ -1,0 +1,6 @@
+---
+
+- name: "{{ cis_section }} | L1 | PATCH | {{ cis_section_description }}"
+  package:
+      name: "{{ FIREWALL_PKGS[ubuntucis_firewall] }}"
+      state: present

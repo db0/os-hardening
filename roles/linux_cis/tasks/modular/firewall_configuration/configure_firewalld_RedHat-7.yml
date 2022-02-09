@@ -1,7 +1,7 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_FIREWALLD_INSTALLED }} | Ensure FirewallD is installed"
-  include_tasks: ensure_firewall_package_installed.yml
+  include_tasks: ensure_firewall_package_installed_RedHat.yml
   vars:
     cis_section: "{{ SEC_ID_ENSURE_FIREWALLD_INSTALLED }}"
     cis_section_description: "Ensure FirewallD is installed"

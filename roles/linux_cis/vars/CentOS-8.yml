@@ -19,3 +19,4 @@ FIREWALL_PKGS:
   - nftables
   iptables:
   - iptables
+  - iptables-services
