@@ -3,4 +3,4 @@
 - name: Perform YUM package cleanup
   yum:
       autoremove: yes
-  changed_when: no
+  changed_when: false
