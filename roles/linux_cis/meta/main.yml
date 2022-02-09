@@ -1,20 +1,23 @@
 ---
 
 galaxy_info:
-    author: "Sam Doran, Josh Springer, Daniel Shepherd, Bas Meijeri, James Cassell, Mike Renfro, DFed, Mark Bolwell, George Nalen, Konstantinos Thoukydidis"
-    description: "Apply the CIS Linux role"
-    company: "MindPoint Group, Others"
-    license: MIT
-    min_ansible_version: 2.10.0
-    role_name: linux_cis
-    platforms:
-        - name: EL
-    versions:
+  author: "Sam Doran, Josh Springer, Daniel Shepherd, Bas Meijeri, James Cassell, Mike Renfro, DFed, Mark Bolwell, George Nalen, Konstantinos Thoukydidis"
+  description: "Apply the CIS Linux role"
+  company: "MindPoint Group, Others"
+  license: MIT
+  min_ansible_version: 2.10.0
+  role_name: linux_cis
+  platforms:
+    - name: EL
+      versions:
         - "7"
         - "8"
-    galaxy_tags:
-        - system
-        - security
-        - cis
-        - hardening
+    - name: Ubuntu
+      versions:
+        - focal
+  galaxy_tags:
+    - system
+    - security
+    - cis
+    - hardening
 dependencies: []
