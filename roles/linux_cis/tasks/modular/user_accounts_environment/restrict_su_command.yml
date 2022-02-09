@@ -15,7 +15,7 @@
             type: auth
             control: required
             module_path: pam_wheel.so
-            module_arguments: 'use_uid group={{ ubtu20cis_su_group }}'
+            module_arguments: 'use_uid group={{ linuxcis_sugroup }}'
         when: linuxcis_pam_wheel_status.stdout | length > 0
 
       - name: "{{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | L1 | PATCH | Ensure access to the su command is restricted | Setting pam_wheel to use_uid"

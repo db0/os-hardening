@@ -1,34 +1,12 @@
 ---
 - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions"
-  block:
-      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Audit the packages"
-        shell: rpm -Va --nomtime --nosize --nomd5 --nolinkto
-        changed_when: false
-        failed_when: false
-        register: linuxcis_6_1_1_packages_rpm
-        tags:
-            - skip_ansible_lint
-
-      - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Create list and warning"
-        block:
-            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Add file discrepancy list to system"
-              copy:
-                  dest: "{{ linuxcis_rpm_audit_file }}"
-                  content: "{{ linuxcis_6_1_1_packages_rpm.stdout }}"
-              changed_when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
-
-            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Message out alert for package descrepancies"
-              debug:
-                  msg: |
-                      "Warning! You have some package descrepancies issues.
-                       The file list can be found in {{ linuxcis_rpm_audit_file }}"
-              changed_when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
-              when: linuxcis_6_1_1_packages_rpm.stdout|length > 0
-
-            - name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Message out no package descrepancies"
-              debug:
-                  msg: "Good News! There are no package descrepancies"
-              when: linuxcis_6_1_1_packages_rpm.stdout|length == 0
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "audit_system_file_permissions_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "audit_system_file_permissions_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "audit_system_file_permissions_{{ ansible_facts.distribution }}.yml"
+      - "audit_system_file_permissions_{{ ansible_facts.os_family }}.yml"
   when:
       - SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS not in disabled_cis_rules
       - linuxcis_level2

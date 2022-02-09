@@ -22,7 +22,8 @@
       - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT |Ensure root login is restricted to system console | Display Console"
         debug:
             msg:
-                - "These are the consoles with root login access, please review:"
+                - "WARNING!!!! Below is the list of consoles with root login access"
+                - "Please review for any consoles that are not in a physically secure location"
                 - "{{ linuxcis_securetty_audit.stdout_lines }}"
         when: linuxcis_securetty_check.stat.exists
 

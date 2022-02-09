@@ -143,14 +143,14 @@
             type: password
             control: required
             module_path: pam_pwhistory.so
-            module_arguments: 'remember={{ ubtu20cis_pamd_pwhistory_remember }}'
+            module_arguments: 'remember={{ linuxcis_pam_faillock.remember }}'
             state: args_present
         when: ubtu20cis_5_4_3_pam_pwhistory_state.stdout | length > 0
 
       - name: "{{ SEC_ID_ENSURE_PASSWORD_REUSE_LIMITED }} | L1 | PATCH | Ensure password reuse is limited | Set remember value if pam_pwhistory does no exist"
         lineinfile:
             path: /etc/pam.d/common-password
-            line: 'password        required                        pam_pwhistory.so remember={{ ubtu20cis_pamd_pwhistory_remember }}'
+            line: 'password        required                        pam_pwhistory.so remember={{ linuxcis_pam_faillock.remember }}'
             insertafter: '^# end of pam-auth-update config'
         when: ubtu20cis_5_4_3_pam_pwhistory_state.stdout | length == 0
   when:

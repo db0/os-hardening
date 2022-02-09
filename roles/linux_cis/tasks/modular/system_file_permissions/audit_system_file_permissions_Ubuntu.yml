@@ -1,0 +1,24 @@
+---
+
+- name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Register package list"
+  command: ls -a /bin/
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  register: linuxcis_list_packages_bin
+
+# - name: "NOTSCORED | {{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Audit the packages"
+#   command: dpkg --verify {{ item }}
+#   changed_when: false
+#   failed_when: false
+#   check_mode: false
+#   with_items:
+#       - "{{ linuxcis_list_packages_bin.stdout_lines }}"
+#   register: linuxcis_packages_audited
+
+- name: "{{ SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS }} | L2 | AUDIT | Audit system file permissions | Message out packages results for review"
+  debug:
+      msg:
+          - "ALERT!!!! Below are the packages that need to be reviewed."
+          - "You can run dpkg --verify <package name> and if nothing is returned the package is installed correctly"
+          - "{{ linuxcis_list_packages_bin.stdout_lines }}"
