@@ -4,6 +4,9 @@ LEGACY_BOOTLOADER_PATH: /boot/grub/
 GRUB_CFG_PATH: /boot/grub/grub.cfg
 GRUB_RECONFIG_HANDLER: update-grub
 
+AIDE_PKG:
+  - aide
+  - aide-common
 AUDITD_PKG: auditd
 CRON_PKG: cron
 GDM_PKG: gdm3

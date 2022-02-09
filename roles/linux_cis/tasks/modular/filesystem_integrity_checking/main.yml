@@ -4,9 +4,7 @@
   block:
   - name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | Install AIDE"
     package:
-      name:
-      - aide
-      - aide-common
+      name: "{{ AIDE_PKG }}"
       state: present
 
   - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"

@@ -28,6 +28,7 @@
         iptables:
             policy: DROP
             chain: "{{ item }}"
+        become: yes
         with_items:
             - INPUT
             - FORWARD
