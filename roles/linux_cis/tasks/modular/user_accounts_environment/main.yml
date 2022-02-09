@@ -40,7 +40,7 @@
             - item.shell != "      /bin/false"
             - item.shell != "      /usr/sbin/nologin"
   when:
-      - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
+      - SEC_ID_ENSURE_SYSTEM_ACCOUNTS_SECURED not in disabled_cis_rules
   tags:
       - level1-server
       - level1-workstation
