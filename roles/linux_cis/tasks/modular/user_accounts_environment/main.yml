@@ -111,6 +111,20 @@
       - "configure_root_login_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
       - "configure_root_login_{{ ansible_facts.distribution }}.yml"
       - "configure_root_login_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - audit
+      - rule_5.6
 
 - name: "SECTION | {{ SEC_ID_ENSURE_SU_COMMAND_RESTRICTED }} | Restrict su command"
   include_tasks: restrict_su_command.yml
+  when:
+      - SEC_ID_ENSURE_SU_COMMAND_RESTRICTED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_5.7
