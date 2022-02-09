@@ -1,50 +1,5 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy"
-  block:
-      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | Ensure ip6tables default deny firewall policy | Configure ssh to be allowed"
-        iptables:
-            chain: INPUT
-            protocol: tcp
-            destination_port: "22"
-            jump: ACCEPT
-            ip_version: ipv6
-
-      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Configure SSH to be allowed out"
-        iptables:
-            chain: OUTPUT
-            protocol: tcp
-            source_port: "22"
-            jump: ACCEPT
-            ctstate: 'NEW,ESTABLISHED'
-            ip_version: ipv6
-
-      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Enable apt traffic"
-        iptables:
-            chain: INPUT
-            ctstate: 'ESTABLISHED'
-            jump: ACCEPT
-            ip_version: ipv6
-        when: ansible_facts.os_family == 'Debian'
-
-      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy | Set drop items"
-        iptables:
-            policy: DROP
-            chain: "{{ item }}"
-            ip_version: ipv6
-        with_items:
-            - INPUT
-            - FORWARD
-            - OUTPUT
-  notify: make ip6tables persistent
-  when:
-      - SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
-  tags:
-      - level1-server
-      - level1-workstation
-      - patch
-      - rule_3.4.4.2.1
-
 - name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH |  Ensure ip6tables loopback traffic is configured"
   block:
       - name: "{{ SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED }} | L1 | PATCH | Ensure ip6tables loopback traffic is configured | INPUT Loopback ACCEPT"
@@ -133,6 +88,51 @@
       - level1-workstation
       - patch
       - rule_3.4.4.2.4
+
+- name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy"
+  block:
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | Ensure ip6tables default deny firewall policy | Configure ssh to be allowed"
+        iptables:
+            chain: INPUT
+            protocol: tcp
+            destination_port: "22"
+            jump: ACCEPT
+            ip_version: ipv6
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Configure SSH to be allowed out"
+        iptables:
+            chain: OUTPUT
+            protocol: tcp
+            source_port: "22"
+            jump: ACCEPT
+            ctstate: 'NEW,ESTABLISHED'
+            ip_version: ipv6
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy | Enable apt traffic"
+        iptables:
+            chain: INPUT
+            ctstate: 'ESTABLISHED'
+            jump: ACCEPT
+            ip_version: ipv6
+        when: ansible_facts.os_family == 'Debian'
+
+      - name: "{{ SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure ip6tables default deny firewall policy | Set drop items"
+        iptables:
+            policy: DROP
+            chain: "{{ item }}"
+            ip_version: ipv6
+        with_items:
+            - INPUT
+            - FORWARD
+            - OUTPUT
+  notify: make ip6tables persistent
+  when:
+      - SEC_ID_ENSURE_IP6TABLES_DEFAULT_DENY_FIREWALL_POLICY not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_3.4.4.2.1
 
 - name: "{{ SEC_ID_ENSURE_IP6TABLES_SERVICE_ENABLED }} | L1 | PATCH | Ensure ip6tables service is enabled and active | Check if ip6tables is enabled"
   service:

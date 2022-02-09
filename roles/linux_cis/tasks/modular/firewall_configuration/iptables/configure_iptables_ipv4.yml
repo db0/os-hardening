@@ -107,6 +107,7 @@
       - patch
       - rule_3.4.4.1.4
 
+# We need to put this section last or risk having our ansible connection being dropped
 - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 | PATCH | Ensure iptables default deny firewall policy"
   block:
       - name: "{{ SEC_ID_ENSURE_IPTABLES_DEFAULT_DENY_FIREWALL_POLICY }} | L1 |  PATCH |  Ensure iptables default deny firewall policy | Configure ssh to be allowed in"
