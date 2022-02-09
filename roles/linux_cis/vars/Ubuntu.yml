@@ -7,7 +7,9 @@ GRUB_RECONFIG_HANDLER: update-grub
 AIDE_PKG:
   - aide
   - aide-common
-AUDITD_PKG: auditd
+AUDITD_PKG:
+  - auditd
+  - audispd-plugins
 CRON_PKG: cron
 GDM_PKG: gdm3
 XORG_PKG: 'xserver-xorg*'

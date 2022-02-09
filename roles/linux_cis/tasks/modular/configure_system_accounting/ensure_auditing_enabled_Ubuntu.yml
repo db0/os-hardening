@@ -1,6 +1,6 @@
 ---
 - name: "{{ SEC_ID_ENSURE_AUDITD_INSTALLED }} | L2 | PATCH | Ensure auditd is installed"
-  dnf:
+  apt:
       name: "{{ AUDITD_PKG }}"
       state: present
   when:
@@ -53,4 +53,4 @@
       - level2-workstation
       - grub
       - patch
-      - rule_4.1.2.4
+      - rule_4.1.1.4

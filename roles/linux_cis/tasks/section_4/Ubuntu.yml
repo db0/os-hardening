@@ -1,0 +1,11 @@
+---
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_SYSTEM_ACCOUNTING }} | Configure System Accounting (auditd)"
+  include_tasks: "../modular/configure_system_accounting/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_SYSTEM_ACCOUNTING not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_CONFIGURE_LOGGING }} | Configure Logging"
+  include_tasks: "../modular/configure_logging/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_LOGGING not in disabled_cis_rules

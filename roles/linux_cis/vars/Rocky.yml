@@ -6,7 +6,9 @@ GRUB_CFG_PATH: /etc/grub2.cfg
 GRUB_RECONFIG_HANDLER: grub2cfg
 
 AIDE_PKG: aide
-AUDITD_PKG: audit
+AUDITD_PKG:
+  - audit
+  - audit-libs
 CRON_PKG: cronie
 RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-rockyofficial
 SELINUX_PKG: libselinux
