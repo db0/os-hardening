@@ -48,6 +48,21 @@
   when:
       - linuxcis_rsyslog_ansiblemanaged
 
+- name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | News log setting"
+  blockinfile:
+      path: /etc/rsyslog.conf
+      state: present
+      marker: "# {mark} NEWS LOG SETTINGS (ANSIBLE MANAGED)"
+      block: |
+        # news logging additions to meet CIS standards
+        news.crit                                                -/var/log/news/news.crit
+        news.err                                                 -/var/log/news/news.err
+        news.notice                                              -/var/log/news/news.notice
+      insertafter: '#### RULES ####'
+  notify: restart rsyslog
+  when:
+      - linuxcis_rsyslog_ansiblemanaged
+
 - name: "{{ SEC_ID_ENSURE_LOGGING_CONFIGURED }} | L1 | PATCH | Ensure logging is configured | Local log settings"
   blockinfile:
       path: /etc/rsyslog.conf

@@ -261,6 +261,13 @@ linuxcis_remote_log_server: logagg.example.com
 # RHEL-07-4.2.1.5
 linuxcis_system_is_log_server: false
 
+# Control 4.3 - Used in Ubuntu CIS only
+# linuxcis_logrotate_create_settings are the settings for the create parameter in /etc/logrotate.conf
+# The permissions need to be 640 or more restrictive.
+# If you would like to include user/group settings to this parameter format the var as below
+# linuxcis_logrotate_create_settings: "0640 root utmp"
+linuxcis_logrotate_create_settings: "0640"
+
 ## Section5 vars
 
 # SSH variables
