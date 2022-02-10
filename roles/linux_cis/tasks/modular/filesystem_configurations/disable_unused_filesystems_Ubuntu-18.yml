@@ -1,0 +1,106 @@
+---
+
+- name: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }} | L1 | PATCH | Ensure mounting of cramfs filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: cramfs
+    cis_level: L1
+    cis_section: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_FS_CRAMFS_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.1
+      - cramfs
+
+
+- name: "{{ SEC_ID_ENSURE_FS_FREEVXFS_DISABLED }} | L1 | PATCH | Ensure mounting of freevxfs filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: freevxfs
+    cis_level: L1
+    cis_section: "{{ SEC_ID_ENSURE_FS_FREEVXFS_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_FS_FREEVXFS_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.1
+      - freevxfs
+
+- name: "{{ SEC_ID_ENSURE_FS_JFFS2_DISABLED }} | L1 | PATCH | Ensure mounting of jffs2 filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: jffs2
+    cis_level: L1
+    cis_section: "{{ SEC_ID_ENSURE_FS_JFFS2_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_FS_JFFS2_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.1
+      - jffs2
+
+
+- name: "{{ SEC_ID_ENSURE_FS_HFS_DISABLED }} | L1 | PATCH | Ensure mounting of hfs filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: hfs
+    cis_level: L1
+    cis_section: "{{ SEC_ID_ENSURE_FS_HFS_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_FS_HFS_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.1
+      - hfs
+
+
+- name: "{{ SEC_ID_ENSURE_FS_HFSPLUS_DISABLED }} | L1 | PATCH | Ensure mounting of hfsplus filesystems is disabled "
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: hfsplus
+    cis_level: L1
+    cis_section: "{{ SEC_ID_ENSURE_FS_HFSPLUS_DISABLED }}"
+  when:
+      - SEC_ID_ENSURE_FS_HFSPLUS_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.1
+      - hfsplus
+
+- name: "{{ SEC_ID_ENSURE_FS_UDF_DISABLED }} | L1 | PATCH | Ensure mounting of udf filesystems is disabled"
+  include_tasks: disable_filesystem_type.yml
+  vars:
+    filesystem_type: udf
+    cis_level: L1
+    cis_section: "{{ SEC_ID_DISABLE_UNUSED_FILESYSTEMS }}"
+  when:
+      - SEC_ID_ENSURE_FS_UDF_DISABLED not in disabled_cis_rules
+      - ansible_connection != 'docker'
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - patch
+      - rule_1.1.1.3
+      - udf
