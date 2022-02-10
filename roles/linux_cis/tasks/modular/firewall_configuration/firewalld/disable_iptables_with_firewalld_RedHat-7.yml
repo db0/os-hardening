@@ -1,6 +1,6 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_NFTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure nftables-services is absent with firewalld"
+- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure iptables-services is absent with firewalld"
   yum:
       name: iptables-services
       state: absent
