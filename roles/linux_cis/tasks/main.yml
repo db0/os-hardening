@@ -4,10 +4,11 @@
   fail:
       msg: "This role can only be run against supported distributions. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported Distributions: {{ SUPPORTED_DISTRIBUTIONS }}"
   when:
-      - not ansible_os_family in SUPPORTED_DISTRIBUTIONS or
-        not ansible_distribution in SUPPORTED_DISTRIBUTIONS or
+      - (not ansible_os_family in SUPPORTED_DISTRIBUTIONS and
+        not ansible_distribution in SUPPORTED_DISTRIBUTIONS) or
         (ansible_os_family in SUPPORTED_DISTRIBUTIONS and
-          not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family]) or
+          not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family] and
+          not ansible_distribution in SUPPORTED_DISTRIBUTIONS) or
         (ansible_distribution in SUPPORTED_DISTRIBUTIONS and
           not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_distribution])
       - linuxcis_os_check
