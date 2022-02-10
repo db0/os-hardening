@@ -156,6 +156,8 @@
       state: started
   when:
       - SEC_ID_ENSURE_IPTABLES_SERVICE_ENABLED not in disabled_cis_rules
+      # Ubuntu 18 does not provide an iptables service
+      - not (ansible_facts.distribution == 'Ubuntu' and ansible_facts.distribution_major_version == '18')
   tags:
       - level1-server
       - level1-workstation
