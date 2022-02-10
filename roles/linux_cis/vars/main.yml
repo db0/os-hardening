@@ -2,11 +2,11 @@
 
 SUPPORTED_DISTRIBUTIONS:
   RedHat:
-    - '7'
-    - '8'
+    - 7
+    - 8
   Ubuntu:
-    - '18'
-    - '20'
+    - 18
+    - 20
 
 linuxcis_allowed_crypto_policies:
     - 'FUTURE'
