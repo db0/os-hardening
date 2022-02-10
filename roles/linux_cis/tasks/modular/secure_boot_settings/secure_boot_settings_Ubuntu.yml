@@ -56,18 +56,13 @@
       - rule_1.4.2
 
 - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode"
-  block:
-      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Emergency service"
-        lineinfile:
-            dest: /usr/lib/systemd/system/emergency.service
-            regexp: '/sbin/systemd-sulogin-shell'
-            line: 'ExecStart=-/bin/sh -c "/sbin/systemd-sulogin-shell; /usr/bin/systemctl --fail --no-block default"'
-
-      - name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Rescue service"
-        lineinfile:
-            dest: /usr/lib/systemd/system/rescue.service
-            regexp: '/sbin/systemd-sulogin-shell'
-            line: 'ExecStart=-/bin/sh -c "/sbin/systemd-sulogin-shell; /usr/bin/systemctl --fail --no-block default"'
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.distribution }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.os_family }}.yml"
   when:
       - SEC_ID_SINGLE_USER_AUTH_NEEDED not in disabled_cis_rules
   tags:
