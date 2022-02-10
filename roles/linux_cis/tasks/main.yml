@@ -2,7 +2,7 @@
 # tasks file for RHEL7-CIS
 - name: Check OS version and family
   fail:
-      msg: "This role can only be run against RHEL 7. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
+      msg: "This role can only be run against supported distributions. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported. Supported Distributions: {{ SUPPORTED_DISTRIBUTIONS }}"
   when:
       - not ansible_os_family in SUPPORTED_DISTRIBUTIONS or
         (ansible_os_family in SUPPORTED_DISTRIBUTIONS and not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family])
