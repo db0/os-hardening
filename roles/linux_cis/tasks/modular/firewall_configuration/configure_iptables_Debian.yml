@@ -69,9 +69,9 @@
 
 # - name: "Make IP6Tables persistent | Not a CIS control"
 #   shell: bash -c "ip6tables-save > /etc/iptables/rules.v6"
-#   changed_when: ubuntucis_ip6tables_save.rc == 0
-#   failed_when: ubuntucis_ip6tables_save.rc > 0
-#   register: ubuntucis_ip6tables_save
+#   changed_when: debiancis_ip6tables_save.rc == 0
+#   failed_when: debiancis_ip6tables_save.rc > 0
+#   register: debiancis_ip6tables_save
 #   when:
 #       - linuxcis_ipv6_required
 #       - SEC_ID_ENSURE_IP6TABLES_LOOPBACK_TRAFFIC_CONFIGURED not in disabled_cis_rules or

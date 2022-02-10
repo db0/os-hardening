@@ -91,16 +91,16 @@
             direction: out
             to_port: '{{ item }}'
         with_items:
-            - "{{ ubuntucis_ufw_allow_out_ports }}"
+            - "{{ debiancis_ufw_allow_out_ports }}"
         notify: reload ufw
-        when: ubuntucis_ufw_allow_out_ports != "all"
+        when: debiancis_ufw_allow_out_ports != "all"
 
       - name: "{{ SEC_ID_ENSURE_UFW_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED }} | L1 | PATCH | Ensure ufw outbound connections are configured | Allow all"
         ufw:
             rule: allow
             direction: out
         notify: reload ufw
-        when: "'all' in ubuntucis_ufw_allow_out_ports"
+        when: "'all' in debiancis_ufw_allow_out_ports"
   when:
       - SEC_ID_ENSURE_UFW_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED not in disabled_cis_rules
   tags:

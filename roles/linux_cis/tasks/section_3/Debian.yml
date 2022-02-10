@@ -1,0 +1,31 @@
+---
+
+- name: "SECTION | {{ SEC_ID_NETWORK_PARAMETERS_HOST_ONLY }} | Network Parameters (Host Only)"
+  include_tasks: "../modular/network_paramets_host_only/main.yml"
+  when:
+    - SEC_ID_NETWORK_PARAMETERS_HOST_ONLY not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_NETWORK_PARAMETERS_HOST_ROUTER }} | Network Parameters (Host and Router)"
+  include_tasks: "../modular/network_parameters_host_router/main.yml"
+  when:
+    - SEC_ID_NETWORK_PARAMETERS_HOST_ROUTER not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_NETWORK_UNCOMMON_NETWORK_PROTOCOLS }} | Uncommon Network Protocols"
+  include_tasks: "../modular/uncommon_network_protocols/main.yml"
+  when:
+    - SEC_ID_NETWORK_UNCOMMON_NETWORK_PROTOCOLS not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_FIREWALL_CONFIGURATION }} | Firewall Configuration"
+  include_tasks: "../modular/firewall_configuration/main.yml"
+  when:
+    - SEC_ID_FIREWALL_CONFIGURATION not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED }} | Disable Wireless"
+  include_tasks: "../modular/disable_wireless/main.yml"
+  when:
+    - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
+
+- name: "SECTION | {{ SEC_ID_ENSURE_DISABLE_IPV6 }} | Disable Ipv6"
+  include_tasks: "../modular/disable_ipv6/main.yml"
+  when:
+    - SEC_ID_ENSURE_DISABLE_IPV6 not in disabled_cis_rules

@@ -12,7 +12,7 @@ AUDITD_PKG:
   - audispd-plugins
 CRON_PKG: cron
 CRON_SRV: cron
-SUDO_PKG: "{{ ubuntucis_sudo_package }}"
+SUDO_PKG: "{{ debiancis_sudo_package }}"
 GDM_PKG: gdm3
 XORG_PKG: 'xserver-xorg*'
 FIREWALL_PKGS:

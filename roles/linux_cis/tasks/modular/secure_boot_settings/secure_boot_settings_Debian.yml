@@ -1,0 +1,52 @@
+---
+
+- name: "{{ SEC_ID_BOOTLOADER_PERMS }} | L1 | PATCH | Ensure permissions on bootloader config are configured"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_BOOTLOADER_PERMS not in disabled_cis_rules
+  tags:
+      - level1
+      - grub
+      - patch
+      - rule_1.4.1
+
+- name: "{{ SEC_ID_BOOT_PASSWORD }} | L1 | PATCH | Ensure bootloader password is set"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.distribution }}.yml"
+      - "ensure_bootloader_configured_{{ ansible_facts.os_family }}.yml"
+  when:
+      - linuxcis_set_boot_pass
+      - SEC_ID_BOOT_PASSWORD not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - scored
+      - grub
+      - patch
+      - rule_1.5.2
+
+- name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode"
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.distribution }}.yml"
+      - "ensure_auth_req_for_single_user_mode_{{ ansible_facts.os_family }}.yml"
+  when:
+      - SEC_ID_SINGLE_USER_AUTH_NEEDED not in disabled_cis_rules
+  tags:
+      - level1-server
+      - level1-workstation
+      - patch
+      - rule_1.4.3

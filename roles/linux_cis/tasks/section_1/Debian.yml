@@ -10,6 +10,11 @@
   when:
     - SEC_ID_CONFIGURE_SOFTWARE_UPDATES not in disabled_cis_rules
 
+- name: "SECTION | {{ SEC_ID_CONFIGURE_SUDO }} | Configure Sudo"
+  include_tasks: "../modular/configure_sudo/main.yml"
+  when:
+    - SEC_ID_CONFIGURE_SUDO not in disabled_cis_rules
+
 - name: "SECTION | {{ SEC_ID_CONFIGURE_FILESYSTEM_INTEGRITY }} | Filesystem Integrity"
   include_tasks: "../modular/filesystem_integrity_checking/main.yml"
   when:
@@ -32,15 +37,10 @@
     - not linuxcis_mandatory_access_control_disable
     - SEC_ID_MANDATORY_ACCESS_CONTROL not in disabled_cis_rules
 
-- name: "SECTION | {{ SEC_ID_COMMAND_LINE_WARNING_BANNERS }} | Command Line Warning Banners"
+- name: "SECTION | {{ SEC_ID_WARNING_BANNERS }} | Command Line Warning Banners"
   include_tasks: "../modular/warning_banners/main.yml"
   when:
-    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
-
-- name: "SECTION | {{ SEC_ID_GNOME_DISPLAY_MANAGER }} | GNOME Display Manager"
-  include_tasks: "../modular/gnome_display_manager/main.yml"
-  when:
-    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
+    - SEC_ID_WARNING_BANNERS not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_UPDATES_AND_PATCHES }} | Updates and Patches"
   include_tasks: "../modular/updates_and_patches/main.yml"

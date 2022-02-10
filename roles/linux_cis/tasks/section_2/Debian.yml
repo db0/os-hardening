@@ -1,10 +1,5 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_INETD_SERVICES }} | inetd Services"
-  include_tasks: "../modular/inetd_services/main.yml"
-  when:
-    - SEC_ID_INETD_SERVICES not in disabled_cis_rules
-
 - name: "SECTION | {{ SEC_ID_SPECIAL_PURPOSE_SERVICES }} | Special Purpose Services"
   include_tasks: "../modular/special_purpose_services/main.yml"
   when:
