@@ -1,0 +1,13 @@
+---
+
+- name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Emergency service"
+  lineinfile:
+      dest: /usr/lib/systemd/system/emergency.service
+      regexp: 'ExecStart'
+      line: 'ExecStart=-/usr/lib/systemd/systemd-sulogin-shell emergency'
+
+- name: "{{ SEC_ID_SINGLE_USER_AUTH_NEEDED }} | L1 | PATCH | Ensure authentication required for single user mode | Rescue service"
+  lineinfile:
+      dest: /usr/lib/systemd/system/rescue.service
+      regexp: 'ExecStart'
+      line: 'ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue'

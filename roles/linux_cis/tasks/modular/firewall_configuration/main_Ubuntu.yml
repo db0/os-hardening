@@ -1,6 +1,6 @@
 ---
 
-- name: "SECTION | {{ SEC_ID_CONFIGURE_FIREWALLD }} | Configure firewalld"
+- name: "SECTION | {{ SEC_ID_CONFIGURE_UFW }} | Configure UFW"
   include_tasks: configure_ufw.yml
   when:
   - ubuntucis_firewall == "ufw"

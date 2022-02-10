@@ -7,14 +7,14 @@
       name: "{{ AIDE_PKG }}"
       state: present
 
-  - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
-    shell: /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'
-    args:
-      creates: /var/lib/aide/aide.db.gz
-    changed_when: false
-    failed_when: false
-    async: 45
-    poll: 0
+  - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | Initialize | Distribution-dependent tasks"
+    include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+    vars:
+      dist_tasks:
+        - "initialize_aide_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+        - "initialize_aide_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+        - "initialize_aide_{{ ansible_facts.distribution }}.yml"
+        - "initialize_aide_{{ ansible_facts.os_family }}.yml"
   when:
     - linuxcis_config_aide
     - SEC_ID_AIDE_SETUP not in disabled_cis_rules
