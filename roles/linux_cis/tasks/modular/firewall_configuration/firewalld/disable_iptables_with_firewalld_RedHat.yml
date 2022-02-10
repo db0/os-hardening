@@ -1,6 +1,6 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure ipables-services is absent with firewalld"
+- name: "{{ SEC_ID_ENSURE_IPTABLES_NOT_ENABLED_WITH_FIREWALLD }} | L1 | PATCH | Ensure iptables not enabled with firewalld"
   systemd:
       name: iptables
       state: stopped
