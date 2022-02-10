@@ -4,8 +4,8 @@
   fail:
       msg: "This role can only be run against RHEL 7. {{ ansible_distribution }} {{ ansible_distribution_major_version }} is not supported."
   when:
-      - ansible_os_family in SUPPORTED_DISTRIBUTIONS
-      - not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family]
+      - not ansible_os_family in SUPPORTED_DISTRIBUTIONS or
+        (ansible_os_family in SUPPORTED_DISTRIBUTIONS and not ansible_distribution_major_version in SUPPORTED_DISTRIBUTIONS[ansible_os_family])
       - linuxcis_os_check
   tags:
       - always
