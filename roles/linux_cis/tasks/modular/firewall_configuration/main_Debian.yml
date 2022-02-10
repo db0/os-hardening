@@ -7,13 +7,13 @@
   - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
-  include_tasks: configure_nftables_Ubuntu.yml
+  include_tasks: configure_nftables_Debian.yml
   when:
   - debiancis_firewall == "nftables"
   - SEC_ID_CONFIGURE_NFTABLES not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_IPTABLES }} | Configure iptables"
-  include_tasks: configure_iptables_Ubuntu.yml
+  include_tasks: configure_iptables_Debian.yml
   when:
   - debiancis_firewall == "iptables"
   - SEC_ID_CONFIGURE_IPTABLES not in disabled_cis_rules

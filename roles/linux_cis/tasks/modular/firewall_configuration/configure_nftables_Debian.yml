@@ -1,7 +1,7 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_NFTABLES_INSTALLED }} | Ensure nftables is installed"
-  include_tasks: ensure_firewall_package_installed_Ubuntu.yml
+  include_tasks: ensure_firewall_package_installed_Debian.yml
   vars:
     cis_section: "{{ SEC_ID_ENSURE_NFTABLES_INSTALLED }}"
     cis_section_description: "Ensure nftables is installed"
