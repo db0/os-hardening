@@ -1,9 +1,9 @@
 ---
 
 - name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
-  command: /usr/sbin/aide --init -B 'database_out=file:/var/lib/aide/aide.db.gz'
+  command: aideinit -d /var/lib/aide/aide.db
   args:
-    creates: /var/lib/aide/aide.db.gz
+    creates: /var/lib/aide/aide.db
   changed_when: false
   failed_when: false
   async: 45
