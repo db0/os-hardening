@@ -1,23 +1,5 @@
 ---
 
-- name: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }} | L1 | PATCH | Ensure mounting of cramfs filesystems is disabled "
-  include_tasks: disable_filesystem_type.yml
-  vars:
-    filesystem_type: cramfs
-    cis_level: L1
-    cis_section: "{{ SEC_ID_ENSURE_FS_CRAMFS_DISABLED }}"
-  when:
-      - SEC_ID_ENSURE_FS_CRAMFS_DISABLED not in disabled_cis_rules
-      - ansible_connection != 'docker'
-  tags:
-      - level1-server
-      - level1-workstation
-      - scored
-      - patch
-      - rule_1.1.1.1
-      - cramfs
-
-
 - name: "{{ SEC_ID_ENSURE_FS_FREEVXFS_DISABLED }} | L1 | PATCH | Ensure mounting of freevxfs filesystems is disabled "
   include_tasks: disable_filesystem_type.yml
   vars:
