@@ -1,4 +1,14 @@
 ---
+
+- name: PRELIM | Distribution-specific Preliminary tasks
+  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
+  vars:
+    dist_tasks:
+      - "prelim_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prelim_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
+      - "prelim_{{ ansible_facts.distribution }}.yml"
+      - "prelim_{{ ansible_facts.os_family }}.yml"
+
 # Preliminary tasks that should always be run
 # List users in order to look files inside each home directory
 - name: "PRELIM | List users accounts"
@@ -72,12 +82,3 @@
   package:
       name: "{{ CRON_PKG }}"
       state: present
-
-- name: PRELIM | Distribution-specific Preliminary tasks
-  include_tasks: "{{ lookup('first_found', dist_tasks) }}"
-  vars:
-    dist_tasks:
-      - "prelim_{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "prelim_{{ ansible_facts.os_family }}-{{ ansible_facts.distribution_major_version }}.yml"
-      - "prelim_{{ ansible_facts.distribution }}.yml"
-      - "prelim_{{ ansible_facts.os_family }}.yml"
