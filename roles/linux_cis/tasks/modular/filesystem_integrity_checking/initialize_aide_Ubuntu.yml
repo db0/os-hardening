@@ -4,5 +4,5 @@
   command: aideinit -d /var/lib/aide/aide.db
   args:
     creates: /var/lib/aide/aide.db
-  async: 45
+  async: 300
   poll: 0
