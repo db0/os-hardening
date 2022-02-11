@@ -9,7 +9,7 @@
       name: network-manager
       state: present
   when:
-      - SEC_ID_ENSURE_WIRELESS_INTERFACE_DISABLED not in disabled_cis_rules
+      - SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED not in disabled_cis_rules
       - not linuxcis_system_is_container
 
 - name: "PRELIM | Install ACL"
