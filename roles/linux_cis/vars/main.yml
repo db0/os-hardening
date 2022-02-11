@@ -9,6 +9,7 @@ SUPPORTED_DISTRIBUTIONS:
     - '20'
   Debian:
     - '10'
+    - '9'
 
 linuxcis_allowed_crypto_policies:
     - 'FUTURE'
