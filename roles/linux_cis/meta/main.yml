@@ -2,7 +2,7 @@
 
 galaxy_info:
   author: "Sam Doran, Josh Springer, Daniel Shepherd, Bas Meijeri, James Cassell, Mike Renfro, DFed, Mark Bolwell, George Nalen, Konstantinos Thoukydidis"
-  description: "Apply the CIS Linux role"
+  description: "This role applies the CIS Linux Hardening role"
   company: "MindPoint Group, Others"
   license: MIT
   min_ansible_version: 2.10.0
@@ -16,9 +16,18 @@ galaxy_info:
       versions:
         - focal
         - bionic
+    - name: Debian
+      versions:
+        - stretch
+        - buster
   galaxy_tags:
     - system
     - security
     - cis
     - hardening
+    - el
+    - redhat
+    - centos
+    - debian
+    - ubuntu
 dependencies: []

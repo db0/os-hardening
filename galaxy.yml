@@ -2,10 +2,10 @@
 
 namespace: "db0"
 name: "os_hardening"
-version: "0.1.0"
+version: "1.0.0"
 readme: "README.md"
 authors:
-    - "Konstantinos Thoukydydis"
+    - "Konstantinos Thoukydidis"
 dependencies:
     community.general: "*"
 license:
@@ -13,6 +13,12 @@ license:
 tags:
     - linux
     - collection
+    - hardening
+    - cis
+    - redhat
+    - centos
+    - debian
+    - ubuntu
 repository: "https://github.com/db0/os-hardening"
 issues: "https://github.com/db0/os-hardening/issues"
 description: Ansible collection for OS-agnostic Hardening
