@@ -193,15 +193,10 @@ linuxcis_chrony_server_options: "minpoll 8"
 linuxcis_ntp_server_options: "iburst"
 
 # Section 3 Control Variables
-# Control 3.1.2
+
+# SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED
 # ubtu20cis_install_network_manager determines if this role can install network manager on Ubuntu Deployents
 debiancis_install_network_manager: true
-
-# 3.4.2 | PATCH | Ensure /etc/hosts.allow is configured
-linuxcis_host_allow:
-    - "10.0.0.0/255.0.0.0"
-    - "172.16.0.0/255.240.0.0"
-    - "192.168.0.0/255.255.0.0"
 
 # Firewall Service for RedHat - either firewalld, nftables or iptables
 redhatcis_firewall: firewalld
@@ -213,7 +208,7 @@ linuxcis_firewall_services:
     - ssh
     - dhcpv6-client
 
-# Control 3.5.1.5
+# SEC_ID_ENSURE_UFW_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED
 # debiancis_ufw_allow_out_ports are the ports for the firewall to allow
 # if you want to allow out on all ports set variable to "all", example debiancis_ufw_allow_out_ports: "all"
 debiancis_ufw_allow_out_ports:
@@ -221,7 +216,6 @@ debiancis_ufw_allow_out_ports:
     - 80
     - 443
 
-# 3.5.2.x
 # NFT firewall
 # not tested but added example for clarity - This will break connections
 # If the tables dont exist automatically create the tablename below
