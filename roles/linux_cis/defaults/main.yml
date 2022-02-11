@@ -1,7 +1,4 @@
 ---
-# linuxcis_notauto will auto install intrusive items
-linuxcis_notauto: false
-
 # Disable/Enable whole sections (Default is for all)
 linuxcis_section1: true
 linuxcis_section2: true
@@ -18,17 +15,20 @@ container_vars_file: is_container.yml
 linuxcis_level2: true
 
 # Disable/Enable OS check
+# If Disabled, this role will run but will fail if the OS family is not supported
 linuxcis_os_check: true
 
 # Whether to skip the reboot
 linuxcis_skip_reboot: true
-## Python Binary
+
+## Python Binary - RHEL7 only
 ## This is used for python3 Installations where python2 OS modules are used in ansible
 python2_bin: /bin/python2.7
 
 
 ## Benchmark name used by audting control role
 # The audit variable found at the base
+# TODO, does not work yet.
 benchmark: RHEL7-CIS
 
 #### Basic external goss audit enablement settings ####
@@ -55,12 +55,6 @@ run_audit: false
 #### Detailed settings found at the end of this document ####
 
 
-# Enable/Disable SELinux or AppArmor
-linuxcis_mandatory_access_control_disable: false
-# Only for CIS for Red Hat 7
-# For 8+, this is expected to always be enforcing
-linuxcis_selinux_state: enforcing
-
 # Misc. environment variables
 linuxcis_skip_for_travis: false
 linuxcis_system_is_container: false
@@ -69,11 +63,18 @@ system_is_ec2: false
 # Change to false if using EFI boot changes 1.1.1.4 to stop vfat
 linuxcis_legacy_boot: true
 
-# These variables correspond with the CIS rule IDs or paragraph numbers defined in
-# the CIS benchmark documents.
-# PLEASE NOTE: These work in coordination with the section # group variables and tags.
-# You must enable an entire section in order for the variables below to take effect.
+# These two variables can contain the CIS sections you want to disable from this role.
+
+# In this list, you need to put the explicit section number in string form. e.g. ['1.1.1', '5.3']
+# Any section in this list will be skipped. However if your infrastructure contains multiple distributions
+# going by the section ID will disable different sections in each distribution
+# in that case, use instead disabled_cis_sections below.
 disabled_cis_rules: []
+# In this list, you need to put the section ID which you want to disable.
+# For example ['SEC_ID_CONFIGURE_PAM', 'SEC_ID_FIREWALL_CONFIGURATION']
+# Any section here will be translated to the relevant section number depending on the distribution
+# and appended into disabled_cis_rules.
+# Thus all sections specified in this list will be applier or considered for CIS benchmarks.
 disabled_cis_sections: []
 
 # Service configuration booleans set true to keep service
@@ -109,21 +110,21 @@ linuxcis_allow_autofs: false
 
 ## Section 1 vars
 
-# 1.1.2
+# SEC_ID_CONFIGURE_TMP
 # These settings go into the /etc/fstab file for the /tmp mount settings
 # The value must contain nosuid,nodev,noexec to conform to CIS standards
 # linuxcis_tmp_tmpfs_settings: "defaults,rw,nosuid,nodev,noexec,relatime 0 0"
 # If set true uses the tmp.mount service else using fstab configuration
 linuxcis_tmp_svc: false
 
-# 1.2.1
+# SEC_ID_ENSURE_RHSM_CONFIGURED
 # This is the login information for your RedHat Subscription
 # DO NOT USE PLAIN TEXT PASSWORDS!!!!!
 # The intent here is to use a password utility like Ansible Vault here
 rhel8cis_rh_sub_user: user
 rhel8cis_rh_sub_password: password
 
-# 1.3.3 var log location variable
+# SEC_ID_CONFIGURE_SUDO
 linuxcis_varlog_location: "/var/log/sudo.log"
 
 # xinetd required
@@ -132,7 +133,7 @@ linuxcis_xinetd_required: false
 # RedHat Satellite Subscription items
 linuxcis_rhnsd_required: false
 
-# 1.4.2 Bootloader password
+# SEC_ID_BOOT_PASSWORD
 linuxcis_set_boot_pass: false
 linuxcis_bootloader_password_hash: 'grub.pbkdf2.sha512.changethispart'
 linuxcis_bootloader_password: random
@@ -156,18 +157,36 @@ linuxcis_aide_cron:
     aide_month: '*'
     aide_weekday: '*'
 
+
+# SEC_ID_MANDATORY_ACCESS_CONTROL
+# Enable/Disable SELinux or AppArmor
+linuxcis_mandatory_access_control_disable: false
+# SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED
+# Only for CIS for Red Hat family
+# For 8+, this is expected to always be enforcing
+linuxcis_selinux_state: enforcing
+# SEC_ID_ENSURE_SELINUX_POLICY_CONFIGURED
 # SELinux policy
 linuxcis_selinux_pol: targeted
 
 # Whether or not to run tasks related to auditing/patching the desktop environment
 linuxcis_gui: no
 
-# 1.10/1.11 Set crypto policy (LEGACY, DEFAULT, FUTURE, FIPS)
+# SEC_ID_ENSURE_CRYPTO_POLICY_NOT_LEGACY / SEC_ID_ENSURE_CRYPTO_POLICY_FUTURE_FIPS
+# Set crypto policy (LEGACY, DEFAULT, FUTURE, FIPS)
 # Control 1.10 sates not ot use LEGACY and control 1.11 says to use FUTURE or FIPS.
 linuxcis_crypto_policy: "FUTURE"
 
 # Set to 'true' if X Windows is needed in your environment
 linuxcis_xwindows_required: no
+
+
+# Warning Banner Content (issue, issue.net, motd)
+linuxcis_warning_banner: |
+    Authorized uses only. All activity may be monitored and reported.
+# End Banner
+
+# Section 2 Control Variables
 
 linuxcis_openldap_clients_required: false
 linuxcis_telnet_required: false
@@ -193,15 +212,10 @@ linuxcis_chrony_server_options: "minpoll 8"
 linuxcis_ntp_server_options: "iburst"
 
 # Section 3 Control Variables
-# Control 3.1.2
+
+# SEC_ID_ENSURE_WIRELESS_INTERFACES_DISABLED
 # ubtu20cis_install_network_manager determines if this role can install network manager on Ubuntu Deployents
 debiancis_install_network_manager: true
-
-# 3.4.2 | PATCH | Ensure /etc/hosts.allow is configured
-linuxcis_host_allow:
-    - "10.0.0.0/255.0.0.0"
-    - "172.16.0.0/255.240.0.0"
-    - "192.168.0.0/255.255.0.0"
 
 # Firewall Service for RedHat - either firewalld, nftables or iptables
 redhatcis_firewall: firewalld
@@ -209,11 +223,13 @@ redhatcis_firewall: firewalld
 debiancis_firewall: iptables
 linuxcis_default_zone: public
 
+# Used for CIS validation via goss
+# see ansible_vars_goss.yml.j2
 linuxcis_firewall_services:
     - ssh
     - dhcpv6-client
 
-# Control 3.5.1.5
+# SEC_ID_ENSURE_UFW_OUTBOUND_AND_ESTABLISHED_CONNECTION_CONFIGURED
 # debiancis_ufw_allow_out_ports are the ports for the firewall to allow
 # if you want to allow out on all ports set variable to "all", example debiancis_ufw_allow_out_ports: "all"
 debiancis_ufw_allow_out_ports:
@@ -221,8 +237,7 @@ debiancis_ufw_allow_out_ports:
     - 80
     - 443
 
-# 3.5.2.x
-# NFT firewall
+# SEC_ID_CONFIGURE_NFTABLES
 # not tested but added example for clarity - This will break connections
 # If the tables dont exist automatically create the tablename below
 linuxcis_nft_tables_autoNewTable: false
@@ -230,12 +245,6 @@ linuxcis_nft_tables_autoNewTable: false
 linuxcis_nft_tables_autoChainCreate: false
 # create a table called
 linuxcis_nft_tables_tableName: filter
-
-
-# Warning Banner Content (issue, issue.net, motd)
-linuxcis_warning_banner: |
-    Authorized uses only. All activity may be monitored and reported.
-# End Banner
 
 ## Section4 vars
 
@@ -248,20 +257,26 @@ linuxcis_auditd:
 
 linuxcis_logrotate: "daily"
 
-# RHEL-07-4.1.2.4
+# SEC_ID_ENSURE_AUDIT_BACKLOG_LIMIT_SUFFICIENT
 # linuxcis_audit_backlog_limit value needs to be 8192 or larger to conform to CIS standards
 linuxcis_audit_backlog_limit: 8192
 
 # The max_log_file parameter should be based on your sites policy
 linuxcis_max_log_file_size: 10
 
-# RHEL-07-4.2.1.4/4.2.1.5 remote and destation log server name
+# SEC_ID_ENSURE_AUDIT_BACKLOG_LIMIT_SUFFICIENT/SEC_ID_ENSURE_RSYSLOG_REMOTE_LOGGING
+# remote and destation log server name
 linuxcis_remote_log_server: logagg.example.com
 
-# RHEL-07-4.2.1.5
+# SEC_ID_ENSURE_RSYSLOG_REMOTE_LOGGING
 linuxcis_system_is_log_server: false
+# SEC_ID_ENSURE_RSYSLOG_INSTALLED
+# Syslog system - either rsyslog or syslog-ng
+linuxcis_syslog: rsyslog
+# SEC_ID_ENSURE_LOGGING_CONFIGURED
+linuxcis_rsyslog_ansiblemanaged: true
 
-# Control 4.3 - Used in Ubuntu CIS only
+# SEC_ID_ENSURE_LOGROTATE_CONFIGURED - Used in Debian CIS only
 # linuxcis_logrotate_create_settings are the settings for the create parameter in /etc/logrotate.conf
 # The permissions need to be 640 or more restrictive.
 # If you would like to include user/group settings to this parameter format the var as below
@@ -270,6 +285,7 @@ linuxcis_logrotate_create_settings: "0640"
 
 ## Section5 vars
 
+# SEC_ID_CONFIGURE_SSH
 # SSH variables
 linuxcis_ssh_loglevel: INFO
 linuxcis_ssh_maxsessions: 4
@@ -288,6 +304,8 @@ linuxcis_sshd:
     # denyusers:
     # denygroups:
 
+
+# SEC_ID_CONFIGURE_PAM
 # pam variables
 linuxcis_pam_faillock:
     attempts: 5
@@ -296,87 +314,77 @@ linuxcis_pam_faillock:
     fail_for_root: no
     remember: 5
     pwhash: sha512
+# SEC_ID_ENSURE_PASSWORD_CREATION_REQS
+linuxcis_pam_password:
+    minlen: "14"
+    minclass: "4"
 
-# Section 5 Control Variables
-# Control 5.2.1 - For Ubuntu CIS Only
+# SEC_ID_ENSURE_SUDO_INSTALLED - For Debian CIS Only
 # debiancis_sudo_package is the name of the sudo package to install
 # The possible values are "sudo" or "sudo-ldap"
 debiancis_sudo_package: "sudo"
 
-# 5.3.1/5.3.2 Custom authselect profile settings. Settings in place now will fail, they are place holders from the control example
+# SEC_ID_CONFIGURE_AUTHSELECT - RHEL8+ only
+# Custom authselect profile settings.
+# Settings in place now will fail, they are place holders from the control example
 # Due to the way many multiple options and ways to configure this control needs to be enabled and settings adjusted to minimise risk
 linuxcis_use_authconfig: false
 linuxcis_authselect:
     custom_profile_name: custom-profile
     default_file_to_copy: "sssd --symlink-meta"
     options: with-sudo with-faillock without-nullok
-
-# 5.3.1 Enable automation to create custom profile settings, using the settings above
+# SEC_ID_CREATE_CUSTOM_AUTHSELECT_PROFILE
+# Enable automation to create custom profile settings, using the settings above
 linuxcis_authselect_custom_profile_create: false
-
-# 5.3.2 Enable automation to select custom profile options, using the settings above
+# SEC_ID_SELECT_AUTHSELECT_PROFILE
+# Enable automation to select custom profile options, using the settings above
 linuxcis_authselect_custom_profile_select: false
 
-# Accounts listed below will not have INACTIVE field set in shadow file
-linuxcis_inactive_whitelist:
-    - root
-    - vagrant
-
+# SEC_ID_SET_SHADOW_SUITE_PARAMETERS
 linuxcis_pass:
     max_days: 90
     min_days: 7
     warn_age: 7
-# Syslog system - either rsyslog or syslog-ng
-linuxcis_syslog: rsyslog
-linuxcis_rsyslog_ansiblemanaged: true
+# SEC_ID_ENSURE_PASSWORD_CHANGE_IN_PAST
+linuxcis_futurepwchgdate_autofix: true
 
-# Var/tmp settings
-linuxcis_vartmp:
-    source: /tmp
-    fstype: none
-    opts: "defaults,nodev,nosuid,noexec,bind"
-    enabled: no
-
-## PAM
-linuxcis_pam_password:
-    minlen: "14"
-    minclass: "4"
-
+# SEC_ID_CONFIGURE_USER_ACCOUNTS_ENVIRONMENT
 # UID settings for interactive users
-# These are discovered via logins.def is set true
-discover_int_uid: false
+# These are used in 99_auditd.rules as well
 min_int_uid: 1000
 max_int_uid: 65533
-
-# RHEL-07-5.4.5
+# SEC_ID_ENSURE_DEFAULT_USER_SHELL_TIMEOUT
 # Session timeout setting file (TMOUT setting can be set in multiple files)
 # Timeout value is in seconds. (60 seconds * 10 = 600)
 linuxcis_shell_session_timeout:
     file: /etc/profile.d/tmout.sh
     timeout: 600
-# RHEL-07-5.4.1.5 Allow ansible to expire password for account with a last changed date in the future. False will just display users in violation, true will expire those users passwords
-linuxcis_futurepwchgdate_autofix: true
 
-# 5.6 Group to be used for su
+
+# SEC_ID_CONFIGURE_SUDO
+# Group to be used for su
 # this group needs to exists groups will not be created for remediation this is considered sys admins
 
 # linuxcis_sugroup: sugroup
 
+# SEC_ID_ENSURE_SU_COMMAND_RESTRICTED
 # wheel users list
 linuxcis_sugroup_users: "root"
 
 ## Section6 vars
 
-# RHEL-07_6.1.1
+# SEC_ID_AUDIT_SYSTEM_FILE_PERMISSIONS
 linuxcis_rpm_audit_file: /var/tmp/rpm_file_check
 
-# RHEL-07_6.1.10 Allow ansible to adjust world-writable files. False will just display world-writable files, True will remove world-writable
+# SEC_ID_ENSURE_NO_WORLD_WRITABLE_FILES
+# Allow ansible to adjust world-writable files.
+# False will just display world-writable files, True will remove world-writable
 linuxcis_no_world_write_adjust: true
+# SEC_ID_ENSURE_USERS_OWN_HOMEDIRS
 linuxcis_passwd_label: "{{ (this_item | default(item)).id }}: {{ (this_item | default(item)).dir }}"
+# SEC_ID_ENSURE_USERS_DOTFILE_PERMS
 linuxcis_dotperm_ansiblemanaged: true
 
-# RHEL-07-6.2.18 Clear users from shadow group
-linuxcis_remove_shadow_grp_usrs: true
 #### Goss Configuration Settings ####
 
 ### Goss binary settings ###

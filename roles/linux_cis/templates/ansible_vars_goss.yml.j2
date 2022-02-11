@@ -9,7 +9,6 @@ is_redhat_os: {% if ansible_distribution == "RedHat" %}true{% else %}false{% end
 timeout_ms: {{ audit_cmd_timeout }}
 
 # Taken from LE rhel7-cis
-linuxcis_notauto: {{ linuxcis_notauto }}
 linuxcis_section1: {{ linuxcis_section1 }}
 linuxcis_section2: {{ linuxcis_section2 }}
 linuxcis_section3: {{ linuxcis_section3 }}

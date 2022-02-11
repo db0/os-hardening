@@ -1,5 +1,17 @@
 # Release Log: Ansible Collection - OS Hardening
 
+## What's new 1.0.0
+
+- Finished merging RHEL8/CentOS8 support
+- Added RHEL9/CentOS9 support
+- Added Ubuntu20.04 support
+- Added Ubuntu18.04 support
+- Added Debian 10 support
+- Added Debian 9 support (CIS sections might mismatch the official document)
+- Removed obsolete default variables from original role
+- Added collection README
+- 
+
 ## What's new 0.1.0
 
 - Converted [CIS RedHat Enterprise Linux 7 Benchmark](https://github.com/ansible-lockdown/RHEL7-CIS) into an Ansible collection.

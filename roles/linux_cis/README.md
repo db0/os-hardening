@@ -1,21 +1,24 @@
 Linux CIS Hardening
 ================
 
-
 Configure Linux machine to be [CIS](https://www.cisecurity.org/cis-benchmarks/) compliant
 
 Currently Supported
 
-* RHEL/Centos 7 - [CIS RedHat Enterprise Linux 7 Benchmark v3.1.1 - 05-21-2021 ](https://www.cisecurity.org/cis-benchmarks/)
-* RHEL/Centos 8
-* RHEL 9
+* RHEL 9 - CIS RedHat Enterprise Linux 8 Benchmark v1.0.1 - 05-19-2021
+* RHEL/Centos 8 - CIS RedHat Enterprise Linux 8 Benchmark v1.0.1 - 05-19-2021
+* RHEL/Centos 7 - CIS RedHat Enterprise Linux 7 Benchmark v3.1.2 - 08-31-2021
+* Ubuntu 20.04 - CIS Ubuntu Enterprise Linux 20.04 Benchmark v1.1.0 - 03-31-2021
+* Ubuntu 18.04 - CIS Ubuntu Enterprise Linux 18.04 Benchmark v2.1.0 - 03-23-2021
+* Debian 10 - CIS Debian Enterprise Linux 9 Benchmark v1.0.0 - 02-13-2020
+* Debian 9
 
 Caution(s)
 ---------
 
 This role **will make changes to the system** which may have unintended consequences. This is not an auditing tool but rather a remediation tool to be used after an audit has been conducted.
 
-This role was developed against a clean install of the Operating System. If you are implimenting to an existing system please review this role for any site specific changes that are needed.
+This role was developed against a clean install of the Operating System. If you are implementing onto an existing system please review this role for any site specific changes that are needed.
 
 To use release version please point to main branch and relevant release for the cis benchmark you wish to work with.
 
@@ -38,9 +41,42 @@ A new form of auditing has been developed, by using a small (12MB) go binary cal
 This audit will not only check the config has the correct setting but aims to capture if it is running with that configuration also trying to remove [false positives](https://www.mindpointgroup.com/blog/is-compliance-scanning-still-relevant/) in the process.
 
 Refer to:
-- [RHEL7-CIS-Audit](https://github.com/ansible-lockdown/RHEL7-CIS-Audit).
-- [RHEL8-CIS-Audit](https://github.com/ansible-lockdown/RHEL8-CIS-Audit).
 - [RHEL9-CIS-Audit](https://github.com/ansible-lockdown/RHEL9-CIS-Audit).
+- [RHEL8-CIS-Audit](https://github.com/ansible-lockdown/RHEL8-CIS-Audit).
+- [RHEL7-CIS-Audit](https://github.com/ansible-lockdown/RHEL7-CIS-Audit).
+- [UBUNTU20-CIS-Audit](https://github.com/ansible-lockdown/UBUNTU20-CIS).
+- [UBUNTU18-CIS-Audit](https://github.com/ansible-lockdown/UBUNTU18-CIS).
+
+Usage
+-----
+
+This role should be tweaked to fit your infrastructure expectations.
+Please read through the default variables to see the various switches you can use.
+Check the `sec_ids_` for the distributions active in your infrastructure, to see which sections
+ID match to the CIS numbers and then disable the ones you need using `disabled_cis_sections`
+
+Typically the role usage should look like this:
+
+```yaml
+---
+- hosts: os_linux
+
+  roles:
+  - role: db0.os_hardening.linux_cis
+    vars:
+      disabled_cis_sections:
+      - SEC_ID_ENSURE_UPDATES_AND_PATCHES_INSTALLED
+      - SEC_ID_CONFIGURE_TMP
+      - SEC_ID_CONFIGURE_SHM
+      - SEC_ID_SEPARATE_VAR
+      - SEC_ID_SEPARATE_VAR_TMP
+      - SEC_ID_SEPARATE_VAR_LOG
+      - SEC_ID_SEPARATE_VAR_LOG_AUDIT
+      - SEC_ID_SEPARATE_HOME
+      - SEC_ID_ENSURE_FS_VFAT_DISABLED
+      # ansible user is 1000
+      min_int_uid: 999
+```
 
 Documentation
 -------------
