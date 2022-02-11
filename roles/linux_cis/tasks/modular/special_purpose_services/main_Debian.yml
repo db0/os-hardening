@@ -4,7 +4,7 @@
   include_tasks: "time_synchronization.yml"
 
 - name: "{{ SEC_ID_ENSURE_XORG_NOT_INSTALLED }} | L1 | PATCH | Ensure X Org not installed | Distribution Specific Tasks"
-  include_tasks: "ensure_xorg_not_installed_Ubuntu.yml"
+  include_tasks: "ensure_xorg_not_installed_Debian.yml"
   when:
       - not linuxcis_xwindows_required
       - SEC_ID_ENSURE_XORG_NOT_INSTALLED not in disabled_cis_rules

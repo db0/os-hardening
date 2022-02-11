@@ -37,6 +37,12 @@
   when:
     - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
 
+- name: "SECTION | {{ SEC_ID_GNOME_DISPLAY_MANAGER }} | GNOME Display Manager"
+  include_tasks: "../modular/gnome_display_manager/main.yml"
+  when:
+    - SEC_ID_COMMAND_LINE_WARNING_BANNERS not in disabled_cis_rules
+
+
 - name: "SECTION | {{ SEC_ID_UPDATES_AND_PATCHES }} | Updates and Patches"
   include_tasks: "../modular/updates_and_patches/main.yml"
   when:

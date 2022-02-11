@@ -1,10 +1,10 @@
 ---
 
 - name: "SECTION | {{ SEC_ID_ENSURE_AUDITING_ENABLED }} | Ensure auditing is enabled"
-  include_tasks: ensure_auditing_enabled_Ubuntu.yml
+  include_tasks: ensure_auditing_enabled_Debian.yml
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_DATA_RETENTION }} | Configure Data Retention"
-  include_tasks: configure_data_retention_Ubuntu.yml
+  include_tasks: configure_data_retention_Debian.yml
 
 - name: "{{ SEC_ID_ENSURE_DATE_TIME_EVENTS_COLLECTED }} | L2 | PATCH | Ensure events that modify date and time information are collected"
   debug:
