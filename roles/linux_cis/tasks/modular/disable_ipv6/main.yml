@@ -1,22 +1,22 @@
 ---
 
-- name: "{{ SEC_ID_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6"
+- name: "{{ SEC_ID_ENSURE_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6"
   block:
-  - name: "{{ SEC_ID_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6 | grub"
+  - name: "{{ SEC_ID_ENSURE_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6 | grub"
     replace:
         dest: /etc/default/grub
         regexp: '(^GRUB_CMDLINE_LINUX\s*\=\s*)(?:")(.+)(?<!ipv6.disable=1)(?:")'
         replace: '\1"\2 ipv6.disable=1"'
         follow: true
     notify: "{{ GRUB_RECONFIG_HANDLER }}"
-  - name: "{{ SEC_ID_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6 | sysctl"
+  - name: "{{ SEC_ID_ENSURE_DISABLE_IPV6 }} | L2 | PATCH | Disable IPv6 | sysctl"
     debug:
         msg: "Control being set via Handler 'update sysctl' which writes to /etc/sysctl.d/99-sysctl.conf"
     notify:
         - update sysctl
   when:
       - not linuxcis_ipv6_required
-      - SEC_ID_DISABLE_IPV6 not in disabled_cis_rules
+      - SEC_ID_ENSURE_DISABLE_IPV6 not in disabled_cis_rules
       - linuxcis_level2
   tags:
       - level2-server

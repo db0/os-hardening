@@ -12,7 +12,7 @@ kernel.randomize_va_space = 2
 {% endif %}
 
 # Network sysctl
-{% if SEC_ID_DISABLE_IPV6 not in disabled_cis_rules and not linuxcis_ipv6_required %}
+{% if SEC_ID_ENSURE_DISABLE_IPV6 not in disabled_cis_rules and not linuxcis_ipv6_required %}
 net.ipv6.conf.all.disable_ipv6 = 1
 {% endif %}
 {% if SEC_ID_ENSURE_IP_FORWARDING_DISABLED not in disabled_cis_rules %}
