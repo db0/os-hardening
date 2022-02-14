@@ -1,8 +1,14 @@
 ---
 
-- name: "{{ SEC_ID_AIDE_SETUP }} |L1 | PATCH | Ensure AIDE is setup | initialize"
+- name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | initialize"
   command: aideinit -d /var/lib/aide/aide.db
   args:
     creates: /var/lib/aide/aide.db
   async: 300
   poll: 0
+
+- name: "{{ SEC_ID_AIDE_SETUP }} | L1 | PATCH | Ensure AIDE is setup | disable package-provided cron script"
+  file:
+    path: /etc/cron.daily/aide
+    attr: +i
+    mode: -x
