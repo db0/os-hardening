@@ -36,3 +36,4 @@ DEFAULT_USER_SHELL_UMASK_FILES:
   - /etc/bash.bashrc
   - /etc/profile
   - /etc/login.defs
+AIDE_CRON_JOB: '/usr/bin/aide.wrapper --config /etc/aide/aide.conf --check'

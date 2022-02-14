@@ -37,3 +37,4 @@ DEFAULT_USER_SHELL_TIMEOUT_FILES:
 DEFAULT_USER_SHELL_UMASK_FILES:
   - /etc/bashrc
   - /etc/profile
+AIDE_CRON_JOB: '/usr/sbin/aide --check'

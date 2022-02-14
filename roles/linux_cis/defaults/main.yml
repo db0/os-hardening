@@ -150,7 +150,9 @@ linuxcis_config_aide: true
 linuxcis_aide_cron:
     cron_user: root
     cron_file: /etc/cron.d/aide.cron
-    aide_job: '/usr/sbin/aide --check'
+    # Default dependent in each distro.
+    # Provide your own to override
+    # aide_job: '/usr/sbin/aide --check'
     aide_minute: 0
     aide_hour: 5
     aide_day: '*'
