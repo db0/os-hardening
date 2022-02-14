@@ -4,7 +4,7 @@
   include_tasks: configure_ufw.yml
   when:
   - debiancis_firewall == "ufw"
-  - SEC_ID_CONFIGURE_FIREWALLD not in disabled_cis_rules
+  - SEC_ID_CONFIGURE_UFW not in disabled_cis_rules
 
 - name: "SECTION | {{ SEC_ID_CONFIGURE_NFTABLES }} | Configure nftables"
   include_tasks: configure_nftables_Debian.yml
