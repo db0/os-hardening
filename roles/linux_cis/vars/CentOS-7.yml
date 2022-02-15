@@ -5,9 +5,7 @@ LEGACY_BOOTLOADER_PATH: /boot/grub2/
 GRUB_CFG_PATH: /etc/grub2.cfg
 GRUB_RECONFIG_HANDLER: grub2cfg
 
-AIDE_PKG:
-- aide
-- aide-common
+AIDE_PKG: aide
 AUDITD_PKG:
   - audit
   - audit-libs
