@@ -5,7 +5,7 @@ name: "os_hardening"
 version: "1.0.0"
 readme: "README.md"
 authors:
-    - "Konstantinos Thoukydidis"
+    - Divided by Zer0 <mail@dbzer0.com>
 dependencies:
     community.general: "*"
 license:
