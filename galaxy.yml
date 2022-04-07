@@ -6,9 +6,7 @@ version: "1.0.0"
 readme: "README.md"
 authors:
     - Divided by Zer0 <mail@dbzer0.com>
-dependencies:
-    community.general: "*"
-    community.windows: "*"
+dependencies: {}
 license:
     - "MIT"
 tags:
