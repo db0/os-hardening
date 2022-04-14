@@ -76,6 +76,10 @@ disabled_cis_rules: []
 # and appended into disabled_cis_rules.
 # Thus all sections specified in this list will be applier or considered for CIS benchmarks.
 disabled_cis_sections: []
+# This serves a similar purpose with disabled_cis_sections but allows someone to add extra disabling directives
+# For example this might be useful when you have a baseline of disabled cis sections for your infrastructure
+# but specific software want to exclude some extra ones.
+additional_disabled_cis_sections: []
 
 # Service configuration booleans set true to keep service
 linuxcis_avahi_server: false

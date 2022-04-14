@@ -58,6 +58,12 @@
   loop: "{{ disabled_cis_sections }}"
   when: item in section_names
 
+- name: Add extra excluded sections by name
+  set_fact:
+    disabled_cis_rules: "{{ disabled_cis_rules + [section_names[item]] }}"
+  loop: "{{ additional_disabled_cis_sections }}"
+  when: item in section_names
+
 - name: "Display Excluded CIS Sections"
   debug:
     msg: "The following CIS benchmark sections have been disabled for {{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }} during this run: {{ disabled_cis_rules }}"
