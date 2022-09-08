@@ -239,6 +239,7 @@
       regexp: '^KexAlgorithms'
       line: "KexAlgorithms {{ linuxcis_sshd['kex'] }}"
       insertafter: '^MACs'
+      insertbefore: '^Match'
       validate: /usr/sbin/sshd -T -C user=root -C host="$(hostname)" -C addr="$(grep $(hostname) /etc/hosts | awk '{print $1}')" -f %s
   notify:
       - restart sshd
