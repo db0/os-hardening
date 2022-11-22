@@ -16,5 +16,7 @@
       warn: false
   loop:
       - xorg_x11_installed.stdout_lines
-  when: xorg_x11_installed.stdout | length > 0
+  when:
+  - xorg_x11_installed.stdout | length > 0
+  - not linuxcis_gui
   tags: always
