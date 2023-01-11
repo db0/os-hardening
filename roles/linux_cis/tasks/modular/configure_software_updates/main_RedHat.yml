@@ -8,7 +8,7 @@
       auto_attach: true
       no_log: true
   when:
-      - rhel8cis_rhnsd_required
+      - linuxcis_rhnsd_required
       - rhel8cis_rule_1_2_1
   tags:
       - level1-server
