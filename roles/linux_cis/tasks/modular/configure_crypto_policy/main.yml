@@ -26,6 +26,7 @@
   when:
       - SEC_ID_ENSURE_CRYPTO_POLICY_FUTURE_FIPS not in disabled_cis_rules
       - system_wide_crypto_policy['stdout'] not in linuxcis_allowed_crypto_policies
+      - linuxcis_level2
   tags:
       - level2-server
       - level2-workstation
