@@ -2,8 +2,6 @@
 
 - name: "{{ SEC_ID_ENSURE_NETWORK_INTERFACES_ASSIGNED_TO_APPROPRIATE_USE }} | L1 | AUDIT | Ensure network interfaces are assigned to appropriate zone | Get list of interfaces and policies"
   shell: "nmcli -t connection show | awk -F: '{ if($4){print $4} }' | while read INT; do firewall-cmd --get-active-zones | grep -B1 $INT; done"
-  args:
-      warn: false
   changed_when: false
   failed_when: false
   check_mode: false

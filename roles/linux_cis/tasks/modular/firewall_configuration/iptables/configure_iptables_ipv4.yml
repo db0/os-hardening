@@ -59,16 +59,12 @@
   block:
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | AUDIT | Ensure iptables firewall rules exist for all open ports | Get list of TCP open ports"
         shell: netstat -ant |grep "tcp.*LISTEN" | awk '{ print $4 }'| sed 's/.*://'
-        args:
-            warn: false
         changed_when: false
         failed_when: false
         register: linuxcis_netstat_otcp_out
 
       - name: "{{ SEC_ID_ENSURE_IPTABLES_FIREWALL_RULES_EXIST_FOR_OPEN_PORTS }} | L1 | AUDIT | Ensure iptables firewall rules exist for all open ports | Get the list of udp open ports"
         shell: netstat -ant |grep "udp.*LISTEN" | awk '{ print $4 }'| sed 's/.*://'
-        args:
-            warn: false
         changed_when: false
         failed_when: false
         register: linuxcis_netstat_oudp_out

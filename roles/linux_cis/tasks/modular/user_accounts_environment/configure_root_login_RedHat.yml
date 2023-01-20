@@ -11,8 +11,6 @@
 
 - name: "{{ SEC_ID_ENSURE_ROOT_LOGIN_CONSOLE }} | L1 | AUDIT | Ensure root login is restricted to system console | Capture consoles"
   shell: cat /etc/securetty
-  args:
-    warn: false
   changed_when: false
   register: linuxcis_securetty_audit
   when: linuxcis_securetty_check.stat.exists

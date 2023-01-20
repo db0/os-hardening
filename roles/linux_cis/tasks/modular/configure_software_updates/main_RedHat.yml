@@ -37,8 +37,6 @@
 
 - name: "{{ SEC_ID_CONFIGURE_GPG_KEYS }} | L1 | AUDIT | Ensure GPG keys are configured"
   shell: gpg --quiet --with-fingerprint "{{ RPM_GPG_KEY_FILE }}"
-  args:
-      warn: false
   when:
       - SEC_ID_CONFIGURE_GPG_KEYS not in disabled_cis_rules
   tags:
