@@ -339,8 +339,6 @@
 
 - name: "{{ SEC_ID_ENSURE_SYSTEM_WIDE_CRYPTO_POLICY }} | L1 | PATCH | Ensure system-wide crypto policy is not over-ridden"
   shell: sed -ri "s/^\s*(CRYPTO_POLICY\s*=.*)$/# \1/" /etc/sysconfig/sshd
-  args:
-      warn: false
   notify: restart sshd
   when:
       - SEC_ID_ENSURE_SYSTEM_WIDE_CRYPTO_POLICY not in disabled_cis_rules

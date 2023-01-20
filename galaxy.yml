@@ -8,6 +8,7 @@ authors:
     - Divided by Zer0 <mail@dbzer0.com>
 dependencies:
     community.general: "*"
+    community.windows: "*"
 license:
     - "MIT"
 tags:

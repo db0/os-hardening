@@ -1,6 +1,6 @@
 ---
 
-UEFI_BOOTLOADER_PATH: /boot/efi/EFI/centos/
+UEFI_BOOTLOADER_PATH: /boot/efi/EFI/redhat/
 LEGACY_BOOTLOADER_PATH: /boot/grub2/
 GRUB_CFG_PATH: /etc/grub2.cfg
 GRUB_RECONFIG_HANDLER: grub2cfg
@@ -12,8 +12,7 @@ AUDITD_PKG:
 CRON_PKG: cronie
 CRON_SRV: crond
 SUDO_PKG: sudo
-GDM_PKG: gdm
-RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+RPM_GPG_KEY_FILE: /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 SELINUX_PKG: libselinux
 SETROUBLESHOOT_PKG: setroubleshoot
 XORG_PKG: 'xorg-x11-server-*'

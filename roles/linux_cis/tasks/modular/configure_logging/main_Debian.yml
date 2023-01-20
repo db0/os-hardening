@@ -8,8 +8,6 @@
 
 - name: "{{ SEC_ID_ENSURE_LOGFILE_PERMISSIONS }} | L1 | PATCH | Ensure permissions on all logfiles are configured"
   command: find /var/log -type f -exec chmod g-wx,o-rwx "{}" +
-  args:
-      warn: false
   changed_when: false
   failed_when: false
   when:

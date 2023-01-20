@@ -4,8 +4,6 @@
   block:
       - name: "{{ SEC_ID_CREATE_CUSTOM_AUTHSELECT_PROFILE }} | L1 | PATCH | Create custom authselect profile | Gather profiles"
         shell: 'authselect current | grep "Profile ID: custom/"'
-        args:
-            warn: false
         failed_when: false
         changed_when: false
         check_mode: false
@@ -19,8 +17,6 @@
 
       - name: "{{ SEC_ID_CREATE_CUSTOM_AUTHSELECT_PROFILE }} | L1 | PATCH | Create custom authselect profile | Create custom profiles"
         shell: authselect create-profile {{ linuxcis_authselect['custom_profile_name'] }} -b {{ linuxcis_authselect['default_file_to_copy'] }}
-        args:
-            warn: false
         when: linuxcis_authselect_custom_profile_create
   when:
       - SEC_ID_CREATE_CUSTOM_AUTHSELECT_PROFILE not in disabled_cis_rules
@@ -35,8 +31,6 @@
   block:
       - name: "{{ SEC_ID_SELECT_AUTHSELECT_PROFILE }} | L1 | AUDIT | Select authselect profile | Gather profiles and enabled features"
         shell: "authselect current"
-        args:
-            warn: false
         failed_when: false
         changed_when: false
         check_mode: false
@@ -50,8 +44,6 @@
 
       - name: "{{ SEC_ID_SELECT_AUTHSELECT_PROFILE }} | L1 | PATCH | Select authselect profile | Create custom profiles"
         shell: "authselect select custom/{{ linuxcis_authselect['custom_profile_name'] }} {{ linuxcis_authselect['options'] }}"
-        args:
-            warn: false
         when: linuxcis_authselect_custom_profile_select
   when:
       - SEC_ID_SELECT_AUTHSELECT_PROFILE not in disabled_cis_rules
@@ -66,8 +58,6 @@
   block:
       - name: "{{ SEC_ID_ENSURE_AUTHSELECT_INCLUDES_WITH_FAILLOCK }} | L1 | AUDIT | Ensure authselect includes with-faillock | Gather profiles and enabled features"
         shell: "authselect current | grep with-faillock"
-        args:
-            warn: false
         failed_when: false
         changed_when: false
         check_mode: false
@@ -81,8 +71,6 @@
 
       - name: "{{ SEC_ID_ENSURE_AUTHSELECT_INCLUDES_WITH_FAILLOCK }} | L1 | PATCH | Ensure authselect includes with-faillock | Create custom profiles"
         shell: "authselect select custom/{{ linuxcis_authselect['custom_profile_name'] }} with-faillock"
-        args:
-            warn: false
         when: linuxcis_authselect_custom_profile_select
   when:
       - SEC_ID_ENSURE_AUTHSELECT_INCLUDES_WITH_FAILLOCK not in disabled_cis_rules

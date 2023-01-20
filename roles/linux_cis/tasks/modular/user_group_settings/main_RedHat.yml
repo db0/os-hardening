@@ -16,8 +16,6 @@
 
 - name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_PASSWD }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/passwd"
   shell: sed -i '/^+/ d' /etc/passwd
-  args:
-      warn: false
   changed_when: false
   failed_when: false
   when:
@@ -41,8 +39,6 @@
 
 - name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_SHADOW }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/shadow"
   shell: sed -i '/^+/ d' /etc/shadow
-  args:
-      warn: false
   changed_when: false
   failed_when: false
   when:
@@ -56,8 +52,6 @@
 
 - name: "{{ SEC_ID_ENSURE_NO_LEGACY_PLUS_IN_GROUP }} | L1 | PATCH | Ensure no legacy '+' entries exist in /etc/group"
   shell: sed -i '/^+/ d' /etc/group
-  args:
-      warn: false
   changed_when: false
   failed_when: false
   when:

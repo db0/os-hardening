@@ -5,8 +5,6 @@
       - name: "{{ SEC_ID_ENSURE_ETC_PASSWD_USES_SHADOW }} | L1 | PATCH | Ensure accounts in /etc/passwd use shadow passwords"
         shell: sed -e 's/^\([a-zA-Z0-9_]*\):[^:]*:/\1:x:/' -i /etc/passwd
         loop: "{{ linuxcis_passwd | selectattr('password', '!=', 'x') | list }}"
-        args:
-            warn: false
         register: rhel7_6_2_1_shadow
         when:
             - linuxcis_passwd | selectattr('password', '!=', 'x')
