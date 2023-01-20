@@ -11,8 +11,6 @@
 
       - name: "PRELIM | Gather system-wide crypto-policy"
         shell: update-crypto-policies --show
-        args:
-            warn: false
         changed_when: false
         check_mode: false
         register: system_wide_crypto_policy
